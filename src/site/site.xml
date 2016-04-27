@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
+  <publishDate position="right"/>
+  <version position="right"/>
+  <body>
+    <links>
+      <item name="API javadoc" href="./apidocs/index.html"/>
+      <item name="GitHub" href="https://github.com/shred/commons-suncalc"/>
+    </links>
+    <breadcrumbs>
+      <item name="shredzone.org" href="http://www.shredzone.org"/>
+      <item name="commons-suncalc" href="index.html"/>
+    </breadcrumbs>
+    <menu name="Documentation">
+      <item name="API javadoc" href="./apidocs/index.html"/>
+    </menu>
+    <menu ref="modules"/>
+    <menu ref="reports"/>
+  </body>
+
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-fluido-skin</artifactId>
+    <version>1.4</version>
+  </skin>
+</project>
