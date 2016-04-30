@@ -15,7 +15,7 @@ It is a Java port of the great [SunCalc](https://github.com/mourner/suncalc) Jav
 This library consists of a few models, all of them are invoked the same way:
 
 ```java
-Date date = // date of computation
+Date date = // date of calculation
 double lat, lng = // geolocation
 SunPosition position = SunPosition.of(date, lat, lng);
 System.out.println("Altitude: " + position.getAltitude());
