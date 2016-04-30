@@ -65,14 +65,32 @@ public class MoonIllumination {
         this.angle = angle;
     }
 
+    /**
+     * Illuminated fraction. {@code 0.0} indicates new moon, {@code 1.0} indicates full
+     * moon.
+     */
     public double getFraction() {
         return fraction;
     }
 
+    /**
+     * Moon phase. Starts at {@code 0.0} (new moon, waxing), passes {@code 0.5} (full
+     * moon) and moves toward {@code 1.0} (waning, new moon).
+     */
     public double getPhase() {
         return phase;
     }
 
+    /**
+     * Midpoint angle in radians of the illuminated limb of the moon reckoned eastward
+     * from the north point of the disk; the moon is waxing if the angle is negative, and
+     * waning if positive.
+     * <p>
+     * By subtracting {@link MoonPosition#getParallacticAngle()} from {@link #getAngle()},
+     * one can get the zenith angle of the moons bright limb (anticlockwise). The zenith
+     * angle can be used do draw the moon shape from the observers perspective (e.g. moon
+     * lying on its back).
+     */
     public double getAngle() {
         return angle;
     }

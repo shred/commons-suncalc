@@ -61,18 +61,30 @@ public class MoonPosition {
         this.parallacticAngle = parallacticAngle;
     }
 
+    /**
+     * Moon azimuth in radians.
+     */
     public double getAzimuth() {
         return azimuth;
     }
 
+    /**
+     * Moon altitude above the horizon in radians.
+     */
     public double getAltitude() {
         return altitude;
     }
 
+    /**
+     * Distance to moon in kilometers.
+     */
     public double getDistance() {
         return distance;
     }
 
+    /**
+     * Parallactic angle of the moon in radians.
+     */
     public double getParallacticAngle() {
         return parallacticAngle;
     }

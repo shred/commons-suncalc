@@ -51,10 +51,22 @@ public class SunPosition {
         this.altitude = altitude;
     }
 
+    /**
+     * Sun altitude above the horizon in radians.
+     * <p>
+     * {@code 0} means the sun is at the horizon, {@code PI / 2} at the zenith (straight
+     * over your head).
+     */
     public double getAltitude() {
         return altitude;
     }
 
+    /**
+     * Sun azimuth in radians.
+     * <p>
+     * This is the direction along the horizon, measured from south to west. For example,
+     * {@code 0} means south, {@code PI * 3 / 4} means northwest.
+     */
     public double getAzimuth() {
         return azimuth;
     }

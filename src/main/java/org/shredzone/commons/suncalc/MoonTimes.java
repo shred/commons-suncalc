@@ -42,6 +42,13 @@ public final class MoonTimes {
     }
 
     /**
+     * Calculates the {@link MoonTimes}, based on the system's time zone.
+     */
+    public static MoonTimes of(Date date, double lat, double lng) {
+        return of(date, lat, lng, TimeZone.getDefault());
+    }
+
+    /**
      * Calculates the {@link MoonTimes}, based on the given {@link TimeZone}.
      */
     public static MoonTimes of(Date date, double lat, double lng, TimeZone tz) {
@@ -116,18 +123,32 @@ public final class MoonTimes {
         this.ye = ye;
     }
 
+    /**
+     * Moonrise time. {@code null} if the moon does not rise that day.
+     */
     public Date getRise() {
         return (rise != null ? new Date(rise.getTime()) : null);
     }
 
+    /**
+     * Moonset time. {@code null} if the moon does not set that day.
+     */
     public Date getSet() {
         return (set != null ? new Date(set.getTime()) : null);
     }
 
+    /**
+     * {@code true} if the moon never rises/sets, but is always above the horizon that
+     * day.
+     */
     public boolean isAlwaysUp() {
         return rise == null && set == null && ye > 0;
     }
 
+    /**
+     * {@code true} if the moon never rises/sets, but is always below the horizon that
+     * day.
+     */
     public boolean isAlwaysDown() {
         return rise == null && set == null && ye <= 0;
     }
