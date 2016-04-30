@@ -207,7 +207,8 @@ public class SunTimes {
      *
      * @param time
      *            Time type
-     * @return Time
+     * @return Time, or {@code null} if the sun does not reach the {@link Time} on the
+     *         given date (e.g. midnight sun).
      */
     public Date getTime(Time time) {
         if (time == Time.SOLAR_NOON) {
@@ -223,6 +224,9 @@ public class SunTimes {
 
     /**
      * Calculates the time when the rising sun reaches the given angle.
+     *
+     * @return Time, or {@code null} if the sun does not reach the angle on the
+     *         given date (e.g. midnight sun).
      */
     public Date sunriseTime(double angle) {
         double jset = getSetJ(angle * RAD, lw, phi, dec, n, m, l);
@@ -232,6 +236,9 @@ public class SunTimes {
 
     /**
      * Calculates the time when the setting sun reaches the given angle.
+     *
+     * @return Time, or {@code null} if the sun does not reach the angle on the
+     *         given date (e.g. midnight sun).
      */
     public Date sunsetTime(double angle) {
         double jset = getSetJ(angle * RAD, lw, phi, dec, n, m, l);
@@ -258,6 +265,9 @@ public class SunTimes {
     }
 
     private static Date fromJulian(double j) {
+        if (Double.isNaN(j)) {
+            return null;
+        }
         return new Date(round((j + 0.5 - J1970) * DAY_MS));
     }
 
