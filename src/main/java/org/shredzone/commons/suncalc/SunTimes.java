@@ -19,46 +19,18 @@ import static java.lang.Math.*;
 import static org.shredzone.commons.suncalc.util.Kopernikus.*;
 
 import java.util.Date;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
- * Calculates the times of the sun.
+ * Calculates the rise and set times of the sun.
  * <p>
- * Uses a default set of times. Use {@link #addTime(double, String, String)} to add
- * further times.
+ * In contrast to the <a href="https://github.com/mourner/suncalc">SunCalc</a> library,
+ * this class does not return a set of sunrise/sunset times. Instead, there is a fixed
+ * enumeration of available sunrise/sunset times, and {@link #getTime(Time)} calculates
+ * the respective time. This way, unused times are not calculated, and the time names
+ * are compiler checked.
  * <p>
- * Default times are:
- * <dl>
- * <dt>{@code sunrise}</dt>
- * <dd>sunrise (top edge of the sun appears on the horizon)</dd>
- * <dt>{@code sunriseEnd}</dt>
- * <dd>sunrise ends (bottom edge of the sun touches the horizon)</dd>
- * <dt>{@code goldenHourEnd}</dt>
- * <dd>morning golden hour (soft light, best time for photography) ends</dd>
- * <dt>{@code solarNoon}</dt>
- * <dd>solar noon (sun is in the highest position)</dd>
- * <dt>{@code goldenHour}</dt>
- * <dd>evening golden hour starts</dd>
- * <dt>{@code sunsetStart}</dt>
- * <dd>sunset starts (bottom edge of the sun touches the horizon)</dd>
- * <dt>{@code sunset}</dt>
- * <dd>sunset (sun disappears below the horizon, evening civil twilight starts)</dd>
- * <dt>{@code dusk}</dt>
- * <dd>dusk (evening nautical twilight starts)</dd>
- * <dt>{@code nauticalDusk}</dt>
- * <dd>nautical dusk (evening astronomical twilight starts)</dd>
- * <dt>{@code night}</dt>
- * <dd>night starts (dark enough for astronomical observations)</dd>
- * <dt>{@code nadir}</dt>
- * <dd>nadir (darkest moment of the night, sun is in the lowest position)</dd>
- * <dt>{@code nightEnd}</dt>
- * <dd>night ends (morning astronomical twilight starts)</dd>
- * <dt>{@code nauticalDawn}</dt>
- * <dd>nautical dawn (morning nautical twilight starts)</dd>
- * <dt>{@code dawn}</dt>
- * <dd>dawn (morning nautical twilight ends, morning civil twilight starts)</dd>
- * </dl>
+ * To calculate individual sunrise/sunset times, use {@link #sunriseTime(double)} and
+ * {@link #sunsetTime(double)}.
  *
  * @see <a href="https://github.com/mourner/suncalc">SunCalc</a>
  * @see <a href="http://aa.quae.nl/en/reken/zonpositie.html">Formulas used for sun
@@ -66,6 +38,134 @@ import java.util.TreeMap;
  * @author Richard "Shred" Körber
  */
 public class SunTimes {
+
+    /**
+     * Enumeration of all available sunrise/sunset times.
+     */
+    public static enum Time {
+
+        /**
+         * sunrise (top edge of the sun appears on the horizon)
+         */
+        SUNRISE("sunrise", -0.833, true),
+
+        /**
+         * sunrise ends (bottom edge of the sun touches the horizon)
+         */
+        SUNRISE_END("sunriseEnd", -0.3, true),
+
+        /**
+         * morning golden hour (soft light, best time for photography) ends
+         */
+        GOLDEN_HOUR_END("goldenHourEnd", 6.0, true),
+
+        /**
+         * solar noon (sun is in the highest position)
+         */
+        SOLAR_NOON("solarNoon", null, true),
+
+        /**
+         * evening golden hour starts
+         */
+        GOLDEN_HOUR("goldenHour", 6.0, false),
+
+        /**
+         * sunset starts (bottom edge of the sun touches the horizon)
+         */
+        SUNSET_START("sunsetStart", -0.3, false),
+
+        /**
+         * sunset (sun disappears below the horizon, evening civil twilight starts)
+         */
+        SUNSET("sunset", -0.833, false),
+
+        /**
+         * dusk (evening nautical twilight starts)
+         */
+        DUSK("dusk", -6.0, false),
+
+        /**
+         * nautical dusk (evening astronomical twilight starts)
+         */
+        NAUTICAL_DUSK("nauticalDusk", -12.0, false),
+
+        /**
+         * night starts (dark enough for astronomical observations)
+         */
+        NIGHT("night", -18.0, false),
+
+        /**
+         * nadir (darkest moment of the night, sun is in the lowest position)
+         */
+        NADIR("nadir", null, false),
+
+        /**
+         * night ends (morning astronomical twilight starts)
+         */
+        NIGHT_END("nightEnd", -18.0, true),
+
+        /**
+         * nautical dawn (morning nautical twilight starts)
+         */
+        NAUTICAL_DAWN("nauticalDawn", -12.0, true),
+
+        /**
+         * dawn (morning nautical twilight ends, morning civil twilight starts)
+         */
+        DAWN("dawn", -6.0, true),
+        ;
+
+        /**
+         * Parses the property name as defined in the
+         * <a href="https://github.com/mourner/suncalc#sunlight-times">SunCalc JavaScript
+         * library</a>.
+         *
+         * @param name
+         *            Name to parse
+         * @return {@link Time}, or {@code null} if the name is not known.
+         */
+        public static Time parse(String name) {
+            for (Time t : values()) {
+                if (t.toString().equals(name)) {
+                    return t;
+                }
+            }
+            return null;
+        }
+
+        private final String key;
+        private final Double angle;
+        private final boolean rising;
+        private Time(String key, Double angle, boolean rising) {
+            this.key = key;
+            this.angle = angle;
+            this.rising = rising;
+        }
+
+        /**
+         * Returns the sun's angle. {@code null} for solar noon, nadir.
+         */
+        public Double getAngle() {
+            return angle;
+        }
+
+        /**
+         * Returns {@code true} if the sun is rising, {@code false} if it is setting.
+         */
+        public boolean isRising() {
+            return rising;
+        }
+
+        /**
+         * Returns the property name as defined in the
+         * <a href="https://github.com/mourner/suncalc#sunlight-times">SunCalc JavaScript
+         * library</a>.
+         */
+        @Override
+        public String toString() {
+            return key;
+        }
+    }
 
     private static final double J0 = 0.0009;
 
@@ -91,7 +191,6 @@ public class SunTimes {
 
     private final double jnoon, lw, phi, dec, m, l;
     private final long n;
-    private final Map<String, Date> times = new TreeMap<>();
 
     private SunTimes(double jnoon, double lw, double phi, double dec, long n, double m, double l) {
         this.jnoon = jnoon;
@@ -101,47 +200,6 @@ public class SunTimes {
         this.n = n;
         this.m = m;
         this.l = l;
-
-        times.put("solarNoon", fromJulian(jnoon));
-        times.put("nadir", fromJulian(jnoon - 0.5));
-
-        addTime( -0.833, "sunrise"      , "sunset");
-        addTime( -0.3  , "sunriseEnd"   , "sunsetStart");
-        addTime( -6.0  , "dawn"         , "dusk");
-        addTime(-12.0  , "nauticalDawn" , "nauticalDusk");
-        addTime(-18.0  , "nightEnd"     , "night");
-        addTime(  6.0  , "goldenHourEnd", "goldenHour");
-    }
-
-    /**
-     * Adds a time to the times table.
-     *
-     * @param angle
-     *            Angle of the sun
-     * @param riseName
-     *            Name of the time when sun rises
-     * @param setName
-     *            Name of the time when sun sets
-     */
-    public void addTime(double angle, String riseName, String setName) {
-        double jset = getSetJ(angle * RAD, lw, phi, dec, n, m, l);
-        double jrise = jnoon - (jset - jnoon);
-
-        times.put(riseName, fromJulian(jrise));
-        times.put(setName, fromJulian(jset));
-    }
-
-    /**
-     * Returns all times using the current times table.
-     *
-     * @return Map of time name and calculated date and time
-     */
-    public Map<String, Date> getTimes() {
-        Map<String, Date> result = new TreeMap<>();
-        for (Map.Entry<String, Date> entry : times.entrySet()) {
-            result.put(entry.getKey(), new Date(entry.getValue().getTime()));
-        }
-        return result;
     }
 
     /**
@@ -149,24 +207,47 @@ public class SunTimes {
      *
      * @param time
      *            Time type
-     * @return Time, or {@code null} if the type is not defined
+     * @return Time
      */
-    public Date getTime(String time) {
-        Date result = times.get(time);
-        return (result != null ? new Date(result.getTime()) : null);
+    public Date getTime(Time time) {
+        if (time == Time.SOLAR_NOON) {
+            return fromJulian(jnoon);
+        } else if (time == Time.NADIR) {
+            return fromJulian(jnoon - 0.5);
+        } else if (time.isRising()){
+            return sunriseTime(time.getAngle());
+        } else {
+            return sunsetTime(time.getAngle());
+        }
+    }
+
+    /**
+     * Calculates the time when the rising sun reaches the given angle.
+     */
+    public Date sunriseTime(double angle) {
+        double jset = getSetJ(angle * RAD, lw, phi, dec, n, m, l);
+        double jrise = jnoon - (jset - jnoon);
+        return fromJulian(jrise);
+    }
+
+    /**
+     * Calculates the time when the setting sun reaches the given angle.
+     */
+    public Date sunsetTime(double angle) {
+        double jset = getSetJ(angle * RAD, lw, phi, dec, n, m, l);
+        return fromJulian(jset);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("SunTimes[");
-        boolean more = false;
-        for (Map.Entry<String, Date> entry : getTimes().entrySet()) {
-            if (more) {
+        Time[] times = Time.values();
+        for (int ix = 0; ix < times.length; ix++) {
+            if (ix > 0) {
                 sb.append(", ");
             }
-            sb.append(entry.getKey()).append('=').append(entry.getValue());
-            more = true;
+            sb.append(times[ix]).append('=').append(getTime(times[ix]));
         }
         sb.append(']');
         return sb.toString();

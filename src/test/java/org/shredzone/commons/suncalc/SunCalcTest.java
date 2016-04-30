@@ -20,12 +20,13 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.TimeZone;
 
 import org.hamcrest.Matcher;
 import org.junit.Test;
+import org.shredzone.commons.suncalc.SunTimes.Time;
 
 /**
  * Unit tests.
@@ -48,31 +49,32 @@ public class SunCalcTest {
 
     @Test
     public void testSunTimes() {
-        Map<String, Matcher<Date>> testTimes = new HashMap<>();
-        testTimes.put("sunrise",       DateMatcher.is("2013-03-05T04:34:56Z"));
-        testTimes.put("sunset",        DateMatcher.is("2013-03-05T15:46:57Z"));
-        testTimes.put("sunriseEnd",    DateMatcher.is("2013-03-05T04:38:19Z"));
-        testTimes.put("sunsetStart",   DateMatcher.is("2013-03-05T15:43:34Z"));
-        testTimes.put("dawn",          DateMatcher.is("2013-03-05T04:02:17Z"));
-        testTimes.put("dusk",          DateMatcher.is("2013-03-05T16:19:36Z"));
-        testTimes.put("nauticalDawn",  DateMatcher.is("2013-03-05T03:24:31Z"));
-        testTimes.put("nauticalDusk",  DateMatcher.is("2013-03-05T16:57:22Z"));
-        testTimes.put("nightEnd",      DateMatcher.is("2013-03-05T02:46:17Z"));
-        testTimes.put("night",         DateMatcher.is("2013-03-05T17:35:36Z"));
-        testTimes.put("goldenHourEnd", DateMatcher.is("2013-03-05T05:19:01Z"));
-        testTimes.put("goldenHour",    DateMatcher.is("2013-03-05T15:02:52Z"));
-        testTimes.put("solarNoon",     DateMatcher.is("2013-03-05T10:10:57Z"));
-        testTimes.put("nadir",         DateMatcher.is("2013-03-04T22:10:57Z"));
+        Map<Time, Matcher<Date>> testTimes = new EnumMap<>(Time.class);
+        testTimes.put(Time.SUNRISE,         DateMatcher.is("2013-03-05T04:34:56Z"));
+        testTimes.put(Time.SUNRISE_END,     DateMatcher.is("2013-03-05T04:38:19Z"));
+        testTimes.put(Time.GOLDEN_HOUR_END, DateMatcher.is("2013-03-05T05:19:01Z"));
+        testTimes.put(Time.SOLAR_NOON,      DateMatcher.is("2013-03-05T10:10:57Z"));
+        testTimes.put(Time.GOLDEN_HOUR,     DateMatcher.is("2013-03-05T15:02:52Z"));
+        testTimes.put(Time.SUNSET_START,    DateMatcher.is("2013-03-05T15:43:34Z"));
+        testTimes.put(Time.SUNSET,          DateMatcher.is("2013-03-05T15:46:57Z"));
+        testTimes.put(Time.DUSK,            DateMatcher.is("2013-03-05T16:19:36Z"));
+        testTimes.put(Time.NAUTICAL_DUSK,   DateMatcher.is("2013-03-05T16:57:22Z"));
+        testTimes.put(Time.NIGHT,           DateMatcher.is("2013-03-05T17:35:36Z"));
+        testTimes.put(Time.NADIR,           DateMatcher.is("2013-03-04T22:10:57Z"));
+        testTimes.put(Time.NIGHT_END,       DateMatcher.is("2013-03-05T02:46:17Z"));
+        testTimes.put(Time.NAUTICAL_DAWN,   DateMatcher.is("2013-03-05T03:24:31Z"));
+        testTimes.put(Time.DAWN,            DateMatcher.is("2013-03-05T04:02:17Z"));
 
         Date date = createDate(2013, 3, 5); // 2013-03-05 00:00:00 UTC
 
         SunTimes times = SunTimes.of(date, LAT, LNG);
-        Map<String, Date> timeMap = times.getTimes();
 
-        assertThat(timeMap.size(), is(testTimes.size()));
-        for (String key : testTimes.keySet()) {
-            assertThat(key, timeMap.get(key), testTimes.get(key));
+        for (Time time : Time.values()) {
+            assertThat(time.name(), times.getTime(time), testTimes.get(time));
         }
+
+        assertThat(times.sunriseTime(Time.SUNRISE.getAngle()), DateMatcher.is("2013-03-05T04:34:56Z"));
+        assertThat(times.sunsetTime(Time.SUNSET.getAngle()), DateMatcher.is("2013-03-05T15:46:57Z"));
     }
 
     @Test
