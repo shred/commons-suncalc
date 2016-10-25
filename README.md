@@ -1,4 +1,4 @@
-# commons-suncalc ![build status](https://jenkins.shredzone.net/project/commons-suncalc/builds/status.png?ref=master)
+# commons-suncalc ![build status](https://shredzone.org/badge/commons-suncalc.svg)
 
 A Java library for calculation of sun and moon positions and phases.
 
@@ -22,7 +22,7 @@ System.out.println("Altitude: " + position.getAltitude());
 System.out.println("Azimuth: " + position.getAzimuth());
 ```
 
-See the [online documentation](http://www.shredzone.org/maven/commons-suncalc/) for API.
+See the [online documentation](https://shredzone.org/maven/commons-suncalc/) for API.
 
 ## Contribute
 
