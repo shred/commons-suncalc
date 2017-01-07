@@ -33,8 +33,29 @@ import org.shredzone.commons.suncalc.util.Kopernikus.Coordinates;
  */
 public class MoonPosition {
 
+    private final double azimuth;
+    private final double altitude;
+    private final double distance;
+    private final double parallacticAngle;
+
+    private MoonPosition(double azimuth, double altitude, double distance, double parallacticAngle) {
+        this.azimuth = azimuth;
+        this.altitude = altitude;
+        this.distance = distance;
+        this.parallacticAngle = parallacticAngle;
+    }
+
+
     /**
      * Calculates the {@link MoonPosition} of the given date and location.
+     *
+     * @param date
+     *            {@link Date} to compute the moon position of
+     * @param lat
+     *            Latitude
+     * @param lng
+     *            Longitude
+     * @return Calculated {@link MoonPosition}
      */
     public static MoonPosition of(Date date, double lat, double lng) {
         double lw  = RAD * -lng;
@@ -42,23 +63,14 @@ public class MoonPosition {
         double d   = toDays(date);
 
         Coordinates c = moonCoords(d);
-        double H = siderealTime(d, lw) - c.ra;
-        double h = altitude(H, phi, c.dec);
+        double sH = siderealTime(d, lw) - c.ra;
+        double h = altitude(sH, phi, c.dec);
         // formula 14.1 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-        double pa = atan2(sin(H), tan(phi) * cos(c.dec)) - sin(c.dec) * cos(H);
+        double pa = atan2(sin(sH), tan(phi) * cos(c.dec)) - sin(c.dec) * cos(sH);
 
         h += astroRefraction(h); // altitude correction for refraction
 
-        return new MoonPosition(azimuth(H, phi, c.dec), h, c.dist, pa);
-    }
-
-    private final double azimuth, altitude, distance, parallacticAngle;
-
-    private MoonPosition(double azimuth, double altitude, double distance, double parallacticAngle) {
-        this.azimuth = azimuth;
-        this.altitude = altitude;
-        this.distance = distance;
-        this.parallacticAngle = parallacticAngle;
+        return new MoonPosition(azimuth(sH, phi, c.dec), h, c.dist, pa);
     }
 
     /**
@@ -103,13 +115,11 @@ public class MoonPosition {
     private static double astroRefraction(double h) {
         // the following formula works for positive altitudes only.
         // if h = -0.08901179 a div/0 would occur.
-        if (h < 0) {
-            h = 0;
-        }
+        double hPos = Math.max(h, 0.0);
 
         // formula 16.4 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
         // 1.02 / tan(h + 10.26 / (h + 5.10)) h in degrees, result in arc minutes -> converted to rad:
-        return 0.0002967 / tan(h + 0.00312536 / (h + 0.08901179));
+        return 0.0002967 / tan(hPos + 0.00312536 / (hPos + 0.08901179));
     }
 
 }

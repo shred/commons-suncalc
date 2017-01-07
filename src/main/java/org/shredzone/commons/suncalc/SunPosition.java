@@ -31,8 +31,24 @@ import org.shredzone.commons.suncalc.util.Kopernikus.Coordinates;
  */
 public class SunPosition {
 
+    private final double azimuth;
+    private final double altitude;
+
+    private SunPosition(double azimuth, double altitude) {
+        this.azimuth = azimuth;
+        this.altitude = altitude;
+    }
+
     /**
      * Calculates the {@link SunPosition} of the given {@link Date} and location.
+     *
+     * @param date
+     *            {@link Date} to compute the sun position of
+     * @param lat
+     *            Latitude
+     * @param lng
+     *            Longitude
+     * @return Calculated {@link SunPosition}
      */
     public static SunPosition of(Date date, double lat, double lng) {
         double lw = RAD * -lng;
@@ -42,13 +58,6 @@ public class SunPosition {
         double h = siderealTime(d, lw) - c.ra;
 
         return new SunPosition(azimuth(h, phi, c.dec), altitude(h, phi, c.dec));
-    };
-
-    private final double azimuth, altitude;
-
-    private SunPosition(double azimuth, double altitude) {
-        this.azimuth = azimuth;
-        this.altitude = altitude;
     }
 
     /**

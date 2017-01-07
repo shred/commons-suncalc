@@ -42,7 +42,7 @@ public class SunTimes {
     /**
      * Enumeration of all available sunrise/sunset times.
      */
-    public static enum Time {
+    public enum Time {
 
         /**
          * sunrise (top edge of the sun appears on the horizon)
@@ -115,6 +115,16 @@ public class SunTimes {
         DAWN("dawn", -6.0, true),
         ;
 
+        private final String key;
+        private final Double angle;
+        private final boolean rising;
+
+        private Time(String key, Double angle, boolean rising) {
+            this.key = key;
+            this.angle = angle;
+            this.rising = rising;
+        }
+
         /**
          * Parses the property name as defined in the
          * <a href="https://github.com/mourner/suncalc#sunlight-times">SunCalc JavaScript
@@ -131,15 +141,6 @@ public class SunTimes {
                 }
             }
             return null;
-        }
-
-        private final String key;
-        private final Double angle;
-        private final boolean rising;
-        private Time(String key, Double angle, boolean rising) {
-            this.key = key;
-            this.angle = angle;
-            this.rising = rising;
         }
 
         /**
@@ -169,8 +170,34 @@ public class SunTimes {
 
     private static final double J0 = 0.0009;
 
+    private final double jnoon;
+    private final double lw;
+    private final double phi;
+    private final double dec;
+    private final double m;
+    private final double l;
+    private final long n;
+
+    private SunTimes(double jnoon, double lw, double phi, double dec, long n, double m, double l) {
+        this.jnoon = jnoon;
+        this.lw = lw;
+        this.phi = phi;
+        this.dec = dec;
+        this.n = n;
+        this.m = m;
+        this.l = l;
+    }
+
     /**
      * Calculates the {@link SunTimes} of the given {@link Date} and location.
+     *
+     * @param date
+     *            {@link Date} to compute the sun times of
+     * @param lat
+     *            Latitude
+     * @param lng
+     *            Longitude
+     * @return Calculated {@link SunTimes}
      */
     public static SunTimes of(Date date, double lat, double lng) {
         double lw = RAD * -lng;
@@ -187,19 +214,6 @@ public class SunTimes {
         double jnoon = solarTransitJ(ds, m, l);
 
         return new SunTimes(jnoon, lw, phi, dec, n, m, l);
-    }
-
-    private final double jnoon, lw, phi, dec, m, l;
-    private final long n;
-
-    private SunTimes(double jnoon, double lw, double phi, double dec, long n, double m, double l) {
-        this.jnoon = jnoon;
-        this.lw = lw;
-        this.phi = phi;
-        this.dec = dec;
-        this.n = n;
-        this.m = m;
-        this.l = l;
     }
 
     /**
@@ -225,6 +239,8 @@ public class SunTimes {
     /**
      * Calculates the time when the rising sun reaches the given angle.
      *
+     * @param angle
+     *            Sun's angle
      * @return Time, or {@code null} if the sun does not reach the angle on the
      *         given date (e.g. midnight sun).
      */
@@ -237,8 +253,10 @@ public class SunTimes {
     /**
      * Calculates the time when the setting sun reaches the given angle.
      *
-     * @return Time, or {@code null} if the sun does not reach the angle on the
-     *         given date (e.g. midnight sun).
+     * @param angle
+     *            Sun's angle
+     * @return Time, or {@code null} if the sun does not reach the angle on the given date
+     *         (e.g. midnight sun).
      */
     public Date sunsetTime(double angle) {
         double jset = getSetJ(angle * RAD, lw, phi, dec, n, m, l);

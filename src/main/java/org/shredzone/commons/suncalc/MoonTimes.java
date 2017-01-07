@@ -34,8 +34,26 @@ import java.util.TimeZone;
  */
 public final class MoonTimes {
 
+    private final Date rise;
+    private final Date set;
+    private final double ye;
+
+    private MoonTimes(Date rise, Date set, double ye) {
+        this.rise = rise;
+        this.set = set;
+        this.ye = ye;
+    }
+
     /**
      * Calculates the {@link MoonTimes}, based on UTC.
+     *
+     * @param date
+     *            {@link Date} to compute the moon times of
+     * @param lat
+     *            Latitude
+     * @param lng
+     *            Longitude
+     * @return Calculated {@link MoonTimes}
      */
     public static MoonTimes ofUTC(Date date, double lat, double lng) {
         return of(date, lat, lng, UTC);
@@ -43,6 +61,14 @@ public final class MoonTimes {
 
     /**
      * Calculates the {@link MoonTimes}, based on the system's time zone.
+     *
+     * @param date
+     *            {@link Date} to compute the moon times of
+     * @param lat
+     *            Latitude
+     * @param lng
+     *            Longitude
+     * @return Calculated {@link MoonTimes}
      */
     public static MoonTimes of(Date date, double lat, double lng) {
         return of(date, lat, lng, TimeZone.getDefault());
@@ -50,6 +76,16 @@ public final class MoonTimes {
 
     /**
      * Calculates the {@link MoonTimes}, based on the given {@link TimeZone}.
+     *
+     * @param date
+     *            {@link Date} to compute the moon times of
+     * @param lat
+     *            Latitude
+     * @param lng
+     *            Longitude
+     * @param tz
+     *            {@link TimeZone} to use
+     * @return Calculated {@link MoonTimes}
      */
     public static MoonTimes of(Date date, double lat, double lng, TimeZone tz) {
         Calendar cal = Calendar.getInstance(tz);
@@ -62,7 +98,8 @@ public final class MoonTimes {
 
         double hc = 0.133 * RAD;
         double h0 = MoonPosition.of(t, lat, lng).getAltitude() - hc;
-        Double rise = null, set = null;
+        Double rise = null;
+        Double set = null;
         double ye = 0.0;
 
         // go in 2-hour chunks, each time seeing if a 3-point quadratic curve crosses zero (which means rise or set)
@@ -77,7 +114,8 @@ public final class MoonTimes {
             double d = b * b - 4 * a * h1;
             int roots = 0;
 
-            double x1 = 0.0, x2 = 0.0;
+            double x1 = 0.0;
+            double x2 = 0.0;
             if (d >= 0) {
                 double dx = sqrt(d) / (abs(a) * 2);
                 x1 = xe - dx;
@@ -114,27 +152,18 @@ public final class MoonTimes {
         return new MoonTimes(hoursLater(t, rise), hoursLater(t, set), ye);
     }
 
-    private final Date rise, set;
-    private final double ye;
-
-    private MoonTimes(Date rise, Date set, double ye) {
-        this.rise = rise;
-        this.set = set;
-        this.ye = ye;
-    }
-
     /**
      * Moonrise time. {@code null} if the moon does not rise that day.
      */
     public Date getRise() {
-        return (rise != null ? new Date(rise.getTime()) : null);
+        return rise != null ? new Date(rise.getTime()) : null;
     }
 
     /**
      * Moonset time. {@code null} if the moon does not set that day.
      */
     public Date getSet() {
-        return (set != null ? new Date(set.getTime()) : null);
+        return set != null ? new Date(set.getTime()) : null;
     }
 
     /**

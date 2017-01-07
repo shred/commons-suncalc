@@ -36,8 +36,22 @@ import org.shredzone.commons.suncalc.util.Kopernikus.Coordinates;
  */
 public class MoonIllumination {
 
+    private final double fraction;
+    private final double phase;
+    private final double angle;
+
+    private MoonIllumination(double fraction, double phase, double angle) {
+        this.fraction = fraction;
+        this.phase = phase;
+        this.angle = angle;
+    }
+
     /**
      * Calculates the {@link MoonIllumination} of the given {@link Date}.
+     *
+     * @param date
+     *            {@link Date} to compute the moon illumination of
+     * @return {@link MoonIllumination} of that date
      */
     public static MoonIllumination of(Date date) {
         double d = toDays(date);
@@ -55,14 +69,6 @@ public class MoonIllumination {
                         (1 + cos(inc)) / 2,
                         0.5 + 0.5 * inc * signum(angle) / PI,
                         angle);
-    }
-
-    private final double fraction, phase, angle;
-
-    private MoonIllumination(double fraction, double phase, double angle) {
-        this.fraction = fraction;
-        this.phase = phase;
-        this.angle = angle;
     }
 
     /**

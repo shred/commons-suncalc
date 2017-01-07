@@ -93,7 +93,9 @@ public final class Kopernikus {
     }
 
     public static class Coordinates {
-        public final double dec, ra, dist;
+        public final double dec;
+        public final double ra;
+        public final double dist;
 
         public Coordinates(double dec, double ra) {
             this(dec, ra, Double.NaN);
