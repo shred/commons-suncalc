@@ -27,6 +27,8 @@ import java.util.TimeZone;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.shredzone.commons.suncalc.SunTimes.Time;
+import org.shredzone.commons.suncalc.util.Kopernikus;
+import org.shredzone.commons.suncalc.util.MoonCalculationsUtil;
 
 /**
  * Unit tests.
@@ -105,8 +107,8 @@ public class SunCalcTest {
 
         MoonTimes moonTimes = MoonTimes.ofUTC(date, LAT, LNG);
 
-        assertThat("rise", moonTimes.getRise(), DateMatcher.is("2013-03-04T23:54:29Z"));
-        assertThat("set", moonTimes.getSet(), DateMatcher.is("2013-03-04T07:47:58Z"));
+        assertThat("rise", moonTimes.getRise(), DateMatcher.is("2013-03-04T23:53:00Z"));
+        assertThat("set", moonTimes.getSet(), DateMatcher.is("2013-03-04T07:43:00Z"));
     }
 
     private static Date createDate(int year, int month, int day) {
@@ -115,5 +117,4 @@ public class SunCalcTest {
         cal.set(year, month - 1, day);
         return cal.getTime();
     }
-
 }

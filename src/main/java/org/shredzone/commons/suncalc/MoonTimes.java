@@ -15,10 +15,12 @@
  */
 package org.shredzone.commons.suncalc;
 
+import org.shredzone.commons.suncalc.util.MoonCalculationsUtil;
+
 import static java.lang.Math.*;
 import static org.shredzone.commons.suncalc.util.Kopernikus.*;
+import static org.shredzone.commons.suncalc.util.TimeUtil.doubleToDate;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -88,24 +90,16 @@ public final class MoonTimes {
      * @return Calculated {@link MoonTimes}
      */
     public static MoonTimes of(Date date, double lat, double lng, TimeZone tz) {
-        Calendar cal = Calendar.getInstance(tz);
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        Date t = cal.getTime();
-
         double hc = 0.133 * RAD;
-        double h0 = MoonPosition.of(t, lat, lng).getAltitude() - hc;
+        double h0 = MoonCalculationsUtil.preciseAltitude(date, tz, 0, lat, lng) - hc;
         Double rise = null;
         Double set = null;
         double ye = 0.0;
 
         // go in 2-hour chunks, each time seeing if a 3-point quadratic curve crosses zero (which means rise or set)
         for (int i = 1; i <= 24; i += 2) {
-            double h1 = MoonPosition.of(hoursLater(t, (double) i), lat, lng).getAltitude() - hc;
-            double h2 = MoonPosition.of(hoursLater(t, (double) (i + 1)), lat, lng).getAltitude() - hc;
+            double h1 = MoonCalculationsUtil.preciseAltitude(date, tz, i, lat, lng) - hc;
+            double h2 = MoonCalculationsUtil.preciseAltitude(date, tz, i + 1, lat, lng) - hc;
 
             double a = (h0 + h2) / 2 - h1;
             double b = (h2 - h0) / 2;
@@ -149,7 +143,10 @@ public final class MoonTimes {
             h0 = h2;
         }
 
-        return new MoonTimes(hoursLater(t, rise), hoursLater(t, set), ye);
+        return new MoonTimes(
+                doubleToDate(rise, date, tz),
+                doubleToDate(set, date, tz),
+                ye);
     }
 
     /**
