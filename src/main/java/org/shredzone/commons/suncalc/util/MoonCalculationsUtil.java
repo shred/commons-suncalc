@@ -1,14 +1,27 @@
+/*
+ * Shredzone Commons - suncalc
+ *
+ * Copyright (C) 2017 Richard "Shred" Körber
+ *   http://commons.shredzone.org
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
 package org.shredzone.commons.suncalc.util;
 
 import static java.lang.Math.*;
+import static org.shredzone.commons.suncalc.util.Kopernikus.E;
+import static org.shredzone.commons.suncalc.util.Kopernikus.RAD;
+import static org.shredzone.commons.suncalc.util.TimeUtil.*;
 
 import java.util.Date;
 import java.util.TimeZone;
 
-import static org.shredzone.commons.suncalc.util.Kopernikus.*;
-import static org.shredzone.commons.suncalc.util.Kopernikus.E;
-import static org.shredzone.commons.suncalc.util.TimeUtil.dateToMJD;
-import static org.shredzone.commons.suncalc.util.TimeUtil.hourToDays;
+import org.shredzone.commons.suncalc.util.Kopernikus.Coordinates;
 
 /**
  * Utility class for calculating the moon's altitude
@@ -21,11 +34,15 @@ import static org.shredzone.commons.suncalc.util.TimeUtil.hourToDays;
  *
  * ISBN - 978-3-662-11187-1
  */
-public class MoonCalculationsUtil {
+public final class MoonCalculationsUtil {
     private static final double ARC = 206264.8062; //radian to arcsecond
     private static final double PI_TIMES_2 = PI * 2.0;
     private static final double COS_E = cos(E);
     private static final double SIN_E = sin(E);
+
+    private MoonCalculationsUtil() {
+        // utility class without constructor
+    }
 
     public static double preciseAltitude(Date date, TimeZone tz, double hour, double lat, double lng) {
         final double phi = RAD * lat;
@@ -82,7 +99,9 @@ public class MoonCalculationsUtil {
         final double dec = (360.0 / PI_TIMES_2) * atan(Z / RHO);
         double ra = (48.0 / PI_TIMES_2) * atan(Y / (X + RHO));
 
-        if (ra < 0.0) ra += 24.0;
+        if (ra < 0.0) {
+            ra += 24.0;
+        }
 
         return new Coordinates(dec, ra);
     }
@@ -94,18 +113,20 @@ public class MoonCalculationsUtil {
         final double GMST = 6.697374558 + 1.0027379093 * UT
                 + (8640184.812866 + (0.093104 - 6.2E-6 * T) * T) * T / 3600.0;
         final double localMeanSiderealTime = 24.0 * FRAC((GMST + longitude / 15.0) / 24.0);
-        return (localMeanSiderealTime);
+        return localMeanSiderealTime;
     }
 
     private static double FRAC(double value) {
         double result = value - TRUNC(value);
-        if (result < 0.0) result += 1.0;
-        return (result);
+        if (result < 0.0) {
+            result += 1.0;
+        }
+        return result;
     }
 
     private static double TRUNC(double value) {
         double result = floor(abs(value));
         result = result * signum(result);
-        return (result);
+        return result;
     }
 }

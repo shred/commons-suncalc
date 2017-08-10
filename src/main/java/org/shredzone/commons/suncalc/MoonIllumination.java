@@ -32,7 +32,6 @@ import org.shredzone.commons.suncalc.util.Kopernikus.Coordinates;
  *      calculations</a>
  * @see "Astronomical Algorithms, 2nd edition by Jean Meeus (Willmann-Bell,
  *      Richmond) 1998, Chapter 48"
- * @author Richard "Shred" Körber
  */
 public class MoonIllumination {
 

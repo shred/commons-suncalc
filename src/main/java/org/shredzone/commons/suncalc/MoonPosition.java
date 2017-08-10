@@ -29,7 +29,6 @@ import org.shredzone.commons.suncalc.util.Kopernikus.Coordinates;
  * @see <a href="http://aa.quae.nl/en/reken/hemelpositie.html">Formulas used for moon
  *      calculations</a>
  * @see "Astronomical Algorithms 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998"
- * @author Richard "Shred" Körber
  */
 public class MoonPosition {
 

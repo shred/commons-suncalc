@@ -15,14 +15,14 @@
  */
 package org.shredzone.commons.suncalc;
 
-import org.shredzone.commons.suncalc.util.MoonCalculationsUtil;
-
 import static java.lang.Math.*;
 import static org.shredzone.commons.suncalc.util.Kopernikus.*;
 import static org.shredzone.commons.suncalc.util.TimeUtil.doubleToDate;
 
 import java.util.Date;
 import java.util.TimeZone;
+
+import org.shredzone.commons.suncalc.util.MoonCalculationsUtil;
 
 /**
  * Calculates the times of the moon.
@@ -32,7 +32,6 @@ import java.util.TimeZone;
  *      base on</a>
  * @see <a href="http://aa.quae.nl/en/reken/hemelpositie.html">Formulas used for moon
  *      calculations</a>
- * @author Richard "Shred" Körber
  */
 public final class MoonTimes {
 
@@ -99,7 +98,7 @@ public final class MoonTimes {
         // go in 2-hour chunks, each time seeing if a 3-point quadratic curve crosses zero (which means rise or set)
         for (int i = 1; i <= 24; i += 2) {
             double h1 = MoonCalculationsUtil.preciseAltitude(date, tz, i, lat, lng) - hc;
-            double h2 = MoonCalculationsUtil.preciseAltitude(date, tz, i + 1, lat, lng) - hc;
+            double h2 = MoonCalculationsUtil.preciseAltitude(date, tz, i + 1.0, lat, lng) - hc;
 
             double a = (h0 + h2) / 2 - h1;
             double b = (h2 - h0) / 2;
@@ -177,13 +176,6 @@ public final class MoonTimes {
      */
     public boolean isAlwaysDown() {
         return rise == null && set == null && ye <= 0;
-    }
-
-    private static Date hoursLater(Date date, Double h) {
-        if (h == null) {
-            return null;
-        }
-        return new Date(date.getTime() + round(h * DAY_MS / 24.0));
     }
 
     @Override

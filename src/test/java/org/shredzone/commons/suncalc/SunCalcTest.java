@@ -30,8 +30,6 @@ import org.shredzone.commons.suncalc.SunTimes.Time;
 
 /**
  * Unit tests.
- *
- * @author Richard "Shred" Körber
  */
 public class SunCalcTest {
 

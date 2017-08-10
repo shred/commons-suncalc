@@ -27,7 +27,6 @@ import org.shredzone.commons.suncalc.util.Kopernikus.Coordinates;
  * @see <a href="https://github.com/mourner/suncalc">SunCalc</a>
  * @see <a href="http://aa.quae.nl/en/reken/zonpositie.html">Formulas used for sun
  *      calculations</a>
- * @author Richard "Shred" Körber
  */
 public class SunPosition {
 

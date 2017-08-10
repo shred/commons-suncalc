@@ -23,8 +23,6 @@ import org.hamcrest.Matcher;
 
 /**
  * A {@link Matcher} for comparing a {@link Date} object with a string representation.
- *
- * @author Richard "Shred" Körber
  */
 public class DateMatcher extends BaseMatcher<Date> {
     private static final TimeZone UTC = TimeZone.getTimeZone("UTC");

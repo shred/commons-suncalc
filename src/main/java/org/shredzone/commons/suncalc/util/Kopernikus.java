@@ -22,8 +22,6 @@ import java.util.TimeZone;
 
 /**
  * An internal utility class with common constants and functions.
- *
- * @author Richard "Shred" Körber
  */
 public final class Kopernikus {
     public static final TimeZone UTC = TimeZone.getTimeZone("UTC");
