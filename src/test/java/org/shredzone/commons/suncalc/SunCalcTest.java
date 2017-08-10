@@ -27,8 +27,6 @@ import java.util.TimeZone;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.shredzone.commons.suncalc.SunTimes.Time;
-import org.shredzone.commons.suncalc.util.Kopernikus;
-import org.shredzone.commons.suncalc.util.MoonCalculationsUtil;
 
 /**
  * Unit tests.
@@ -109,6 +107,31 @@ public class SunCalcTest {
 
         assertThat("rise", moonTimes.getRise(), DateMatcher.is("2013-03-04T23:53:00Z"));
         assertThat("set", moonTimes.getSet(), DateMatcher.is("2013-03-04T07:43:00Z"));
+
+        // Cologne, Germany
+        MoonTimes mt = MoonTimes.ofUTC(createDate(2017, 7, 12), 50.938056d, 6.956944d);
+        assertThat("rise", mt.getRise(), DateMatcher.is("2017-07-12T21:26:00Z"));
+        assertThat("set", mt.getSet(), DateMatcher.is("2017-07-12T06:53:00Z"));
+
+        // Alert, Nunavut, Canada
+        MoonTimes mt2 = MoonTimes.ofUTC(createDate(2017, 7, 12), 82.5d, -62.316667d);
+        assertThat(mt2.isAlwaysUp(), is(false));
+        assertThat(mt2.isAlwaysDown(), is(true));
+
+        // Alert, Nunavut, Canada
+        MoonTimes mt3 = MoonTimes.ofUTC(createDate(2017, 7, 14), 82.5d, -62.316667d);
+        assertThat("rise", mt3.getRise(), DateMatcher.is("2017-07-14T05:46:00Z"));
+        assertThat("set", mt3.getSet(), DateMatcher.is("2017-07-14T11:26:00Z"));
+
+        // Wellington, New Zealand
+        MoonTimes mt4 = MoonTimes.ofUTC(createDate(2017, 7, 12), -41.2875d, 174.776111d);
+        assertThat("rise", mt4.getRise(), DateMatcher.is("2017-07-12T08:06:00Z"));
+        assertThat("set", mt4.getSet(), DateMatcher.is("2017-07-12T21:57:00Z"));
+
+        // Puerto Williams, Chile
+        MoonTimes mt5 = MoonTimes.ofUTC(createDate(2017, 7, 13), -54.933333d, -67.616667d);
+        assertThat("rise", mt5.getRise(), DateMatcher.is("2017-07-13T00:31:00Z"));
+        assertThat("set", mt5.getSet(), DateMatcher.is("2017-07-13T14:48:00Z"));
     }
 
     private static Date createDate(int year, int month, int day) {
