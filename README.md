@@ -1,4 +1,4 @@
-# commons-suncalc ![build status](https://shredzone.org/badge/commons-suncalc.svg)
+# commons-suncalc ![build status](https://shredzone.org/badge/commons-suncalc.svg) ![maven central](https://maven-badges.herokuapp.com/maven-central/org.shredzone.commons/commons-suncalc/badge.svg)
 
 A Java library for calculation of sun and moon positions and phases.
 
