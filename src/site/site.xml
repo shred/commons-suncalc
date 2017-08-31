@@ -13,6 +13,9 @@
       <item name="commons-suncalc" href="index.html"/>
     </breadcrumbs>
     <menu name="Documentation">
+      <item name="Introduction" href="index.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="Migration Guide" href="migration.html"/>
       <item name="API javadoc" href="./apidocs/index.html"/>
     </menu>
     <menu ref="modules"/>
@@ -22,6 +25,6 @@
   <skin>
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-fluido-skin</artifactId>
-    <version>1.4</version>
+    <version>1.6</version>
   </skin>
 </project>

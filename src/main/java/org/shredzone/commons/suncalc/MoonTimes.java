@@ -1,7 +1,7 @@
 /*
  * Shredzone Commons - suncalc
  *
- * Copyright (C) 2016 Richard "Shred" Körber
+ * Copyright (C) 2017 Richard "Shred" Körber
  *   http://commons.shredzone.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -10,28 +10,24 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * Bases on SunCalc by Vladimir Agafonkin (https://github.com/mourner/suncalc)
  */
 package org.shredzone.commons.suncalc;
 
-import static java.lang.Math.*;
-import static org.shredzone.commons.suncalc.util.Kopernikus.*;
-import static org.shredzone.commons.suncalc.util.TimeUtil.doubleToDate;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.APPARENT_REFRACTION;
 
 import java.util.Date;
-import java.util.TimeZone;
 
-import org.shredzone.commons.suncalc.util.MoonCalculationsUtil;
+import org.shredzone.commons.suncalc.param.AbstractBuilder;
+import org.shredzone.commons.suncalc.param.Builder;
+import org.shredzone.commons.suncalc.param.LocationParameter;
+import org.shredzone.commons.suncalc.param.TimeParameter;
+import org.shredzone.commons.suncalc.util.JulianDate;
+import org.shredzone.commons.suncalc.util.Moon;
+import org.shredzone.commons.suncalc.util.QuadraticInterpolation;
+import org.shredzone.commons.suncalc.util.Vector;
 
 /**
  * Calculates the times of the moon.
- *
- * @see <a href="https://github.com/mourner/suncalc">SunCalc</a>
- * @see <a href="http://www.stargazing.net/kepler/moonrise.html">Formulas the calculation
- *      base on</a>
- * @see <a href="http://aa.quae.nl/en/reken/hemelpositie.html">Formulas used for moon
- *      calculations</a>
  */
 public final class MoonTimes {
 
@@ -46,106 +42,110 @@ public final class MoonTimes {
     }
 
     /**
-     * Calculates the {@link MoonTimes}, based on UTC.
+     * Starts the computation of {@link MoonTimes}.
      *
-     * @param date
-     *            {@link Date} to compute the moon times of
-     * @param lat
-     *            Latitude
-     * @param lng
-     *            Longitude
-     * @return Calculated {@link MoonTimes}
+     * @return {@link Parameters} to set.
      */
-    public static MoonTimes ofUTC(Date date, double lat, double lng) {
-        return of(date, lat, lng, UTC);
+    public static Parameters compute() {
+        return new MoonTimesBuilder();
     }
 
     /**
-     * Calculates the {@link MoonTimes}, based on the system's time zone.
-     *
-     * @param date
-     *            {@link Date} to compute the moon times of
-     * @param lat
-     *            Latitude
-     * @param lng
-     *            Longitude
-     * @return Calculated {@link MoonTimes}
+     * Collects all parameters for {@link MoonTimes}.
      */
-    public static MoonTimes of(Date date, double lat, double lng) {
-        return of(date, lat, lng, TimeZone.getDefault());
+    public static interface Parameters extends
+            LocationParameter<Parameters>,
+            TimeParameter<Parameters>,
+            Builder<MoonTimes> {
+
+        /**
+         * Checks only the next 24 hours. Rise or set times can be {@code null} if the
+         * moon never reaches the point during one day.
+         * <p>
+         * This is the default.
+         *
+         * @return itself
+         */
+        Parameters oneDay();
+
+        /**
+         * Computes until rise and set times are found, even if the moon needs more than a
+         * day for it. This can increase computation time.
+         *
+         * @return itself
+         */
+        Parameters fullCycle();
     }
 
     /**
-     * Calculates the {@link MoonTimes}, based on the given {@link TimeZone}.
-     *
-     * @param date
-     *            {@link Date} to compute the moon times of
-     * @param lat
-     *            Latitude
-     * @param lng
-     *            Longitude
-     * @param tz
-     *            {@link TimeZone} to use
-     * @return Calculated {@link MoonTimes}
+     * Builder for {@link MoonTimes}. Performs the computations based on the parameters,
+     * and creates a {@link MoonTimes} object that holds the result.
      */
-    public static MoonTimes of(Date date, double lat, double lng, TimeZone tz) {
-        double hc = 0.133 * RAD;
-        double h0 = MoonCalculationsUtil.preciseAltitude(date, tz, 0, lat, lng) - hc;
-        Double rise = null;
-        Double set = null;
-        double ye = 0.0;
+    private static class MoonTimesBuilder extends AbstractBuilder<Parameters> implements Parameters {
+        private boolean fullCycle = false;
 
-        // go in 2-hour chunks, each time seeing if a 3-point quadratic curve crosses zero (which means rise or set)
-        for (int i = 1; i <= 24; i += 2) {
-            double h1 = MoonCalculationsUtil.preciseAltitude(date, tz, i, lat, lng) - hc;
-            double h2 = MoonCalculationsUtil.preciseAltitude(date, tz, i + 1.0, lat, lng) - hc;
-
-            double a = (h0 + h2) / 2 - h1;
-            double b = (h2 - h0) / 2;
-            double xe = -b / (2 * a);
-            ye = (a * xe + b) * xe + h1;
-            double d = b * b - 4 * a * h1;
-            int roots = 0;
-
-            double x1 = 0.0;
-            double x2 = 0.0;
-            if (d >= 0) {
-                double dx = sqrt(d) / (abs(a) * 2);
-                x1 = xe - dx;
-                x2 = xe + dx;
-                if (abs(x1) <= 1) {
-                    roots++;
-                }
-                if (abs(x2) <= 1) {
-                    roots++;
-                }
-                if (x1 < -1) {
-                    x1 = x2;
-                }
-            }
-
-            if (roots == 1) {
-                if (h0 < 0) {
-                    rise = i + x1;
-                } else {
-                    set = i + x1;
-                }
-            } else if (roots == 2) {
-                rise = i + (ye < 0 ? x2 : x1);
-                set = i + (ye < 0 ? x1 : x2);
-            }
-
-            if (rise != null && set != null) {
-                break;
-            }
-
-            h0 = h2;
+        @Override
+        public Parameters oneDay() {
+            this.fullCycle = false;
+            return this;
         }
 
-        return new MoonTimes(
-                doubleToDate(rise, date, tz),
-                doubleToDate(set, date, tz),
-                ye);
+        @Override
+        public Parameters fullCycle() {
+            this.fullCycle = true;
+            return this;
+        }
+
+        @Override
+        public MoonTimes execute() {
+            JulianDate jd = getJulianDate();
+            double lat = getLatitudeRad();
+            double lng = getLongitudeRad();
+
+            Vector startPosition = Moon.positionHorizontal(jd, lat, lng);
+            double hc = Moon.parallax(getHeight(), startPosition.getR())
+                    - APPARENT_REFRACTION
+                    - Moon.angularRadius(startPosition.getR());
+
+            double y_minus = startPosition.getTheta() - hc;
+            Double rise = null;
+            Double set = null;
+            double ye = 0.0;
+
+            int maxHours = fullCycle ? 365 * 24 : 24;
+
+            for (int hour = 1; hour <= maxHours; hour += 2) {
+                JulianDate jd0 = jd.atHour(hour);
+                JulianDate jd1 = jd.atHour(hour + 1.0);
+                double y_0 = Moon.positionHorizontal(jd0, lat, lng).getTheta() - hc;
+                double y_plus = Moon.positionHorizontal(jd1, lat, lng).getTheta() - hc;
+
+                QuadraticInterpolation qi = new QuadraticInterpolation(y_minus, y_0, y_plus);
+                ye = qi.getYe();
+
+                if (qi.getNumberOfRoots() == 1) {
+                    if (y_minus < 0.0) {
+                        rise = qi.getRoot1() + hour;
+                    } else {
+                        set = qi.getRoot1() + hour;
+                    }
+                } else if (qi.getNumberOfRoots() == 2) {
+                    rise = hour + (ye < 0.0 ? qi.getRoot2() : qi.getRoot1());
+                    set = hour + (ye < 0.0? qi.getRoot1() : qi.getRoot2());
+                }
+
+                if (rise != null && set != null) {
+                    break;
+                }
+
+                y_minus = y_plus;
+            }
+
+            return new MoonTimes(
+                    rise != null ? jd.atHour(rise).getDate() : null,
+                    set != null ? jd.atHour(set).getDate() : null,
+                    ye);
+        }
     }
 
     /**
@@ -167,7 +167,7 @@ public final class MoonTimes {
      * day.
      */
     public boolean isAlwaysUp() {
-        return rise == null && set == null && ye > 0;
+        return rise == null && set == null && ye > 0.0;
     }
 
     /**
@@ -175,7 +175,7 @@ public final class MoonTimes {
      * day.
      */
     public boolean isAlwaysDown() {
-        return rise == null && set == null && ye <= 0;
+        return rise == null && set == null && ye <= 0.0;
     }
 
     @Override

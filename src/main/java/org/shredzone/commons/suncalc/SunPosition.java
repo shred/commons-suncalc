@@ -1,7 +1,7 @@
 /*
  * Shredzone Commons - suncalc
  *
- * Copyright (C) 2016 Richard "Shred" Körber
+ * Copyright (C) 2017 Richard "Shred" Körber
  *   http://commons.shredzone.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -10,23 +10,22 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * Bases on SunCalc by Vladimir Agafonkin (https://github.com/mourner/suncalc)
  */
 package org.shredzone.commons.suncalc;
 
-import static org.shredzone.commons.suncalc.util.Kopernikus.*;
+import static java.lang.Math.toRadians;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
-import java.util.Date;
-
-import org.shredzone.commons.suncalc.util.Kopernikus.Coordinates;
+import org.shredzone.commons.suncalc.param.AbstractBuilder;
+import org.shredzone.commons.suncalc.param.Builder;
+import org.shredzone.commons.suncalc.param.LocationParameter;
+import org.shredzone.commons.suncalc.param.TimeParameter;
+import org.shredzone.commons.suncalc.util.JulianDate;
+import org.shredzone.commons.suncalc.util.Sun;
+import org.shredzone.commons.suncalc.util.Vector;
 
 /**
  * Calculates the position of the sun.
- *
- * @see <a href="https://github.com/mourner/suncalc">SunCalc</a>
- * @see <a href="http://aa.quae.nl/en/reken/zonpositie.html">Formulas used for sun
- *      calculations</a>
  */
 public class SunPosition {
 
@@ -39,31 +38,48 @@ public class SunPosition {
     }
 
     /**
-     * Calculates the {@link SunPosition} of the given {@link Date} and location.
+     * Starts the computation of {@link SunPosition}.
      *
-     * @param date
-     *            {@link Date} to compute the sun position of
-     * @param lat
-     *            Latitude
-     * @param lng
-     *            Longitude
-     * @return Calculated {@link SunPosition}
+     * @return {@link Parameters} to set.
      */
-    public static SunPosition of(Date date, double lat, double lng) {
-        double lw = RAD * -lng;
-        double phi = RAD * lat;
-        double d = toDays(date);
-        Coordinates c = sunCoords(d);
-        double h = siderealTime(d, lw) - c.ra;
-
-        return new SunPosition(azimuth(h, phi, c.dec), altitude(h, phi, c.dec));
+    public static Parameters compute() {
+        return new SunPositionBuilder();
     }
 
     /**
-     * Sun altitude above the horizon in radians.
+     * Collects all parameters for {@link SunPosition}.
+     */
+    public static interface Parameters extends
+            LocationParameter<Parameters>,
+            TimeParameter<Parameters>,
+            Builder<SunPosition> {
+    }
+
+    /**
+     * Builder for {@link SunPosition}. Performs the computations based on the parameters,
+     * and creates a {@link SunPosition} object that holds the result.
+     */
+    private static class SunPositionBuilder extends AbstractBuilder<Parameters> implements Parameters {
+        @Override
+        public SunPosition execute() {
+            JulianDate t = getJulianDate();
+
+            double lw = toRadians(-getLongitude());
+            double phi = toRadians(getLatitude());
+            Vector c = Sun.position(t);
+            double h = t.getGreenwichMeanSiderealTime() - lw - c.getPhi();
+            Vector horizontal = equatorialToHorizontal(h, c.getTheta(), c.getR(), phi);
+            double hRef = refraction(horizontal.getTheta());
+
+            return new SunPosition(horizontal.getPhi(), horizontal.getTheta() + hRef);
+        }
+    }
+
+    /**
+     * Sun altitude above the horizon, in radians.
      * <p>
-     * {@code 0} means the sun is at the horizon, {@code PI / 2} at the zenith (straight
-     * over your head).
+     * {@code 0} means the sun's center is at the horizon, {@code PI / 2} at the zenith
+     * (straight over your head).
      */
     public double getAltitude() {
         return altitude;
@@ -73,7 +89,8 @@ public class SunPosition {
      * Sun azimuth in radians.
      * <p>
      * This is the direction along the horizon, measured from south to west. For example,
-     * {@code 0} means south, {@code PI * 3 / 4} means northwest.
+     * {@code 0} means south, {@code PI * 3 / 4} means northwest, {@code PI * 6 / 4} means
+     * east.
      */
     public double getAzimuth() {
         return azimuth;

@@ -1,7 +1,7 @@
 /*
  * Shredzone Commons - suncalc
  *
- * Copyright (C) 2016 Richard "Shred" Körber
+ * Copyright (C) 2017 Richard "Shred" Körber
  *   http://commons.shredzone.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -10,300 +10,363 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * Bases on SunCalc by Vladimir Agafonkin (https://github.com/mourner/suncalc)
  */
 package org.shredzone.commons.suncalc;
 
-import static java.lang.Math.*;
-import static org.shredzone.commons.suncalc.util.Kopernikus.*;
+import static java.lang.Math.toRadians;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.APPARENT_REFRACTION;
 
 import java.util.Date;
 
+import org.shredzone.commons.suncalc.param.AbstractBuilder;
+import org.shredzone.commons.suncalc.param.Builder;
+import org.shredzone.commons.suncalc.param.LocationParameter;
+import org.shredzone.commons.suncalc.param.TimeParameter;
+import org.shredzone.commons.suncalc.util.JulianDate;
+import org.shredzone.commons.suncalc.util.QuadraticInterpolation;
+import org.shredzone.commons.suncalc.util.Sun;
+import org.shredzone.commons.suncalc.util.Vector;
+
 /**
  * Calculates the rise and set times of the sun.
- * <p>
- * In contrast to the <a href="https://github.com/mourner/suncalc">SunCalc</a> library,
- * this class does not return a set of sunrise/sunset times. Instead, there is a fixed
- * enumeration of available sunrise/sunset times, and {@link #getTime(Time)} calculates
- * the respective time. This way, unused times are not calculated, and the time names
- * are compiler checked.
- * <p>
- * To calculate individual sunrise/sunset times, use {@link #sunriseTime(double)} and
- * {@link #sunsetTime(double)}.
- *
- * @see <a href="https://github.com/mourner/suncalc">SunCalc</a>
- * @see <a href="http://aa.quae.nl/en/reken/zonpositie.html">Formulas used for sun
- *      calculations</a>
  */
 public class SunTimes {
 
+    private final Date rise;
+    private final Date set;
+    private final Date noon;
+    private final Date nadir;
+    private final double ye;
+
+    private SunTimes(Date rise, Date set, Date noon, Date nadir, double ye) {
+        this.rise = rise;
+        this.set = set;
+        this.noon = noon;
+        this.nadir = nadir;
+        this.ye = ye;
+    }
+
     /**
-     * Enumeration of all available sunrise/sunset times.
+     * Starts the computation of {@link SunTimes}.
+     *
+     * @return {@link Parameters} to set.
      */
-    public enum Time {
+    public static Parameters compute() {
+        return new SunTimesBuilder();
+    }
+
+    /**
+     * Collects all parameters for {@link SunTimes}.
+     */
+    public static interface Parameters extends
+            LocationParameter<Parameters>,
+            TimeParameter<Parameters>,
+            Builder<SunTimes> {
 
         /**
-         * sunrise (top edge of the sun appears on the horizon)
-         */
-        SUNRISE("sunrise", -0.833, true),
-
-        /**
-         * sunrise ends (bottom edge of the sun touches the horizon)
-         */
-        SUNRISE_END("sunriseEnd", -0.3, true),
-
-        /**
-         * morning golden hour (soft light, best time for photography) ends
-         */
-        GOLDEN_HOUR_END("goldenHourEnd", 6.0, true),
-
-        /**
-         * solar noon (sun is in the highest position)
-         */
-        SOLAR_NOON("solarNoon", null, true),
-
-        /**
-         * evening golden hour starts
-         */
-        GOLDEN_HOUR("goldenHour", 6.0, false),
-
-        /**
-         * sunset starts (bottom edge of the sun touches the horizon)
-         */
-        SUNSET_START("sunsetStart", -0.3, false),
-
-        /**
-         * sunset (sun disappears below the horizon, evening civil twilight starts)
-         */
-        SUNSET("sunset", -0.833, false),
-
-        /**
-         * dusk (evening nautical twilight starts)
-         */
-        DUSK("dusk", -6.0, false),
-
-        /**
-         * nautical dusk (evening astronomical twilight starts)
-         */
-        NAUTICAL_DUSK("nauticalDusk", -12.0, false),
-
-        /**
-         * night starts (dark enough for astronomical observations)
-         */
-        NIGHT("night", -18.0, false),
-
-        /**
-         * nadir (darkest moment of the night, sun is in the lowest position)
-         */
-        NADIR("nadir", null, false),
-
-        /**
-         * night ends (morning astronomical twilight starts)
-         */
-        NIGHT_END("nightEnd", -18.0, true),
-
-        /**
-         * nautical dawn (morning nautical twilight starts)
-         */
-        NAUTICAL_DAWN("nauticalDawn", -12.0, true),
-
-        /**
-         * dawn (morning nautical twilight ends, morning civil twilight starts)
-         */
-        DAWN("dawn", -6.0, true),
-        ;
-
-        private final String key;
-        private final Double angle;
-        private final boolean rising;
-
-        private Time(String key, Double angle, boolean rising) {
-            this.key = key;
-            this.angle = angle;
-            this.rising = rising;
-        }
-
-        /**
-         * Parses the property name as defined in the
-         * <a href="https://github.com/mourner/suncalc#sunlight-times">SunCalc JavaScript
-         * library</a>.
+         * Sets the {@link Twilight} mode.
+         * <p>
+         * Defaults to {@value Twilight#VISUAL}.
          *
-         * @param name
-         *            Name to parse
-         * @return {@link Time}, or {@code null} if the name is not known.
+         * @param twilight
+         *            {@link Twilight} mode to be used.
+         * @return itself
          */
-        public static Time parse(String name) {
-            for (Time t : values()) {
-                if (t.toString().equals(name)) {
-                    return t;
-                }
-            }
-            return null;
+        Parameters twilight(Twilight twilight);
+
+        /**
+         * Sets the desired elevation angle of the sun. The sunrise and sunset times are
+         * referring to the moment where the sun passes this angle.
+         *
+         * @param angle
+         *            Geocentric elevation angle, in degrees.
+         * @return itself
+         */
+        Parameters twilight(double angle);
+
+        /**
+         * Checks only the next 24 hours. Rise, set, noon or nadir times can be
+         * {@code null} if the sun never reaches the point during one day (e.g. at
+         * solstice).
+         * <p>
+         * This is the default.
+         *
+         * @return itself
+         */
+        Parameters oneDay();
+
+        /**
+         * Computes until rise, set, noon, and nadir times are found, even if the sun
+         * needs more than a day for it. This can considerably increase computation time.
+         *
+         * @return itself
+         */
+        Parameters fullCycle();
+    }
+
+    /**
+     * Enumeration of predefined twilights.
+     * <p>
+     * The twilight angles use a geocentric reference, by definition. However,
+     * {@link #VISUAL} and {@link #VISUAL_LOWER} are topocentric, and take atmospheric
+     * refraction into account.
+     *
+     * @see <a href="https://en.wikipedia.org/wiki/Twilight">Wikipedia: Twilight</a>
+     */
+    public enum Twilight {
+
+        /**
+         * The moment when the visual upper edge of the sun crosses the horizon. This is
+         * commonly referred to as "sunrise" and "sunset". Atmospheric refraction is taken
+         * into account.
+         * <p>
+         * This is the default.
+         */
+        VISUAL(0.0, 1.0),
+
+        /**
+         * The moment when the visual lower edge of the sun crosses the horizon. This is
+         * the ending of the sunrise and the starting of the sunset. Atmospheric
+         * refraction is taken into account.
+         */
+        VISUAL_LOWER(0.0, -1.0),
+
+        /**
+         * The moment when the center of the sun crosses the horizon (0°).
+         */
+        HORIZON(0.0),
+
+        /**
+         * Civil twilight (-6°).
+         */
+        CIVIL(-6.0),
+
+        /**
+         * Nautical twilight (-12°).
+         */
+        NAUTICAL(-12.0),
+
+        /**
+         * Astronomical twilight (-18°).
+         */
+        ASTRONOMICAL(-18.0),
+
+        /**
+         * Golden hour (6°). The Golden hour is between {@link #GOLDEN_HOUR} and
+         * {@link #BLUE_HOUR}. The Magic hour is between {@link #GOLDEN_HOUR} and
+         * {@link #CIVIL}.
+         *
+         * @see <a href=
+         *      "https://en.wikipedia.org/wiki/Golden_hour_(photography)">Wikipedia:
+         *      Golden hour</a>
+         */
+        GOLDEN_HOUR(6.0),
+
+        /**
+         * Blue hour (-4°). The Blue hour is between {@link #CIVIL} and
+         * {@link #BLUE_HOUR}.
+         *
+         * @see <a href="https://en.wikipedia.org/wiki/Blue_hour">Wikipedia: Blue hour</a>
+         */
+        BLUE_HOUR(-4.0);
+
+        private final double angle;
+        private final Double position;
+
+        private Twilight(double angle) {
+            this(angle, null);
+        }
+
+        private Twilight(double angle, Double position) {
+            this.angle = angle;
+            this.position = position;
         }
 
         /**
-         * Returns the sun's angle. {@code null} for solar noon, nadir.
+         * Returns the sun's angle at the twilight position, in degrees.
          */
-        public Double getAngle() {
+        public double getAngle() {
             return angle;
         }
 
         /**
-         * Returns {@code true} if the sun is rising, {@code false} if it is setting.
+         * Returns {@code true} if this twilight position is topocentric. Then the
+         * parallax and the atmospheric refraction is taken into account.
          */
-        public boolean isRising() {
-            return rising;
+        public boolean isTopocentric() {
+            return position != null;
         }
 
         /**
-         * Returns the property name as defined in the
-         * <a href="https://github.com/mourner/suncalc#sunlight-times">SunCalc JavaScript
-         * library</a>.
+         * Returns the angular position. {@code 0.0} means center of the sun. {@code 1.0}
+         * means upper edge of the sun. {@code -1.0} means lower edge of the sun.
          */
+        private Double getAngularPosition() {
+            return position;
+        }
+    }
+
+    /**
+     * Builder for {@link SunTimes}. Performs the computations based on the parameters,
+     * and creates a {@link SunTimes} object that holds the result.
+     */
+    private static class SunTimesBuilder extends AbstractBuilder<Parameters> implements Parameters {
+        private double angle = Twilight.VISUAL.getAngle();
+        private Double position = Twilight.VISUAL.getAngularPosition();
+        private boolean fullCycle = false;
+
         @Override
-        public String toString() {
-            return key;
+        public Parameters twilight(Twilight twilight) {
+            this.angle = twilight.getAngle();
+            this.position = twilight.getAngularPosition();
+            return this;
+        }
+
+        @Override
+        public Parameters twilight(double angle) {
+            this.angle = angle;
+            this.position = null;
+            return this;
+        }
+
+        @Override
+        public Parameters oneDay() {
+            this.fullCycle = false;
+            return this;
+        }
+
+        @Override
+        public Parameters fullCycle() {
+            this.fullCycle = true;
+            return this;
+        }
+
+        @Override
+        public SunTimes execute() {
+            JulianDate jd = getJulianDate();
+            double lat = getLatitudeRad();
+            double lng = getLongitudeRad();
+
+            Vector startPosition = Sun.positionHorizontal(jd, lat, lng);
+
+            double hc = toRadians(angle);
+            if (position != null) {
+                hc += Sun.parallax(getHeight(), startPosition.getR());
+                hc -= APPARENT_REFRACTION;
+                hc -= position * Sun.angularRadius(startPosition.getR());
+            }
+
+            double y_minus = startPosition.getTheta() - hc;
+            Double rise = null;
+            Double set = null;
+            Double noon = null;
+            Double nadir = null;
+            double ye = 0.0;
+
+            int maxHours = fullCycle ? 365 * 24 : 24;
+
+            for (int hour = 1; hour <= maxHours; hour += 2) {
+                JulianDate jdH0 = jd.atHour(hour);
+                JulianDate jdH1 = jd.atHour(hour + 1.0);
+                double y_0 = Sun.positionHorizontal(jdH0, lat, lng).getTheta() - hc;
+                double y_plus = Sun.positionHorizontal(jdH1, lat, lng).getTheta() - hc;
+
+                QuadraticInterpolation qi = new QuadraticInterpolation(y_minus, y_0, y_plus);
+                ye = qi.getYe();
+
+                if (qi.getNumberOfRoots() == 1) {
+                    if (y_minus < 0.0) {
+                        rise = qi.getRoot1() + hour;
+                    } else {
+                        set = qi.getRoot1() + hour;
+                    }
+                } else if (qi.getNumberOfRoots() == 2) {
+                    rise = hour + (ye < 0.0 ? qi.getRoot2() : qi.getRoot1());
+                    set = hour + (ye < 0.0? qi.getRoot1() : qi.getRoot2());
+                }
+
+                double xe = qi.getXe();
+                if (xe >= -1.0 && xe <= 1.0) {
+                    if (ye < 0.0) {
+                        nadir = xe + hour;
+                    } else {
+                        noon = xe + hour;
+                    }
+                }
+
+                if (rise != null && set != null && nadir != null && noon != null) {
+                    break;
+                }
+
+                y_minus = y_plus;
+            }
+
+            return new SunTimes(
+                    rise != null ? jd.atHour(rise).getDate() : null,
+                    set != null ? jd.atHour(set).getDate() : null,
+                    noon != null ? jd.atHour(noon).getDate() : null,
+                    nadir != null ? jd.atHour(nadir).getDate() : null,
+                    ye);
         }
     }
 
-    private static final double J0 = 0.0009;
-
-    private final double jnoon;
-    private final double lw;
-    private final double phi;
-    private final double dec;
-    private final double m;
-    private final double l;
-    private final long n;
-
-    private SunTimes(double jnoon, double lw, double phi, double dec, long n, double m, double l) {
-        this.jnoon = jnoon;
-        this.lw = lw;
-        this.phi = phi;
-        this.dec = dec;
-        this.n = n;
-        this.m = m;
-        this.l = l;
+    /**
+     * Sunrise time. {@code null} if the sun does not rise that day.
+     */
+    public Date getRise() {
+        return rise != null ? new Date(rise.getTime()) : null;
     }
 
     /**
-     * Calculates the {@link SunTimes} of the given {@link Date} and location.
-     *
-     * @param date
-     *            {@link Date} to compute the sun times of
-     * @param lat
-     *            Latitude
-     * @param lng
-     *            Longitude
-     * @return Calculated {@link SunTimes}
+     * Sunset time. {@code null} if the sun does not set that day.
      */
-    public static SunTimes of(Date date, double lat, double lng) {
-        double lw = RAD * -lng;
-        double phi = RAD * lat;
-
-        double d = toDays(date);
-        long n = julianCycle(d, lw);
-        double ds = approxTransit(0, lw, n);
-
-        double m = solarMeanAnomaly(ds);
-        double l = eclipticLongitude(m);
-        double dec = declination(l, 0);
-
-        double jnoon = solarTransitJ(ds, m, l);
-
-        return new SunTimes(jnoon, lw, phi, dec, n, m, l);
+    public Date getSet() {
+        return set != null ? new Date(set.getTime()) : null;
     }
 
     /**
-     * Returns the time of the given type.
-     *
-     * @param time
-     *            Time type
-     * @return Time, or {@code null} if the sun does not reach the {@link Time} on the
-     *         given date (e.g. midnight sun).
+     * Gets the time when the sun reaches its highest point. {@code null} if the sun
+     * never rises on that day.
      */
-    public Date getTime(Time time) {
-        if (time == Time.SOLAR_NOON) {
-            return fromJulian(jnoon);
-        } else if (time == Time.NADIR) {
-            return fromJulian(jnoon - 0.5);
-        } else if (time.isRising()){
-            return sunriseTime(time.getAngle());
-        } else {
-            return sunsetTime(time.getAngle());
-        }
+    public Date getNoon() {
+        return noon;
     }
 
     /**
-     * Calculates the time when the rising sun reaches the given angle.
-     *
-     * @param angle
-     *            Sun's angle
-     * @return Time, or {@code null} if the sun does not reach the angle on the
-     *         given date (e.g. midnight sun).
+     * Gets the time when the sun reaches its lowest point. {@code null} if the sun
+     * never sets on that day.
      */
-    public Date sunriseTime(double angle) {
-        double jset = getSetJ(angle * RAD, lw, phi, dec, n, m, l);
-        double jrise = jnoon - (jset - jnoon);
-        return fromJulian(jrise);
+    public Date getNadir() {
+        return nadir;
     }
 
     /**
-     * Calculates the time when the setting sun reaches the given angle.
-     *
-     * @param angle
-     *            Sun's angle
-     * @return Time, or {@code null} if the sun does not reach the angle on the given date
-     *         (e.g. midnight sun).
+     * {@code true} if the sun never rises/sets, but is always above the twilight angle
+     * that day.
      */
-    public Date sunsetTime(double angle) {
-        double jset = getSetJ(angle * RAD, lw, phi, dec, n, m, l);
-        return fromJulian(jset);
+    public boolean isAlwaysUp() {
+        return rise == null && set == null && ye > 0.0;
+    }
+
+    /**
+     * {@code true} if the sun never rises/sets, but is always below the twilight angle
+     * that day.
+     */
+    public boolean isAlwaysDown() {
+        return rise == null && set == null && ye <= 0.0;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("SunTimes[");
-        Time[] times = Time.values();
-        for (int ix = 0; ix < times.length; ix++) {
-            if (ix > 0) {
-                sb.append(", ");
-            }
-            sb.append(times[ix]).append('=').append(getTime(times[ix]));
-        }
+        sb.append("SunTimes[rise=").append(rise);
+        sb.append(", set=").append(set);
+        sb.append(", noon=").append(noon);
+        sb.append(", nadir=").append(nadir);
+        sb.append(", alwaysUp=").append(isAlwaysUp());
+        sb.append(", alwaysDown=").append(isAlwaysDown());
         sb.append(']');
         return sb.toString();
-    }
-
-    private static long julianCycle(double d, double lw) {
-        return round(d - J0 - lw / (2 * PI));
-    }
-
-    private static Date fromJulian(double j) {
-        if (Double.isNaN(j)) {
-            return null;
-        }
-        return new Date(round((j + 0.5 - J1970) * DAY_MS));
-    }
-
-    private static double getSetJ(double h, double lw, double phi, double dec, long n, double m, double l) {
-        double w = hourAngle(h, phi, dec);
-        double a = approxTransit(w, lw, n);
-        return solarTransitJ(a, m, l);
-    }
-
-    private static double hourAngle(double h, double phi, double d) {
-        return acos((sin(h) - sin(phi) * sin(d)) / (cos(phi) * cos(d)));
-    }
-
-    private static double approxTransit(double ht, double lw, long n) {
-        return J0 + (ht + lw) / (2 * PI) + n;
-    }
-
-    private static double solarTransitJ(double ds, double m, double l) {
-        return J2000 + ds + 0.0053 * sin(m) - 0.0069 * sin(2 * l);
     }
 
 }

@@ -1,7 +1,7 @@
 /*
  * Shredzone Commons - suncalc
  *
- * Copyright (C) 2016 Richard "Shred" Körber
+ * Copyright (C) 2017 Richard "Shred" Körber
  *   http://commons.shredzone.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -10,25 +10,22 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * Bases on SunCalc by Vladimir Agafonkin (https://github.com/mourner/suncalc)
  */
 package org.shredzone.commons.suncalc;
 
 import static java.lang.Math.*;
-import static org.shredzone.commons.suncalc.util.Kopernikus.*;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
-import java.util.Date;
-
-import org.shredzone.commons.suncalc.util.Kopernikus.Coordinates;
+import org.shredzone.commons.suncalc.param.AbstractBuilder;
+import org.shredzone.commons.suncalc.param.Builder;
+import org.shredzone.commons.suncalc.param.LocationParameter;
+import org.shredzone.commons.suncalc.param.TimeParameter;
+import org.shredzone.commons.suncalc.util.JulianDate;
+import org.shredzone.commons.suncalc.util.Moon;
+import org.shredzone.commons.suncalc.util.Vector;
 
 /**
  * Calculates the position of the moon.
- *
- * @see <a href="https://github.com/mourner/suncalc">SunCalc</a>
- * @see <a href="http://aa.quae.nl/en/reken/hemelpositie.html">Formulas used for moon
- *      calculations</a>
- * @see "Astronomical Algorithms 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998"
  */
 public class MoonPosition {
 
@@ -44,50 +41,72 @@ public class MoonPosition {
         this.parallacticAngle = parallacticAngle;
     }
 
-
     /**
-     * Calculates the {@link MoonPosition} of the given date and location.
+     * Starts the computation of {@link MoonPosition}.
      *
-     * @param date
-     *            {@link Date} to compute the moon position of
-     * @param lat
-     *            Latitude
-     * @param lng
-     *            Longitude
-     * @return Calculated {@link MoonPosition}
+     * @return {@link Parameters} to set.
      */
-    public static MoonPosition of(Date date, double lat, double lng) {
-        double lw  = RAD * -lng;
-        double phi = RAD * lat;
-        double d   = toDays(date);
-
-        Coordinates c = moonCoords(d);
-        double sH = siderealTime(d, lw) - c.ra;
-        double h = altitude(sH, phi, c.dec);
-        // formula 14.1 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-        double pa = atan2(sin(sH), tan(phi) * cos(c.dec)) - sin(c.dec) * cos(sH);
-
-        h += astroRefraction(h); // altitude correction for refraction
-
-        return new MoonPosition(azimuth(sH, phi, c.dec), h, c.dist, pa);
+    public static Parameters compute() {
+        return new MoonPositionBuilder();
     }
 
     /**
-     * Moon azimuth in radians.
+     * Collects all parameters for {@link MoonPosition}.
      */
-    public double getAzimuth() {
-        return azimuth;
+    public static interface Parameters extends
+            LocationParameter<Parameters>,
+            TimeParameter<Parameters>,
+            Builder<MoonPosition> {
     }
 
     /**
-     * Moon altitude above the horizon in radians.
+     * Builder for {@link MoonPosition}. Performs the computations based on the
+     * parameters, and creates a {@link MoonPosition} object that holds the result.
+     */
+    private static class MoonPositionBuilder extends AbstractBuilder<Parameters> implements Parameters {
+        @Override
+        public MoonPosition execute() {
+            JulianDate t = getJulianDate();
+
+            double phi = getLatitudeRad();
+            double lambda = getLongitudeRad();
+
+            Vector mc = Moon.position(t);
+            double h = t.getGreenwichMeanSiderealTime() + lambda - mc.getPhi();
+
+            Vector horizontal = equatorialToHorizontal(h, mc.getTheta(), mc.getR(), phi);
+
+            double hRef = refraction(horizontal.getTheta());
+
+            double pa = atan2(sin(h), tan(phi) * cos(mc.getTheta())) - sin(mc.getTheta()) * cos(h);
+
+            return new MoonPosition(horizontal.getPhi(), horizontal.getTheta() + hRef, mc.getR(), pa);
+        }
+    }
+
+    /**
+     * Moon altitude above the horizon, in radians.
+     * <p>
+     * {@code 0} means the moon's center is at the horizon, {@code PI / 2} at the zenith
+     * (straight over your head).
      */
     public double getAltitude() {
         return altitude;
     }
 
     /**
-     * Distance to moon in kilometers.
+     * Moon azimuth in radians.
+     * <p>
+     * This is the direction along the horizon, measured from south to west. For example,
+     * {@code 0} means south, {@code PI * 3 / 4} means northwest, {@code PI * 6 / 4} means
+     * east.
+     */
+    public double getAzimuth() {
+        return azimuth;
+    }
+
+    /**
+     * Distance to the moon in kilometers.
      */
     public double getDistance() {
         return distance;
@@ -109,16 +128,6 @@ public class MoonPosition {
         sb.append(", parallacticAngle=").append(parallacticAngle);
         sb.append(']');
         return sb.toString();
-    }
-
-    private static double astroRefraction(double h) {
-        // the following formula works for positive altitudes only.
-        // if h = -0.08901179 a div/0 would occur.
-        double hPos = Math.max(h, 0.0);
-
-        // formula 16.4 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-        // 1.02 / tan(h + 10.26 / (h + 5.10)) h in degrees, result in arc minutes -> converted to rad:
-        return 0.0002967 / tan(hPos + 0.00312536 / (hPos + 0.08901179));
     }
 
 }

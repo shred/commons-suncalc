@@ -1,7 +1,7 @@
 /*
  * Shredzone Commons - suncalc
  *
- * Copyright (C) 2016 Richard "Shred" Körber
+ * Copyright (C) 2017 Richard "Shred" Körber
  *   http://commons.shredzone.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -10,22 +10,22 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * Bases on SunCalc by Vladimir Agafonkin (https://github.com/mourner/suncalc)
  */
 package org.shredzone.commons.suncalc;
 
 import static java.lang.Math.*;
-import static org.shredzone.commons.suncalc.util.Kopernikus.*;
 
-import java.util.Date;
-
-import org.shredzone.commons.suncalc.util.Kopernikus.Coordinates;
+import org.shredzone.commons.suncalc.param.AbstractBuilder;
+import org.shredzone.commons.suncalc.param.Builder;
+import org.shredzone.commons.suncalc.param.TimeParameter;
+import org.shredzone.commons.suncalc.util.JulianDate;
+import org.shredzone.commons.suncalc.util.Moon;
+import org.shredzone.commons.suncalc.util.Sun;
+import org.shredzone.commons.suncalc.util.Vector;
 
 /**
  * Calculates the illumination of the moon.
  *
- * @see <a href="https://github.com/mourner/suncalc">SunCalc</a>
  * @see <a href="http://idlastro.gsfc.nasa.gov/ftp/pro/astro/mphase.pro">Formulas the
  *      calculations base on</a>
  * @see <a href="http://aa.quae.nl/en/reken/hemelpositie.html">Formulas used for moon
@@ -46,28 +46,43 @@ public class MoonIllumination {
     }
 
     /**
-     * Calculates the {@link MoonIllumination} of the given {@link Date}.
+     * Starts the computation of {@link MoonIllumination}.
      *
-     * @param date
-     *            {@link Date} to compute the moon illumination of
-     * @return {@link MoonIllumination} of that date
+     * @return {@link Parameters} to set.
      */
-    public static MoonIllumination of(Date date) {
-        double d = toDays(date);
-        Coordinates s = sunCoords(d);
-        Coordinates m = moonCoords(d);
+    public static Parameters compute() {
+        return new MoonIlluminationBuilder();
+    }
 
-        double sdist = 149598000.0; // distance from Earth to Sun in km
+    /**
+     * Collects all parameters for {@link MoonIllumination}.
+     */
+    public static interface Parameters extends
+            TimeParameter<Parameters>,
+            Builder<MoonIllumination> {
+    }
 
-        double phi = acos(sin(s.dec) * sin(m.dec) + cos(s.dec) * cos(m.dec) * cos(s.ra - m.ra));
-        double inc = atan2(sdist * sin(phi), m.dist - sdist * cos(phi));
-        double angle = atan2(cos(s.dec) * sin(s.ra - m.ra), sin(s.dec) * cos(m.dec) -
-                cos(s.dec) * sin(m.dec) * cos(s.ra - m.ra));
+    /**
+     * Builder for {@link MoonIllumination}. Performs the computations based on the
+     * parameters, and creates a {@link MoonIllumination} object that holds the result.
+     */
+    private static class MoonIlluminationBuilder extends AbstractBuilder<Parameters> implements Parameters {
+        @Override
+        public MoonIllumination execute() {
+            JulianDate t = getJulianDate();
+            Vector s = Sun.position(t);
+            Vector m = Moon.position(t);
 
-        return new MoonIllumination(
-                        (1 + cos(inc)) / 2,
-                        0.5 + 0.5 * inc * signum(angle) / PI,
-                        angle);
+            double phi = acos(sin(s.getTheta()) * sin(m.getTheta()) + cos(s.getTheta()) * cos(m.getTheta()) * cos(s.getPhi() - m.getPhi()));
+            double inc = atan2(s.getR() * sin(phi), m.getR() - s.getR() * cos(phi));
+            double angle = atan2(cos(s.getTheta()) * sin(s.getPhi() - m.getPhi()), sin(s.getTheta()) * cos(m.getTheta()) -
+                    cos(s.getTheta()) * sin(m.getTheta()) * cos(s.getPhi() - m.getPhi()));
+
+            return new MoonIllumination(
+                            (1 + cos(inc)) / 2,
+                            0.5 + 0.5 * inc * signum(angle) / PI,
+                            angle);
+        }
     }
 
     /**

@@ -1,7 +1,7 @@
 /*
  * Shredzone Commons - suncalc
  *
- * Copyright (C) 2016 Richard "Shred" Körber
+ * Copyright (C) 2017 Richard "Shred" Körber
  *   http://commons.shredzone.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,7 @@ import org.hamcrest.Matcher;
  * A {@link Matcher} for comparing a {@link Date} object with a string representation.
  */
 public class DateMatcher extends BaseMatcher<Date> {
+
     private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
     private final String expected;
