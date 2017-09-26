@@ -29,6 +29,7 @@ public class DateMatcher extends BaseMatcher<Date> {
     private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
     private final String expected;
+    private final TimeZone timeZone;
 
     /**
      * Creates a new matcher for matching {@link Date} objects.
@@ -39,11 +40,24 @@ public class DateMatcher extends BaseMatcher<Date> {
      *            milliseconds.
      */
     public static DateMatcher is(String expected) {
-        return new DateMatcher(expected);
+        return new DateMatcher(expected, UTC);
     }
 
-    private DateMatcher(String expected) {
+    /**
+     * Creates a new matcher for matching {@link Date} objects.
+     *
+     * @param expected
+     *            Expected date, as string. Format "yyyy-MM-dd'T'HH:mm:ss'Z'". The
+     *            expected date must be UTC. Compares date and time, but does not compare
+     *            milliseconds.
+     */
+    public static DateMatcher is(String expected, String tz) {
+        return new DateMatcher(expected, TimeZone.getTimeZone(tz));
+    }
+
+    private DateMatcher(String expected, TimeZone timeZone) {
         this.expected = expected;
+        this.timeZone = timeZone;
     }
 
     @Override
@@ -52,7 +66,7 @@ public class DateMatcher extends BaseMatcher<Date> {
             return false;
         }
 
-        String fmtDate = dateToString((Date) item);
+        String fmtDate = dateToString((Date) item, timeZone);
         return fmtDate.equals(expected);
     }
 
@@ -73,7 +87,7 @@ public class DateMatcher extends BaseMatcher<Date> {
             return;
         }
 
-        description.appendText("was ").appendValue(dateToString((Date) item));
+        description.appendText("was ").appendValue(dateToString((Date) item, timeZone));
     }
 
     /**
@@ -83,9 +97,9 @@ public class DateMatcher extends BaseMatcher<Date> {
      *            {@link Date} to format
      * @return String representation to compare with
      */
-    private static String dateToString(Date date) {
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        fmt.setTimeZone(UTC);
+    private static String dateToString(Date date, TimeZone tz) {
+        SimpleDateFormat fmt = new SimpleDateFormat(tz.equals(UTC) ? "yyyy-MM-dd'T'HH:mm:ss'Z'" : "yyyy-MM-dd'T'HH:mm:ssZ");
+        fmt.setTimeZone(tz);
         return fmt.format(date);
     }
 

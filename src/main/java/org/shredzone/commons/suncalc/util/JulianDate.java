@@ -37,10 +37,7 @@ public class JulianDate {
      */
     public JulianDate(Calendar cal) {
         this.cal = cal;
-
-        int zoneOffset = cal.getTimeZone().getOffset(cal.getTimeInMillis());
-        long localTime = cal.getTimeInMillis() + zoneOffset;
-        mjd = localTime / 86400000.0 + 40587.0;
+        mjd = cal.getTimeInMillis() / 86400000.0 + 40587.0;
     }
 
     /**
@@ -52,7 +49,7 @@ public class JulianDate {
      * @return {@link JulianDate} instance.
      */
     public JulianDate atHour(double hour) {
-        Calendar clone = (Calendar) cal.clone();
+        Calendar clone = getCalendar();
         clone.add(Calendar.SECOND, (int) Math.round(hour * 60.0 * 60.0));
         return new JulianDate(clone);
     }
@@ -67,9 +64,18 @@ public class JulianDate {
     }
 
     /**
+     * Returns this {@link JulianDate} as {@link Calendar} object.
+     *
+     * @return New {@link Calendar} instance of this {@link JulianDate}.
+     */
+    public Calendar getCalendar() {
+        return (Calendar) cal.clone();
+    }
+
+    /**
      * Returns the Modified Julian Date.
      *
-     * @return MJD
+     * @return Modified Julian Date, UTC.
      */
     public double getModifiedJulianDate() {
         return mjd;
@@ -78,7 +84,7 @@ public class JulianDate {
     /**
      * Returns the Julian Centuries.
      *
-     * @return Julian Centuries, based on J2000 epoch.
+     * @return Julian Centuries, based on J2000 epoch, UTC.
      */
     public double getJulianCentury() {
         return (mjd - 51544.5) / 36525.0;
@@ -103,6 +109,15 @@ public class JulianDate {
                 + (0.093104 - 6.2e-6 * t) * t * t;
 
         return (PI2 / secs) * (gmst % secs);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%dd %02dh %02dm %02ds",
+                (long) mjd,
+                (long) (mjd * 24 % 24),
+                (long) (mjd * 24 * 60 % 60),
+                (long) (mjd * 24 * 60 * 60 % 60));
     }
 
 }
