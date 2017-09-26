@@ -6,6 +6,8 @@ This document will help you migrate your code to the latest _suncalc_ version.
 
 > **NOTE:** Version 2.0 is a major rewrite. It uses different and (hopefully) more accurate formulae than the previous version. If you rely on reproducable results (e.g. in unit tests), be careful before upgrading. The results may differ up to several minutes between both versions.
 
+* `SunPosition`, `MoonPosition`, and `MoonIllumination` now return all angles in **degrees** instead of radians, as it is more commonly used.
+* `SunPosition`'s and `MoonPosition`'s `getAzimuth()` are now **north-based** (previously they were south-based) and always return positive values.
 * The builder pattern is now more verbose. Instead of just invoking methods like `MoonTimes.of()`, you now invoke `MoonTimes.compute()`, add verbs for setting the time, location, and other parameters, and then invoke `execute()` to get the result. An example:
 
 Previously:
@@ -51,6 +53,3 @@ Date sunsetTime = st.getSet();
 ```
 
 Noon and nadir times are available from separate getters.
-
-* `SunPosition`, `MoonPosition`, and `MoonIllumination` now return all angles in **degrees** instead of radians, as it is more commonly used.
-* `SunPosition`'s and `MoonPosition`'s `getAzimuth()` now always return positive values.

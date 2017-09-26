@@ -33,7 +33,7 @@ public class SunPosition {
     private final double altitude;
 
     private SunPosition(double azimuth, double altitude) {
-        this.azimuth = toDegrees(azimuth);
+        this.azimuth = (toDegrees(azimuth) + 180.0) % 360.0;
         this.altitude = toDegrees(altitude);
     }
 
@@ -86,10 +86,10 @@ public class SunPosition {
     }
 
     /**
-     * Sun azimuth, in degrees.
+     * Sun azimuth, in degrees, north-based.
      * <p>
-     * This is the direction along the horizon, measured from south to west. For example,
-     * {@code 0.0} means south, {@code 135.0} means northwest, {@code 270.0} means east.
+     * This is the direction along the horizon, measured from north to east. For example,
+     * {@code 0.0} means north, {@code 135.0} means southeast, {@code 270.0} means west.
      */
     public double getAzimuth() {
         return azimuth;
