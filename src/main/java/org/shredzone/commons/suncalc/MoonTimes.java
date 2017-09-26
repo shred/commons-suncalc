@@ -131,7 +131,7 @@ public final class MoonTimes {
                     }
                 } else if (qi.getNumberOfRoots() == 2) {
                     rise = hour + (ye < 0.0 ? qi.getRoot2() : qi.getRoot1());
-                    set = hour + (ye < 0.0? qi.getRoot1() : qi.getRoot2());
+                    set = hour + (ye < 0.0 ? qi.getRoot1() : qi.getRoot2());
                 }
 
                 if (rise != null && set != null) {
