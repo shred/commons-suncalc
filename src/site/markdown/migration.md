@@ -52,4 +52,5 @@ Date sunsetTime = st.getSet();
 
 Noon and nadir times are available from separate getters.
 
+* `SunPosition`, `MoonPosition`, and `MoonIllumination` now return all angles in **degrees** instead of radians, as it is more commonly used.
 * `SunPosition`'s and `MoonPosition`'s `getAzimuth()` now always return positive values.

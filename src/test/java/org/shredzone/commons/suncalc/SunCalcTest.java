@@ -37,12 +37,12 @@ public class SunCalcTest {
     @Test
     public void testSunPosition() {
         SunPosition sunPos = SunPosition.compute().on(2013, 3, 5).utc().at(LAT, LNG).execute();
-        assertThat("azimuth", sunPos.getAzimuth(), is(closeTo(3.786359378, ERROR)));
-        assertThat("altitude", sunPos.getAltitude(), is(closeTo(-0.6972572, ERROR)));
+        assertThat("azimuth", sunPos.getAzimuth(), is(closeTo(216.942412096, ERROR)));
+        assertThat("altitude", sunPos.getAltitude(), is(closeTo(-39.94989479, ERROR)));
 
         SunPosition sunPos2 = SunPosition.compute().on(2017, 8, 20, 8, 0, 0).utc().at(LAT, LNG).execute();
-        assertThat("azimuth", sunPos2.getAzimuth(), is(closeTo(5.518563005, ERROR)));
-        assertThat("altitude", sunPos2.getAltitude(), is(closeTo(0.777206222, ERROR)));
+        assertThat("azimuth", sunPos2.getAzimuth(), is(closeTo(316.190369197, ERROR)));
+        assertThat("altitude", sunPos2.getAltitude(), is(closeTo(44.530636355, ERROR)));
     }
 
     @Test
@@ -79,8 +79,8 @@ public class SunCalcTest {
     @Test
     public void testMoonPosition() {
         MoonPosition moonPos = MoonPosition.compute().at(LAT, LNG).on(2013, 3, 5).utc().execute();
-        assertThat("azimuth", moonPos.getAzimuth(), is(closeTo(5.317346920, ERROR)));
-        assertThat("altitude", moonPos.getAltitude(), is(closeTo(0.023388760, ERROR)));
+        assertThat("azimuth", moonPos.getAzimuth(), is(closeTo(304.661536751, ERROR)));
+        assertThat("altitude", moonPos.getAltitude(), is(closeTo(1.340077257, ERROR)));
         assertThat("distance", moonPos.getDistance(), is(closeTo(364120.978084165, ERROR)));
     }
 
@@ -89,7 +89,7 @@ public class SunCalcTest {
         MoonIllumination moonIllum = MoonIllumination.compute().on(2013, 3, 5).utc().execute();
         assertThat("fraction", moonIllum.getFraction(), is(closeTo(0.491425328, ERROR)));
         assertThat("phase", moonIllum.getPhase(), is(closeTo(0.752729536, ERROR)));
-        assertThat("angle", moonIllum.getAngle(), is(closeTo(1.676554024, ERROR)));
+        assertThat("angle", moonIllum.getAngle(), is(closeTo(96.059469727, ERROR)));
     }
 
     @Test

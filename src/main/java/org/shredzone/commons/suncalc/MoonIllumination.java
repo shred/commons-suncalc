@@ -42,7 +42,7 @@ public class MoonIllumination {
     private MoonIllumination(double fraction, double phase, double angle) {
         this.fraction = fraction;
         this.phase = phase;
-        this.angle = angle;
+        this.angle = toDegrees(angle);
     }
 
     /**
@@ -102,7 +102,7 @@ public class MoonIllumination {
     }
 
     /**
-     * Midpoint angle in radians of the illuminated limb of the moon reckoned eastward
+     * Midpoint angle in degrees of the illuminated limb of the moon reckoned eastward
      * from the north point of the disk; the moon is waxing if the angle is negative, and
      * waning if positive.
      * <p>
@@ -121,7 +121,7 @@ public class MoonIllumination {
         sb.append("MoonIllumination[fraction=").append(fraction);
         sb.append(", phase=").append(phase);
         sb.append(", angle=").append(angle);
-        sb.append(']');
+        sb.append("°]");
         return sb.toString();
     }
 

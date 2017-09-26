@@ -35,10 +35,10 @@ public class MoonPosition {
     private final double parallacticAngle;
 
     private MoonPosition(double azimuth, double altitude, double distance, double parallacticAngle) {
-        this.azimuth = azimuth;
-        this.altitude = altitude;
+        this.azimuth = toDegrees(azimuth);
+        this.altitude = toDegrees(altitude);
         this.distance = distance;
-        this.parallacticAngle = parallacticAngle;
+        this.parallacticAngle = toDegrees(parallacticAngle);
     }
 
     /**
@@ -85,9 +85,9 @@ public class MoonPosition {
     }
 
     /**
-     * Moon altitude above the horizon, in radians.
+     * Moon altitude above the horizon, in degrees.
      * <p>
-     * {@code 0} means the moon's center is at the horizon, {@code PI / 2} at the zenith
+     * {@code 0.0} means the moon's center is at the horizon, {@code 90.0} at the zenith
      * (straight over your head).
      */
     public double getAltitude() {
@@ -95,11 +95,10 @@ public class MoonPosition {
     }
 
     /**
-     * Moon azimuth in radians.
+     * Moon azimuth, in degrees.
      * <p>
      * This is the direction along the horizon, measured from south to west. For example,
-     * {@code 0} means south, {@code PI * 3 / 4} means northwest, {@code PI * 6 / 4} means
-     * east.
+     * {@code 0.0} means south, {@code 135.0} means northwest, {@code 270.0} means east.
      */
     public double getAzimuth() {
         return azimuth;
@@ -113,7 +112,7 @@ public class MoonPosition {
     }
 
     /**
-     * Parallactic angle of the moon in radians.
+     * Parallactic angle of the moon, in degrees.
      */
     public double getParallacticAngle() {
         return parallacticAngle;
@@ -123,10 +122,10 @@ public class MoonPosition {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("MoonPosition[azimuth=").append(azimuth);
-        sb.append(", altitude=").append(altitude);
-        sb.append(", distance=").append(distance);
-        sb.append(", parallacticAngle=").append(parallacticAngle);
-        sb.append(']');
+        sb.append("°, altitude=").append(altitude);
+        sb.append("°, distance=").append(distance);
+        sb.append(" km, parallacticAngle=").append(parallacticAngle);
+        sb.append("°]");
         return sb.toString();
     }
 

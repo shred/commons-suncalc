@@ -13,7 +13,7 @@
  */
 package org.shredzone.commons.suncalc;
 
-import static java.lang.Math.toRadians;
+import static java.lang.Math.*;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
 import org.shredzone.commons.suncalc.param.AbstractBuilder;
@@ -33,8 +33,8 @@ public class SunPosition {
     private final double altitude;
 
     private SunPosition(double azimuth, double altitude) {
-        this.azimuth = azimuth;
-        this.altitude = altitude;
+        this.azimuth = toDegrees(azimuth);
+        this.altitude = toDegrees(altitude);
     }
 
     /**
@@ -76,9 +76,9 @@ public class SunPosition {
     }
 
     /**
-     * Sun altitude above the horizon, in radians.
+     * Sun altitude above the horizon, in degrees.
      * <p>
-     * {@code 0} means the sun's center is at the horizon, {@code PI / 2} at the zenith
+     * {@code 0.0} means the sun's center is at the horizon, {@code 90.0} at the zenith
      * (straight over your head).
      */
     public double getAltitude() {
@@ -86,11 +86,10 @@ public class SunPosition {
     }
 
     /**
-     * Sun azimuth in radians.
+     * Sun azimuth, in degrees.
      * <p>
      * This is the direction along the horizon, measured from south to west. For example,
-     * {@code 0} means south, {@code PI * 3 / 4} means northwest, {@code PI * 6 / 4} means
-     * east.
+     * {@code 0.0} means south, {@code 135.0} means northwest, {@code 270.0} means east.
      */
     public double getAzimuth() {
         return azimuth;
@@ -100,8 +99,8 @@ public class SunPosition {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("SunPosition[azimuth=").append(azimuth);
-        sb.append(", altitude=").append(altitude);
-        sb.append(']');
+        sb.append("°, altitude=").append(altitude);
+        sb.append("°]");
         return sb.toString();
     }
 
