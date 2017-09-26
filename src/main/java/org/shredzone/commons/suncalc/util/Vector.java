@@ -267,11 +267,10 @@ public class Vector {
             φ += PI2;
         }
 
-        double ρ = sqrt(ρSqr);
-        if (isZero(z) && isZero(ρ)) {
+        if (isZero(z) && isZero(ρSqr)) {
             θ = 0.0;
         } else {
-            θ = atan2(z, ρ);
+            θ = atan2(z, sqrt(ρSqr));
         }
 
         hasPolar = true;
