@@ -231,6 +231,19 @@ public class Matrix {
         return new Vector(result);
     }
 
+    /**
+     * Gets a value from the matrix.
+     *
+     * @param r
+     *            Row number (0..2)
+     * @param c
+     *            Column number (0..2)
+     * @return Value at that position
+     */
+    public double get(int r, int c) {
+        return mx[r][c];
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null || !(obj instanceof Matrix)) {

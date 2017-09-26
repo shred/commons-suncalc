@@ -36,14 +36,12 @@ public class SunTimes {
     private final Date set;
     private final Date noon;
     private final Date nadir;
-    private final double ye;
 
-    private SunTimes(Date rise, Date set, Date noon, Date nadir, double ye) {
+    private SunTimes(Date rise, Date set, Date noon, Date nadir) {
         this.rise = rise;
         this.set = set;
         this.noon = noon;
         this.nadir = nadir;
-        this.ye = ye;
     }
 
     /**
@@ -286,7 +284,7 @@ public class SunTimes {
                 }
 
                 double xe = qi.getXe();
-                if (xe >= -1.0 && xe <= 1.0) {
+                if (xe > -1.01 && xe < 1.01) {
                     if (ye < 0.0) {
                         nadir = xe + hour;
                     } else {
@@ -305,8 +303,7 @@ public class SunTimes {
                     rise != null ? jd.atHour(rise).getDate() : null,
                     set != null ? jd.atHour(set).getDate() : null,
                     noon != null ? jd.atHour(noon).getDate() : null,
-                    nadir != null ? jd.atHour(nadir).getDate() : null,
-                    ye);
+                    nadir != null ? jd.atHour(nadir).getDate() : null);
         }
     }
 
@@ -345,7 +342,7 @@ public class SunTimes {
      * that day.
      */
     public boolean isAlwaysUp() {
-        return rise == null && set == null && ye > 0.0;
+        return rise == null && set == null && noon != null;
     }
 
     /**
@@ -353,7 +350,7 @@ public class SunTimes {
      * that day.
      */
     public boolean isAlwaysDown() {
-        return rise == null && set == null && ye <= 0.0;
+        return rise == null && set == null && nadir != null;
     }
 
     @Override

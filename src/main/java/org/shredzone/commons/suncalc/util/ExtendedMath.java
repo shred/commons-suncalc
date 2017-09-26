@@ -57,6 +57,9 @@ public final class ExtendedMath {
 
     /**
      * Performs a safe check if the given double is actually zero (0.0).
+     * <p>
+     * Note that "almost zero" returns {@code false}, so this method should not be used
+     * for comparing calculation results to zero.
      *
      * @param d
      *            double to check for zero.
