@@ -259,7 +259,7 @@ public class SunTimes {
             Double set = null;
             Double noon = null;
             Double nadir = null;
-            double ye = 0.0;
+            double ye;
 
             int maxHours = fullCycle ? 365 * 24 : 24;
 
