@@ -18,7 +18,7 @@ import static org.shredzone.commons.suncalc.util.ExtendedMath.APPARENT_REFRACTIO
 
 import java.util.Date;
 
-import org.shredzone.commons.suncalc.param.AbstractBuilder;
+import org.shredzone.commons.suncalc.param.BaseBuilder;
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
@@ -210,7 +210,7 @@ public class SunTimes {
      * Builder for {@link SunTimes}. Performs the computations based on the parameters,
      * and creates a {@link SunTimes} object that holds the result.
      */
-    private static class SunTimesBuilder extends AbstractBuilder<Parameters> implements Parameters {
+    private static class SunTimesBuilder extends BaseBuilder<Parameters> implements Parameters {
         private double angle = Twilight.VISUAL.getAngle();
         private Double position = Twilight.VISUAL.getAngularPosition();
         private boolean fullCycle = false;

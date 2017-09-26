@@ -13,7 +13,7 @@
  */
 package org.shredzone.commons.suncalc.param;
 
-import static java.lang.Math.toRadians;
+import static java.lang.Math.*;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Calendar;
@@ -23,7 +23,7 @@ import java.util.TimeZone;
 import org.shredzone.commons.suncalc.util.JulianDate;
 
 /**
- * An abstract implementation of {@link LocationParameter} and {@link TimeParameter}.
+ * A base implementation of {@link LocationParameter} and {@link TimeParameter}.
  * <p>
  * For internal use only.
  *
@@ -31,12 +31,12 @@ import org.shredzone.commons.suncalc.util.JulianDate;
  *            Type of the final builder
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractBuilder<T> implements LocationParameter<T>, TimeParameter<T> {
+public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T> {
 
     private double lat = 0.0;
     private double lng = 0.0;
     private double height = 0.0;
-    private Calendar cal = Calendar.getInstance();
+    private Calendar cal = createCalendar();
 
     @Override
     public T on(int year, int month, int date) {
@@ -75,15 +75,15 @@ public abstract class AbstractBuilder<T> implements LocationParameter<T>, TimePa
 
     @Override
     public T now() {
-        return on(Calendar.getInstance());
+        return on(createCalendar());
     }
 
     @Override
     public T midnight() {
-        cal.clear(Calendar.HOUR_OF_DAY);
-        cal.clear(Calendar.MINUTE);
-        cal.clear(Calendar.SECOND);
-        cal.clear(Calendar.MILLISECOND);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         return (T) this;
     }
 
@@ -146,12 +146,12 @@ public abstract class AbstractBuilder<T> implements LocationParameter<T>, TimePa
 
     @Override
     public T latitude(int d, int m, double s) {
-        return latitude((s / 60.0 + m) / 60.0 + d);
+        return latitude(dms(d, m, s));
     }
 
     @Override
     public T longitude(int d, int m, double s) {
-        return longitude((s / 60.0 + m) / 60.0 + d);
+        return longitude(dms(d, m, s));
     }
 
     @Override
@@ -212,6 +212,33 @@ public abstract class AbstractBuilder<T> implements LocationParameter<T>, TimePa
      */
     public JulianDate getJulianDate() {
         return new JulianDate((Calendar) cal.clone());
+    }
+
+    /**
+     * Creates a new {@link Calendar} instance containing the current instant.
+     * <p>
+     * This method can be overriden on unit tests.
+     *
+     * @return {@link Calendar} instance
+     */
+    protected Calendar createCalendar() {
+        return Calendar.getInstance();
+    }
+
+    /**
+     * Converts dms to double.
+     *
+     * @param d
+     *            Degrees. Sign is used for result.
+     * @param m
+     *            Minutes. Sign is ignored.
+     * @param s
+     *            Seconds and fractions. Sign is ignored.
+     * @return angle, in degrees
+     */
+    private static double dms(int d, int m, double s) {
+        double sig = d < 0 ? -1.0 : 1.0;
+        return sig * ((abs(s) / 60.0 + abs(m)) / 60.0 + abs(d));
     }
 
 }

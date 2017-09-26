@@ -15,7 +15,7 @@ package org.shredzone.commons.suncalc;
 
 import static java.lang.Math.*;
 
-import org.shredzone.commons.suncalc.param.AbstractBuilder;
+import org.shredzone.commons.suncalc.param.BaseBuilder;
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.TimeParameter;
 import org.shredzone.commons.suncalc.util.JulianDate;
@@ -66,7 +66,7 @@ public class MoonIllumination {
      * Builder for {@link MoonIllumination}. Performs the computations based on the
      * parameters, and creates a {@link MoonIllumination} object that holds the result.
      */
-    private static class MoonIlluminationBuilder extends AbstractBuilder<Parameters> implements Parameters {
+    private static class MoonIlluminationBuilder extends BaseBuilder<Parameters> implements Parameters {
         @Override
         public MoonIllumination execute() {
             JulianDate t = getJulianDate();

@@ -16,7 +16,7 @@ package org.shredzone.commons.suncalc;
 import static java.lang.Math.*;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
-import org.shredzone.commons.suncalc.param.AbstractBuilder;
+import org.shredzone.commons.suncalc.param.BaseBuilder;
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
@@ -59,7 +59,7 @@ public class SunPosition {
      * Builder for {@link SunPosition}. Performs the computations based on the parameters,
      * and creates a {@link SunPosition} object that holds the result.
      */
-    private static class SunPositionBuilder extends AbstractBuilder<Parameters> implements Parameters {
+    private static class SunPositionBuilder extends BaseBuilder<Parameters> implements Parameters {
         @Override
         public SunPosition execute() {
             JulianDate t = getJulianDate();

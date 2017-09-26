@@ -17,7 +17,7 @@ import static org.shredzone.commons.suncalc.util.ExtendedMath.APPARENT_REFRACTIO
 
 import java.util.Date;
 
-import org.shredzone.commons.suncalc.param.AbstractBuilder;
+import org.shredzone.commons.suncalc.param.BaseBuilder;
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
@@ -81,7 +81,7 @@ public final class MoonTimes {
      * Builder for {@link MoonTimes}. Performs the computations based on the parameters,
      * and creates a {@link MoonTimes} object that holds the result.
      */
-    private static class MoonTimesBuilder extends AbstractBuilder<Parameters> implements Parameters {
+    private static class MoonTimesBuilder extends BaseBuilder<Parameters> implements Parameters {
         private boolean fullCycle = false;
 
         @Override
