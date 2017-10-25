@@ -10,7 +10,7 @@
 
 ## Parameters
 
-All parameters are given in a builder-style interface. You can chain them together, and then call `execute()` to perform the computation.
+All parameters are passed in a fluent builder-style interface. After retrieving the builder from `compute()`, you can chain the parameter setters, and finally call `execute()` to perform the computation.
 
 ```java
 SunPosition pos = SunPosition.compute().today().at(12.3, 45.6).execute();
@@ -26,11 +26,12 @@ param.today();
 SunPosition pos = param.execute();
 ```
 
-The resulting instance is immutable and only holds the result. You can continue to modify the parameters without changing the first result, then call `execute()` again for a second result.
+The instance that is returned by `execute()` is immutable and only holds the result. You can continue modifying the parameters without changing the first result, then call `execute()` again for a second result.
 
 ```java
 param.at(2016, 12, 24);
 SunPosition christmas = param.execute();
+// pos from above is unchanged
 ```
 
 ### Time-based Parameters
@@ -72,7 +73,7 @@ SunPosition.compute().at(20.5, 18.3);
 SunPosition.compute().latitude(20.5).longitude(18.3);
 
 // Use arrays for coordinate constants
-final double[] COLOGNE = new double[] {50.938056, 6.956944};
+final double[] COLOGNE = new double[] { 50.938056, 6.956944 };
 SunPosition.compute().at(COLOGNE);
 ```
 
