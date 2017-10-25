@@ -31,10 +31,12 @@ public class SunPosition {
 
     private final double azimuth;
     private final double altitude;
+    private final double distance;
 
-    private SunPosition(double azimuth, double altitude) {
+    private SunPosition(double azimuth, double altitude, double distance) {
         this.azimuth = (toDegrees(azimuth) + 180.0) % 360.0;
         this.altitude = toDegrees(altitude);
+        this.distance = distance;
     }
 
     /**
@@ -71,7 +73,7 @@ public class SunPosition {
             Vector horizontal = equatorialToHorizontal(h, c.getTheta(), c.getR(), phi);
             double hRef = refraction(horizontal.getTheta());
 
-            return new SunPosition(horizontal.getPhi(), horizontal.getTheta() + hRef);
+            return new SunPosition(horizontal.getPhi(), horizontal.getTheta() + hRef, horizontal.getR());
         }
     }
 
@@ -95,12 +97,19 @@ public class SunPosition {
         return azimuth;
     }
 
+    /**
+     * Sun's distance, in kilometers.
+     */
+    public double getDistance() {
+        return distance;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("SunPosition[azimuth=").append(azimuth);
         sb.append("°, altitude=").append(altitude);
-        sb.append("°]");
+        sb.append("°, distance=").append(distance).append(" km]");
         return sb.toString();
     }
 

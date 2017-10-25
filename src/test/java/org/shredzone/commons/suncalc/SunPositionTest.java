@@ -121,4 +121,35 @@ public class SunPositionTest {
         assertThat("altitude", sp2.getAltitude(), is(closeTo(69.4, ERROR)));
     }
 
+    @Test
+    public void testDistance() {
+        SunPosition sp1 = SunPosition.compute()
+                        .on(2017, 1, 4, 12, 37, 0)
+                        .at(COLOGNE)
+                        .timezone(COLOGNE_TZ)
+                        .execute();
+        assertThat(sp1.getDistance(), is(closeTo(147097390.6, ERROR)));
+
+        SunPosition sp2 = SunPosition.compute()
+                        .on(2017, 4, 20, 13, 31, 0)
+                        .at(COLOGNE)
+                        .timezone(COLOGNE_TZ)
+                        .execute();
+        assertThat(sp2.getDistance(), is(closeTo(150181373.3, ERROR)));
+
+        SunPosition sp3 = SunPosition.compute()
+                        .on(2017, 7, 12, 13, 37, 0)
+                        .at(COLOGNE)
+                        .timezone(COLOGNE_TZ)
+                        .execute();
+        assertThat(sp3.getDistance(), is(closeTo(152088309.0, ERROR)));
+
+        SunPosition sp4 = SunPosition.compute()
+                        .on(2017, 10, 11, 13, 18, 0)
+                        .at(COLOGNE)
+                        .timezone(COLOGNE_TZ)
+                        .execute();
+        assertThat(sp4.getDistance(), is(closeTo(149380680.0, ERROR)));
+    }
+
 }

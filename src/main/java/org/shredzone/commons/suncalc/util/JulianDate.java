@@ -13,8 +13,8 @@
  */
 package org.shredzone.commons.suncalc.util;
 
-import static java.lang.Math.floor;
-import static org.shredzone.commons.suncalc.util.ExtendedMath.PI2;
+import static java.lang.Math.*;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -50,7 +50,7 @@ public class JulianDate {
      */
     public JulianDate atHour(double hour) {
         Calendar clone = getCalendar();
-        clone.add(Calendar.SECOND, (int) Math.round(hour * 60.0 * 60.0));
+        clone.add(Calendar.SECOND, (int) round(hour * 60.0 * 60.0));
         return new JulianDate(clone);
     }
 
@@ -91,7 +91,7 @@ public class JulianDate {
     }
 
     /**
-     * Retuns the Greenwich Mean Sidereal Time of this Julian Date.
+     * Returns the Greenwich Mean Sidereal Time of this Julian Date.
      *
      * @return GMST
      */
@@ -109,6 +109,19 @@ public class JulianDate {
                 + (0.093104 - 6.2e-6 * t) * t * t;
 
         return (PI2 / secs) * (gmst % secs);
+    }
+
+    /**
+     * Returns the earth's true anomaly of the current date.
+     * <p>
+     * A simple approximation is used here, to keep the calculation simple.
+     *
+     * @return True anomaly, in radians
+     */
+    public double getTrueAnomaly() {
+        // TODO: Use MJD instead...
+        int dayOfYear = cal.get(Calendar.DAY_OF_YEAR) - 1;
+        return PI2 * frac((dayOfYear - 4.0) / 365.256363);
     }
 
     @Override

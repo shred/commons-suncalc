@@ -13,6 +13,7 @@
  */
 package org.shredzone.commons.suncalc.util;
 
+import static java.lang.Math.PI;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -86,6 +87,15 @@ public class JulianDateTest {
         JulianDate jd1 = new JulianDate(of(2017, 9, 3, 19, 5, 15, "UTC"));
         assertThat(jd1.getGreenwichMeanSiderealTime(), is(closeTo(4.702, ERROR)));
 
+    }
+
+    @Test
+    public void testTrueAnomaly() {
+        JulianDate jd1 = new JulianDate(of(2017, 1, 4, 0, 0, 0, "UTC"));
+        assertThat(jd1.getTrueAnomaly(), is(closeTo(0.0, 0.1)));
+
+        JulianDate jd2 = new JulianDate(of(2017, 7, 4, 0, 0, 0, "UTC"));
+        assertThat(jd2.getTrueAnomaly(), is(closeTo(PI, 0.1)));
     }
 
     private Calendar of(int year, int month, int day, int hour, int minute, int second, String zone) {

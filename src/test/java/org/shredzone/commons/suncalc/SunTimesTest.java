@@ -37,16 +37,16 @@ public class SunTimesTest {
         riseTimes.put(Twilight.NAUTICAL,     DateMatcher.is("2017-08-10T02:44:33Z"));
         riseTimes.put(Twilight.CIVIL,        DateMatcher.is("2017-08-10T03:34:01Z"));
         riseTimes.put(Twilight.BLUE_HOUR,    DateMatcher.is("2017-08-10T03:48:59Z"));
-        riseTimes.put(Twilight.VISUAL,       DateMatcher.is("2017-08-10T04:11:34Z"));
-        riseTimes.put(Twilight.VISUAL_LOWER, DateMatcher.is("2017-08-10T04:15:19Z"));
+        riseTimes.put(Twilight.VISUAL,       DateMatcher.is("2017-08-10T04:11:36Z"));
+        riseTimes.put(Twilight.VISUAL_LOWER, DateMatcher.is("2017-08-10T04:15:17Z"));
         riseTimes.put(Twilight.HORIZON,      DateMatcher.is("2017-08-10T04:17:27Z"));
         riseTimes.put(Twilight.GOLDEN_HOUR,  DateMatcher.is("2017-08-10T04:58:31Z"));
 
         Map<Twilight, Matcher<Date>> setTimes = new EnumMap<>(Twilight.class);
         setTimes.put(Twilight.GOLDEN_HOUR,   DateMatcher.is("2017-08-10T18:15:34Z"));
         setTimes.put(Twilight.HORIZON,       DateMatcher.is("2017-08-10T18:56:26Z"));
-        setTimes.put(Twilight.VISUAL_LOWER,  DateMatcher.is("2017-08-10T18:58:35Z"));
-        setTimes.put(Twilight.VISUAL,        DateMatcher.is("2017-08-10T19:02:22Z"));
+        setTimes.put(Twilight.VISUAL_LOWER,  DateMatcher.is("2017-08-10T18:58:37Z"));
+        setTimes.put(Twilight.VISUAL,        DateMatcher.is("2017-08-10T19:02:20Z"));
         setTimes.put(Twilight.BLUE_HOUR,     DateMatcher.is("2017-08-10T19:25:16Z"));
         setTimes.put(Twilight.CIVIL,         DateMatcher.is("2017-08-10T19:40:13Z"));
         setTimes.put(Twilight.NAUTICAL,      DateMatcher.is("2017-08-10T20:28:24Z"));
@@ -79,37 +79,37 @@ public class SunTimesTest {
         assertTimes(t1, null, null, "2017-08-10T16:12:47Z");
 
         SunTimes t2 = SunTimes.compute().at(ALERT).on(2017, 9, 24).utc().execute();
-        assertTimes(t2, "2017-09-24T09:54:27Z", "2017-09-24T22:01:59Z", "2017-09-24T16:00:23Z");
+        assertTimes(t2, "2017-09-24T09:54:29Z", "2017-09-24T22:01:58Z", "2017-09-24T16:00:23Z");
 
         SunTimes t3 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc().execute();
         assertTimes(t3, null, null, null);
 
         SunTimes t4 = SunTimes.compute().at(ALERT).on(2017, 8, 10).utc().fullCycle().execute();
-        assertTimes(t4, "2017-09-06T05:13:00Z", "2017-09-06T03:06:17Z", "2017-09-05T16:05:21Z");
+        assertTimes(t4, "2017-09-06T05:13:25Z", "2017-09-06T03:05:52Z", "2017-09-05T16:05:21Z");
 
         SunTimes t5 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc().fullCycle().execute();
-        assertTimes(t5, "2017-02-27T15:24:38Z", "2017-02-27T17:23:27Z", "2017-02-27T16:23:41Z");
+        assertTimes(t5, "2017-02-27T15:24:11Z", "2017-02-27T17:23:53Z", "2017-02-27T16:23:41Z");
 
         SunTimes t6 = SunTimes.compute().at(ALERT).on(2017, 9, 6).utc().oneDay().execute();
-        assertTimes(t6, "2017-09-06T05:13:00Z", "2017-09-06T03:06:17Z", "2017-09-06T16:04:59Z");
+        assertTimes(t6, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-09-06T16:04:59Z");
     }
 
     @Test
     public void testWellington() {
         SunTimes t1 = SunTimes.compute().at(WELLINGTON).on(2017, 8, 10).utc().execute();
-        assertTimes(t1, "2017-08-10T19:17:15Z", "2017-08-10T05:34:51Z", "2017-08-10T00:26:26Z");
+        assertTimes(t1, "2017-08-10T19:17:16Z", "2017-08-10T05:34:50Z", "2017-08-10T00:26:26Z");
     }
 
     @Test
     public void testPuertoWilliams() {
         SunTimes t1 = SunTimes.compute().at(PUERTO_WILLIAMS).on(2017, 8, 10).utc().execute();
-        assertTimes(t1, "2017-08-10T12:01:47Z", "2017-08-10T21:10:37Z", "2017-08-10T16:36:12Z");
+        assertTimes(t1, "2017-08-10T12:01:48Z", "2017-08-10T21:10:36Z", "2017-08-10T16:36:12Z");
     }
 
     @Test
     public void testSingapore() {
         SunTimes t1 = SunTimes.compute().at(SINGAPORE).on(2017, 8, 10).utc().execute();
-        assertTimes(t1, "2017-08-10T23:05:05Z", "2017-08-10T11:14:57Z", "2017-08-10T05:08:44Z");
+        assertTimes(t1, "2017-08-10T23:05:06Z", "2017-08-10T11:14:56Z", "2017-08-10T05:08:44Z");
     }
 
     private void assertTimes(SunTimes t, String rise, String set, String noon) {

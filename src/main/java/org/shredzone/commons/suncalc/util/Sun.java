@@ -45,8 +45,11 @@ public final class Sun {
         double L = PI2 * frac(0.7859453 + M / PI2
             + (6893.0 * sin(M) + 72.0 * sin(2.0 * M) + 6191.2 * T) / 1296.0e3);
 
+        double d = SUN_DISTANCE
+            * (1 - 0.016718 * cos(date.getTrueAnomaly()));
+
         Matrix rotateMatrix = equatorialToEcliptical(date).transpose();
-        return rotateMatrix.multiply(Vector.ofPolar(L, 0.0, SUN_DISTANCE));
+        return rotateMatrix.multiply(Vector.ofPolar(L, 0.0, d));
     }
 
     /**
