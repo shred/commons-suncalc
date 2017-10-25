@@ -31,11 +31,6 @@ public final class ExtendedMath {
     public static final double ARCS = toDegrees(3600.0);
 
     /**
-     * Apparent refraction at the horizon, in radians.
-     */
-    public static final double APPARENT_REFRACTION = PI / (tan(toRadians(7.31 / 4.4)) * 10800.0);
-
-    /**
      * Mean radius of the earth, in kilometers.
      */
     public static final double EARTH_MEAN_RADIUS = 6371.0;
@@ -115,10 +110,34 @@ public final class ExtendedMath {
     }
 
     /**
+     * Calculates the atmospheric refraction of an object at the given apparent altitude.
+     * <p>
+     * The result is only valid for positive altitude angles. If negative, 0.0 is
+     * returned.
+     * <p>
+     * Assumes an atmospheric pressure of 1010 hPa and a temperature of 10 °C.
+     *
+     * @param ha
+     *            Apparent altitude, in radians.
+     * @return Refraction at this altitude
+     * @see <a href="https://en.wikipedia.org/wiki/Atmospheric_refraction">Wikipedia:
+     *      Atmospheric Refraction</a>
+     */
+    public static double apparentRefraction(double ha) {
+        if (ha < 0.0) {
+            return 0.0;
+        }
+
+        return PI / (tan(toRadians(ha + (7.31 / (ha + 4.4)))) * 10800.0);
+    }
+
+    /**
      * Calculates the atmospheric refraction of an object at the given altitude.
      * <p>
      * The result is only valid for positive altitude angles. If negative, 0.0 is
      * returned.
+     * <p>
+     * Assumes an atmospheric pressure of 1010 hPa and a temperature of 10 °C.
      *
      * @param h
      *            True altitude, in radians.

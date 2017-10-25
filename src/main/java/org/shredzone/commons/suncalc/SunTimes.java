@@ -222,6 +222,7 @@ public class SunTimes {
         private double angle = Twilight.VISUAL.getAngleRad();
         private Double position = Twilight.VISUAL.getAngularPosition();
         private boolean fullCycle = false;
+        private double refraction = apparentRefraction(0.0);
 
         @Override
         public Parameters twilight(Twilight twilight) {
@@ -315,7 +316,7 @@ public class SunTimes {
             double hc = angle;
             if (position != null) {
                 hc += parallax(getHeight(), pos.getR());
-                hc -= APPARENT_REFRACTION;
+                hc -= refraction;
                 hc -= position * Sun.angularRadius(pos.getR());
             }
 

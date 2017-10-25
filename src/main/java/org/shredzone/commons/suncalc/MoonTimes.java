@@ -83,6 +83,7 @@ public final class MoonTimes {
      */
     private static class MoonTimesBuilder extends BaseBuilder<Parameters> implements Parameters {
         private boolean fullCycle = false;
+        private double refraction = apparentRefraction(0.0);
 
         @Override
         public Parameters oneDay() {
@@ -147,7 +148,7 @@ public final class MoonTimes {
         private double correctedMoonHeight(JulianDate jd) {
             Vector pos = Moon.positionHorizontal(jd, getLatitudeRad(), getLongitudeRad());
             double hc = parallax(getHeight(), pos.getR())
-                            - APPARENT_REFRACTION
+                            - refraction
                             - Moon.angularRadius(pos.getR());
             return pos.getTheta() - hc;
         }
