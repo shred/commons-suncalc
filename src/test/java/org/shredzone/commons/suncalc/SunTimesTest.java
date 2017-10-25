@@ -85,10 +85,10 @@ public class SunTimesTest {
         assertTimes(t3, null, null, null);
 
         SunTimes t4 = SunTimes.compute().at(ALERT).on(2017, 8, 10).utc().fullCycle().execute();
-        assertTimes(t4, "2017-09-06T05:13:25Z", "2017-09-06T03:05:52Z", "2017-09-05T16:05:21Z");
+        assertTimes(t4, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-09-05T16:05:21Z");
 
         SunTimes t5 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc().fullCycle().execute();
-        assertTimes(t5, "2017-02-27T15:24:11Z", "2017-02-27T17:23:53Z", "2017-02-27T16:23:41Z");
+        assertTimes(t5, "2017-02-27T15:24:18Z", "2017-02-27T17:23:46Z", "2017-02-27T16:23:41Z");
 
         SunTimes t6 = SunTimes.compute().at(ALERT).on(2017, 9, 6).utc().oneDay().execute();
         assertTimes(t6, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-09-06T16:04:59Z");

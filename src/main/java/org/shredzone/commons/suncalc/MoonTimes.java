@@ -99,26 +99,17 @@ public final class MoonTimes {
         @Override
         public MoonTimes execute() {
             JulianDate jd = getJulianDate();
-            double lat = getLatitudeRad();
-            double lng = getLongitudeRad();
 
-            Vector startPosition = Moon.positionHorizontal(jd, lat, lng);
-            double hc = Moon.parallax(getHeight(), startPosition.getR())
-                    - APPARENT_REFRACTION
-                    - Moon.angularRadius(startPosition.getR());
-
-            double y_minus = startPosition.getTheta() - hc;
             Double rise = null;
             Double set = null;
             double ye = 0.0;
 
-            int maxHours = fullCycle ? 365 * 24 : 24;
+            double y_minus = correctedMoonHeight(jd);
 
+            int maxHours = fullCycle ? 365 * 24 : 24;
             for (int hour = 1; hour <= maxHours; hour += 2) {
-                JulianDate jd0 = jd.atHour(hour);
-                JulianDate jd1 = jd.atHour(hour + 1.0);
-                double y_0 = Moon.positionHorizontal(jd0, lat, lng).getTheta() - hc;
-                double y_plus = Moon.positionHorizontal(jd1, lat, lng).getTheta() - hc;
+                double y_0 = correctedMoonHeight(jd.atHour(hour));
+                double y_plus = correctedMoonHeight(jd.atHour(hour + 1.0));
 
                 QuadraticInterpolation qi = new QuadraticInterpolation(y_minus, y_0, y_plus);
                 ye = qi.getYe();
@@ -145,6 +136,20 @@ public final class MoonTimes {
                     rise != null ? jd.atHour(rise).getDate() : null,
                     set != null ? jd.atHour(set).getDate() : null,
                     ye);
+        }
+
+        /**
+         * Computes the moon height at the given date and position.
+         *
+         * @param jd {@link JulianDate} to use
+         * @return height, in radians
+         */
+        private double correctedMoonHeight(JulianDate jd) {
+            Vector pos = Moon.positionHorizontal(jd, getLatitudeRad(), getLongitudeRad());
+            double hc = Moon.parallax(getHeight(), pos.getR())
+                            - APPARENT_REFRACTION
+                            - Moon.angularRadius(pos.getR());
+            return pos.getTheta() - hc;
         }
     }
 

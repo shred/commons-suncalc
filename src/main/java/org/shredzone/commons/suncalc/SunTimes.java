@@ -242,32 +242,19 @@ public class SunTimes {
         @Override
         public SunTimes execute() {
             JulianDate jd = getJulianDate();
-            double lat = getLatitudeRad();
-            double lng = getLongitudeRad();
 
-            Vector startPosition = Sun.positionHorizontal(jd, lat, lng);
-
-            double hc = toRadians(angle);
-            if (position != null) {
-                hc += Sun.parallax(getHeight(), startPosition.getR());
-                hc -= APPARENT_REFRACTION;
-                hc -= position * Sun.angularRadius(startPosition.getR());
-            }
-
-            double y_minus = startPosition.getTheta() - hc;
             Double rise = null;
             Double set = null;
             Double noon = null;
             Double nadir = null;
             double ye;
 
-            int maxHours = fullCycle ? 365 * 24 : 24;
+            double y_minus = correctedSunHeight(jd);
 
+            int maxHours = fullCycle ? 365 * 24 : 24;
             for (int hour = 1; hour <= maxHours; hour += 2) {
-                JulianDate jdH0 = jd.atHour(hour);
-                JulianDate jdH1 = jd.atHour(hour + 1.0);
-                double y_0 = Sun.positionHorizontal(jdH0, lat, lng).getTheta() - hc;
-                double y_plus = Sun.positionHorizontal(jdH1, lat, lng).getTheta() - hc;
+                double y_0 = correctedSunHeight(jd.atHour(hour));
+                double y_plus = correctedSunHeight(jd.atHour(hour + 1.0));
 
                 QuadraticInterpolation qi = new QuadraticInterpolation(y_minus, y_0, y_plus);
                 ye = qi.getYe();
@@ -304,6 +291,25 @@ public class SunTimes {
                     set != null ? jd.atHour(set).getDate() : null,
                     noon != null ? jd.atHour(noon).getDate() : null,
                     nadir != null ? jd.atHour(nadir).getDate() : null);
+        }
+
+        /**
+         * Computes the sun height at the given date and position.
+         *
+         * @param jd {@link JulianDate} to use
+         * @return height, in radians
+         */
+        private double correctedSunHeight(JulianDate jd) {
+            Vector pos = Sun.positionHorizontal(jd, getLatitudeRad(), getLongitudeRad());
+
+            double hc = toRadians(angle);
+            if (position != null) {
+                hc += Sun.parallax(getHeight(), pos.getR());
+                hc -= APPARENT_REFRACTION;
+                hc -= position * Sun.angularRadius(pos.getR());
+            }
+
+            return pos.getTheta() - hc;
         }
     }
 
