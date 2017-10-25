@@ -24,24 +24,17 @@ import java.util.Arrays;
  */
 public class Matrix {
 
-    private final double[][] mx = new double[3][3];
+    private final double[] mx;
 
     private Matrix() {
-        // use zero matrix
+        mx = new double[9];
     }
 
-    private Matrix(double d00, double d01, double d02, //NOSONAR: performance reasons
-            double d10, double d11, double d12,
-            double d20, double d21, double d22) {
-        mx[0][0] = d00;
-        mx[0][1] = d01;
-        mx[0][2] = d02;
-        mx[1][0] = d10;
-        mx[1][1] = d11;
-        mx[1][2] = d12;
-        mx[2][0] = d20;
-        mx[2][1] = d21;
-        mx[2][2] = d22;
+    private Matrix(double... values) {
+        if (values == null || values.length != 9) {
+            throw new IllegalArgumentException("requires 9 values");
+        }
+        mx = values;
     }
 
     /**
@@ -116,7 +109,7 @@ public class Matrix {
         Matrix result = new Matrix();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                result.mx[i][j] = mx[j][i];
+                result.set(i, j, get(j, i));
             }
         }
         return result;
@@ -129,10 +122,8 @@ public class Matrix {
      */
     public Matrix negate() {
         Matrix result = new Matrix();
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                result.mx[i][j] = -mx[i][j];
-            }
+        for (int i = 0; i < 9; i++) {
+            result.mx[i] = -mx[i];
         }
         return result;
     }
@@ -146,10 +137,8 @@ public class Matrix {
      */
     public Matrix add(Matrix right) {
         Matrix result = new Matrix();
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                result.mx[i][j] = mx[i][j] + right.mx[i][j];
-            }
+        for (int i = 0; i < 9; i++) {
+            result.mx[i] = mx[i] + right.mx[i];
         }
         return result;
     }
@@ -163,10 +152,8 @@ public class Matrix {
      */
     public Matrix subtract(Matrix right) {
         Matrix result = new Matrix();
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                result.mx[i][j] = mx[i][j] - right.mx[i][j];
-            }
+        for (int i = 0; i < 9; i++) {
+            result.mx[i] = mx[i] - right.mx[i];
         }
         return result;
     }
@@ -184,9 +171,9 @@ public class Matrix {
             for (int j = 0; j < 3; j++) {
                 double scalp = 0.0;
                 for (int k = 0; k < 3; k++) {
-                    scalp += mx[i][k] * right.mx[k][j];
+                    scalp += get(i, k) * right.get(k, j);
                 }
-                result.mx[i][j] = scalp;
+                result.set(i, j, scalp);
             }
         }
         return result;
@@ -201,10 +188,8 @@ public class Matrix {
      */
     public Matrix multiply(double scalar) {
         Matrix result = new Matrix();
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                result.mx[i][j] = mx[i][j] * scalar;
-            }
+        for (int i = 0; i < 9; i++) {
+            result.mx[i] = mx[i] * scalar;
         }
         return result;
     }
@@ -223,7 +208,7 @@ public class Matrix {
         for (int i = 0; i < 3; i++) {
             double scalp = 0.0;
             for (int j = 0; j < 3; j++) {
-                scalp += mx[i][j] * vec[j];
+                scalp += get(i, j) * vec[j];
             }
             result[i] = scalp;
         }
@@ -241,7 +226,28 @@ public class Matrix {
      * @return Value at that position
      */
     public double get(int r, int c) {
-        return mx[r][c];
+        if (r < 0 || r > 2 || c < 0 || c > 2) {
+            throw new IllegalArgumentException("row/column out of range: " + r + ":" + c);
+        }
+        return mx[r * 3 + c];
+    }
+
+    /**
+     * Changes a value in the matrix. As a {@link Matrix} object is immutable from the
+     * outside, this method is private.
+     *
+     * @param r
+     *            Row number (0..2)
+     * @param c
+     *            Column number (0..2)
+     * @param v
+     *            New value
+     */
+    private void set(int r, int c, double v) {
+        if (r < 0 || r > 2 || c < 0 || c > 2) {
+            throw new IllegalArgumentException("row/column out of range: " + r + ":" + c);
+        }
+        mx[r * 3 + c] = v;
     }
 
     @Override
@@ -249,17 +255,32 @@ public class Matrix {
         if (obj == null || !(obj instanceof Matrix)) {
             return false;
         }
-        return Arrays.deepEquals(mx, ((Matrix) obj).mx);
+        return Arrays.equals(mx, ((Matrix) obj).mx);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.deepHashCode(mx);
+        return Arrays.hashCode(mx);
     }
 
     @Override
     public String toString() {
-        return Arrays.deepToString(mx);
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        for (int ix = 0; ix < 9; ix++) {
+            if (ix % 3 == 0) {
+                sb.append('[');
+            }
+            sb.append(mx[ix]);
+            if (ix % 3 == 2) {
+                sb.append(']');
+            }
+            if (ix < 8) {
+                sb.append(", ");
+            }
+        }
+        sb.append(']');
+        return sb.toString();
     }
 
 }
