@@ -13,7 +13,7 @@
  */
 package org.shredzone.commons.suncalc;
 
-import static org.shredzone.commons.suncalc.util.ExtendedMath.APPARENT_REFRACTION;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
 import java.util.Date;
 
@@ -146,7 +146,7 @@ public final class MoonTimes {
          */
         private double correctedMoonHeight(JulianDate jd) {
             Vector pos = Moon.positionHorizontal(jd, getLatitudeRad(), getLongitudeRad());
-            double hc = Moon.parallax(getHeight(), pos.getR())
+            double hc = parallax(getHeight(), pos.getR())
                             - APPARENT_REFRACTION
                             - Moon.angularRadius(pos.getR());
             return pos.getTheta() - hc;

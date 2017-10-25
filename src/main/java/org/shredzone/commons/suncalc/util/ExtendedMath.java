@@ -102,6 +102,19 @@ public final class ExtendedMath {
     }
 
     /**
+     * Returns the parallax for objects at the horizon.
+     *
+     * @param height
+     *            Observer's height, in meters above sea level.
+     * @param distance
+     *            Distance of the sun, in kilometers.
+     * @return parallax, in radians
+     */
+    public static double parallax(double height, double distance) {
+        return asin((EARTH_MEAN_RADIUS + (height / 1000.0)) / distance);
+    }
+
+    /**
      * Calculates the atmospheric refraction of an object at the given altitude.
      * <p>
      * The result is only valid for positive altitude angles. If negative, 0.0 is

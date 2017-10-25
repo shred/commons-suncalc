@@ -14,7 +14,7 @@
 package org.shredzone.commons.suncalc;
 
 import static java.lang.Math.toRadians;
-import static org.shredzone.commons.suncalc.util.ExtendedMath.APPARENT_REFRACTION;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
 import java.util.Date;
 
@@ -314,7 +314,7 @@ public class SunTimes {
 
             double hc = angle;
             if (position != null) {
-                hc += Sun.parallax(getHeight(), pos.getR());
+                hc += parallax(getHeight(), pos.getR());
                 hc -= APPARENT_REFRACTION;
                 hc -= position * Sun.angularRadius(pos.getR());
             }

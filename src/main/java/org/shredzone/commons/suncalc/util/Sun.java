@@ -82,17 +82,4 @@ public final class Sun {
         return asin(SUN_MEAN_RADIUS / distance);
     }
 
-    /**
-     * Returns the parallax for objects at the horizon.
-     *
-     * @param height
-     *            Observer's height, in meters above sea level.
-     * @param distance
-     *            Distance of the sun, in kilometers.
-     * @return parallax, in radians
-     */
-    public static double parallax(double height, double distance) {
-        return asin((EARTH_MEAN_RADIUS + (height / 1000.0)) / distance);
-    }
-
 }
