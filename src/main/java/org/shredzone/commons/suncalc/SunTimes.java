@@ -169,6 +169,7 @@ public class SunTimes {
         BLUE_HOUR(-4.0);
 
         private final double angle;
+        private final double angleRad;
         private final Double position;
 
         private Twilight(double angle) {
@@ -177,6 +178,7 @@ public class SunTimes {
 
         private Twilight(double angle, Double position) {
             this.angle = angle;
+            this.angleRad = toRadians(angle);
             this.position = position;
         }
 
@@ -185,6 +187,13 @@ public class SunTimes {
          */
         public double getAngle() {
             return angle;
+        }
+
+        /**
+         * Returns the sun's angle at the twilight position, in radians.
+         */
+        public double getAngleRad() {
+            return angleRad;
         }
 
         /**
@@ -209,20 +218,20 @@ public class SunTimes {
      * and creates a {@link SunTimes} object that holds the result.
      */
     private static class SunTimesBuilder extends BaseBuilder<Parameters> implements Parameters {
-        private double angle = Twilight.VISUAL.getAngle();
+        private double angle = Twilight.VISUAL.getAngleRad();
         private Double position = Twilight.VISUAL.getAngularPosition();
         private boolean fullCycle = false;
 
         @Override
         public Parameters twilight(Twilight twilight) {
-            this.angle = twilight.getAngle();
+            this.angle = twilight.getAngleRad();
             this.position = twilight.getAngularPosition();
             return this;
         }
 
         @Override
         public Parameters twilight(double angle) {
-            this.angle = angle;
+            this.angle = toRadians(angle);
             this.position = null;
             return this;
         }
@@ -302,7 +311,7 @@ public class SunTimes {
         private double correctedSunHeight(JulianDate jd) {
             Vector pos = Sun.positionHorizontal(jd, getLatitudeRad(), getLongitudeRad());
 
-            double hc = toRadians(angle);
+            double hc = angle;
             if (position != null) {
                 hc += Sun.parallax(getHeight(), pos.getR());
                 hc -= APPARENT_REFRACTION;
