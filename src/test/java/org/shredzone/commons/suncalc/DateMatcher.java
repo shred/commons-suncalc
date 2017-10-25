@@ -47,9 +47,11 @@ public class DateMatcher extends BaseMatcher<Date> {
      * Creates a new matcher for matching {@link Date} objects.
      *
      * @param expected
-     *            Expected date, as string. Format "yyyy-MM-dd'T'HH:mm:ss'Z'". The
-     *            expected date must be UTC. Compares date and time, but does not compare
-     *            milliseconds.
+     *            Expected date, as string. Format "yyyy-MM-dd'T'HH:mm:ssZ". The expected
+     *            date must use the correct offset of the given time zone. Compares date
+     *            and time, but does not compare milliseconds.
+     * @param tz
+     *            Name of the time zone to be used for matching
      */
     public static DateMatcher is(String expected, String tz) {
         return new DateMatcher(expected, TimeZone.getTimeZone(tz));
@@ -98,7 +100,11 @@ public class DateMatcher extends BaseMatcher<Date> {
      * @return String representation to compare with
      */
     private static String dateToString(Date date, TimeZone tz) {
-        SimpleDateFormat fmt = new SimpleDateFormat(tz.equals(UTC) ? "yyyy-MM-dd'T'HH:mm:ss'Z'" : "yyyy-MM-dd'T'HH:mm:ssZ");
+        SimpleDateFormat fmt = new SimpleDateFormat(
+              tz.equals(UTC)
+            ? "yyyy-MM-dd'T'HH:mm:ss'Z'"
+            : "yyyy-MM-dd'T'HH:mm:ssZ"
+        );
         fmt.setTimeZone(tz);
         return fmt.format(date);
     }

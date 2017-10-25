@@ -74,7 +74,7 @@ public class SunTimes {
 
         /**
          * Sets the desired elevation angle of the sun. The sunrise and sunset times are
-         * referring to the moment where the sun passes this angle.
+         * referring to the moment when the center of the sun passes this angle.
          *
          * @param angle
          *            Geocentric elevation angle, in degrees.
@@ -207,6 +207,7 @@ public class SunTimes {
         /**
          * Returns the angular position. {@code 0.0} means center of the sun. {@code 1.0}
          * means upper edge of the sun. {@code -1.0} means lower edge of the sun.
+         * {@code null} means the angular position is not topocentric.
          */
         private Double getAngularPosition() {
             return position;
@@ -337,24 +338,24 @@ public class SunTimes {
     }
 
     /**
-     * Gets the time when the sun reaches its highest point. {@code null} if the sun
-     * never rises on that day.
+     * The time when the sun reaches its highest point. {@code null} if the sun never
+     * rises on that day.
      */
     public Date getNoon() {
-        return noon;
+        return noon != null ? new Date(noon.getTime()) : null;
     }
 
     /**
-     * Gets the time when the sun reaches its lowest point. {@code null} if the sun
-     * never sets on that day.
+     * The time when the sun reaches its lowest point. {@code null} if the sun never sets
+     * on that day.
      */
     public Date getNadir() {
-        return nadir;
+        return nadir != null ? new Date(nadir.getTime()) : null;
     }
 
     /**
      * {@code true} if the sun never rises/sets, but is always above the twilight angle
-     * that day.
+     * that day. Always returns {@code false} if {@link Parameters#fullCycle()} is used.
      */
     public boolean isAlwaysUp() {
         return rise == null && set == null && noon != null;
@@ -362,7 +363,7 @@ public class SunTimes {
 
     /**
      * {@code true} if the sun never rises/sets, but is always below the twilight angle
-     * that day.
+     * that day. Always returns {@code false} if {@link Parameters#fullCycle()} is used.
      */
     public boolean isAlwaysDown() {
         return rise == null && set == null && nadir != null;

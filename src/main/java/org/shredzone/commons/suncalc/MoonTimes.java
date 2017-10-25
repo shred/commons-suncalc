@@ -169,7 +169,7 @@ public final class MoonTimes {
 
     /**
      * {@code true} if the moon never rises/sets, but is always above the horizon that
-     * day.
+     * day. Always returns {@code false} if {@link Parameters#fullCycle()} is used.
      */
     public boolean isAlwaysUp() {
         return rise == null && set == null && ye > 0.0;
@@ -177,7 +177,7 @@ public final class MoonTimes {
 
     /**
      * {@code true} if the moon never rises/sets, but is always below the horizon that
-     * day.
+     * day. Always returns {@code false} if {@link Parameters#fullCycle()} is used.
      */
     public boolean isAlwaysDown() {
         return rise == null && set == null && ye <= 0.0;

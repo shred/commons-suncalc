@@ -27,7 +27,7 @@ import org.shredzone.commons.suncalc.util.Vector;
  * Calculates the illumination of the moon.
  * <p>
  * <em>NOTE:</em> This implementation will change in one of the next versions. Methods
- * could give other results, or disappear.
+ * may give other results, or disappear completely.
  *
  * @see <a href="http://idlastro.gsfc.nasa.gov/ftp/pro/astro/mphase.pro">Formulas the
  *      calculations base on</a>
