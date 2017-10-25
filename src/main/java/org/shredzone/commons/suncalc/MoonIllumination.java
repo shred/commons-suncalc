@@ -25,6 +25,9 @@ import org.shredzone.commons.suncalc.util.Vector;
 
 /**
  * Calculates the illumination of the moon.
+ * <p>
+ * <em>NOTE:</em> This implementation will change in one of the next versions. Methods
+ * could give other results, or disappear.
  *
  * @see <a href="http://idlastro.gsfc.nasa.gov/ftp/pro/astro/mphase.pro">Formulas the
  *      calculations base on</a>
@@ -42,7 +45,7 @@ public class MoonIllumination {
     private MoonIllumination(double fraction, double phase, double angle) {
         this.fraction = fraction;
         this.phase = phase;
-        this.angle = toDegrees(angle);
+        this.angle = angle;
     }
 
     /**
@@ -80,8 +83,8 @@ public class MoonIllumination {
 
             return new MoonIllumination(
                             (1 + cos(inc)) / 2,
-                            0.5 + 0.5 * inc * signum(angle) / PI,
-                            angle);
+                            360.0 * (0.5 * inc * signum(angle) / PI),
+                            toDegrees(angle));
         }
     }
 
@@ -94,8 +97,8 @@ public class MoonIllumination {
     }
 
     /**
-     * Moon phase. Starts at {@code 0.0} (new moon, waxing), passes {@code 0.5} (full
-     * moon) and moves toward {@code 1.0} (waning, new moon).
+     * Moon phase. Starts at {@code -180.0} (new moon, waxing), passes {@code 0.0} (full
+     * moon) and moves toward {@code 180.0} (waning, new moon).
      */
     public double getPhase() {
         return phase;
@@ -120,7 +123,7 @@ public class MoonIllumination {
         StringBuilder sb = new StringBuilder();
         sb.append("MoonIllumination[fraction=").append(fraction);
         sb.append(", phase=").append(phase);
-        sb.append(", angle=").append(angle);
+        sb.append("°, angle=").append(angle);
         sb.append("°]");
         return sb.toString();
     }

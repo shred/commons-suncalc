@@ -24,6 +24,7 @@ import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
  *      ISBN 978-3-540-67221-0"
  */
 public final class Moon {
+
     private static final double MOON_MEAN_RADIUS = 1737.1;
 
     private Moon() {

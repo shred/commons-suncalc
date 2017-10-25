@@ -15,6 +15,7 @@ package org.shredzone.commons.suncalc;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.shredzone.commons.suncalc.Locations.COLOGNE_TZ;
 
 import org.junit.Test;
 
@@ -23,14 +24,50 @@ import org.junit.Test;
  */
 public class MoonIlluminationTest {
 
-    private static final double ERROR = 0.000_000_001;
+    private static final double ERROR = 0.1;
 
     @Test
-    public void testMoonIllumination() {
-        MoonIllumination moonIllum = MoonIllumination.compute().on(2013, 3, 5).utc().execute();
-        assertThat("fraction", moonIllum.getFraction(), is(closeTo(0.491425328, ERROR)));
-        assertThat("phase", moonIllum.getPhase(), is(closeTo(0.752729536, ERROR)));
-        assertThat("angle", moonIllum.getAngle(), is(closeTo(96.06, 0.001)));
+    public void testNewMoon() {
+        MoonIllumination mi = MoonIllumination.compute()
+                        .on(2017, 6, 24, 4, 30, 0)
+                        .timezone(COLOGNE_TZ)
+                        .execute();
+        assertThat("fraction", mi.getFraction(), is(closeTo(0.0, ERROR)));
+        assertThat("phase", mi.getPhase(), is(closeTo(175.9, ERROR))); // -180.0
+        assertThat("angle", mi.getAngle(), is(closeTo(2.0, ERROR)));
+    }
+
+    @Test
+    public void testWaxingHalfMoon() {
+        MoonIllumination mi = MoonIllumination.compute()
+                        .on(2017, 7, 1, 2, 51, 0)
+                        .timezone(COLOGNE_TZ)
+                        .execute();
+        assertThat("fraction", mi.getFraction(), is(closeTo(0.5, ERROR)));
+        assertThat("phase", mi.getPhase(), is(closeTo(-89.9, ERROR))); // -90.0
+        assertThat("angle", mi.getAngle(), is(closeTo(-66.9, ERROR)));
+    }
+
+    @Test
+    public void testFullMoon() {
+        MoonIllumination mi = MoonIllumination.compute()
+                        .on(2017, 7, 9, 6, 6, 0)
+                        .timezone(COLOGNE_TZ)
+                        .execute();
+        assertThat("fraction", mi.getFraction(), is(closeTo(1.0, ERROR)));
+        assertThat("phase", mi.getPhase(), is(closeTo(-3.1, ERROR))); // 0.0
+        assertThat("angle", mi.getAngle(), is(closeTo(-7.4, ERROR)));
+    }
+
+    @Test
+    public void testWaningHalfMoon() {
+        MoonIllumination mi = MoonIllumination.compute()
+                        .on(2017, 7, 16, 21, 25, 0)
+                        .timezone(COLOGNE_TZ)
+                        .execute();
+        assertThat("fraction", mi.getFraction(), is(closeTo(0.5, ERROR)));
+        assertThat("phase", mi.getPhase(), is(closeTo(89.8, ERROR))); // 90.0
+        assertThat("angle", mi.getAngle(), is(closeTo(68.7, ERROR)));
     }
 
 }
