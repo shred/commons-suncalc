@@ -15,9 +15,9 @@ package org.shredzone.commons.suncalc;
 
 import static java.lang.Math.*;
 
-import org.shredzone.commons.suncalc.param.BaseBuilder;
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.TimeParameter;
+import org.shredzone.commons.suncalc.util.BaseBuilder;
 import org.shredzone.commons.suncalc.util.JulianDate;
 import org.shredzone.commons.suncalc.util.Moon;
 import org.shredzone.commons.suncalc.util.Sun;

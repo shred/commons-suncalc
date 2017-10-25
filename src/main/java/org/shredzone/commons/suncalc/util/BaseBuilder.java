@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
-package org.shredzone.commons.suncalc.param;
+package org.shredzone.commons.suncalc.util;
 
 import static java.lang.Math.*;
 import static java.util.Objects.requireNonNull;
@@ -20,7 +20,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.shredzone.commons.suncalc.util.JulianDate;
+import org.shredzone.commons.suncalc.param.LocationParameter;
+import org.shredzone.commons.suncalc.param.TimeParameter;
 
 /**
  * A base implementation of {@link LocationParameter} and {@link TimeParameter}.

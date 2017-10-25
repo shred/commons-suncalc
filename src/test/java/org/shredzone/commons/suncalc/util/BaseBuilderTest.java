@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
-package org.shredzone.commons.suncalc.param;
+package org.shredzone.commons.suncalc.util;
 
 import static java.lang.Math.toRadians;
 import static org.hamcrest.Matchers.*;

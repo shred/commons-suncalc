@@ -18,10 +18,10 @@ import static org.shredzone.commons.suncalc.util.ExtendedMath.APPARENT_REFRACTIO
 
 import java.util.Date;
 
-import org.shredzone.commons.suncalc.param.BaseBuilder;
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
+import org.shredzone.commons.suncalc.util.BaseBuilder;
 import org.shredzone.commons.suncalc.util.JulianDate;
 import org.shredzone.commons.suncalc.util.QuadraticInterpolation;
 import org.shredzone.commons.suncalc.util.Sun;
