@@ -114,12 +114,11 @@ public class JulianDate {
     /**
      * Returns the earth's true anomaly of the current date.
      * <p>
-     * A simple approximation is used here, to keep the calculation simple.
+     * A simple approximation is used here.
      *
      * @return True anomaly, in radians
      */
     public double getTrueAnomaly() {
-        // TODO: Use MJD instead...
         int dayOfYear = cal.get(Calendar.DAY_OF_YEAR) - 1;
         return PI2 * frac((dayOfYear - 4.0) / 365.256363);
     }
