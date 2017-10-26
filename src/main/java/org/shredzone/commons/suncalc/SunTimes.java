@@ -64,7 +64,7 @@ public class SunTimes {
         /**
          * Sets the {@link Twilight} mode.
          * <p>
-         * Defaults to {@value Twilight#VISUAL}.
+         * Defaults to {@link Twilight#VISUAL}.
          *
          * @param twilight
          *            {@link Twilight} mode to be used.
