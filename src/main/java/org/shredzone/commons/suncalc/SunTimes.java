@@ -36,12 +36,17 @@ public class SunTimes {
     private final Date set;
     private final Date noon;
     private final Date nadir;
+    private final boolean alwaysUp;
+    private final boolean alwaysDown;
 
-    private SunTimes(Date rise, Date set, Date noon, Date nadir) {
+    private SunTimes(Date rise, Date set, Date noon, Date nadir, boolean alwaysUp,
+            boolean alwaysDown) {
         this.rise = rise;
         this.set = set;
         this.noon = noon;
         this.nadir = nadir;
+        this.alwaysUp = alwaysUp;
+        this.alwaysDown = alwaysDown;
     }
 
     /**
@@ -83,9 +88,8 @@ public class SunTimes {
         Parameters twilight(double angle);
 
         /**
-         * Checks only the next 24 hours. Rise, set, noon or nadir times can be
-         * {@code null} if the sun never reaches the point during one day (e.g. at
-         * solstice).
+         * Checks only the next 24 hours. Rise or set time can be {@code null} if the sun
+         * never reaches the point during one day (e.g. at solstice).
          * <p>
          * This is the default.
          *
@@ -94,8 +98,8 @@ public class SunTimes {
         Parameters oneDay();
 
         /**
-         * Computes until rise, set, noon, and nadir times are found, even if the sun
-         * needs more than a day for it. This can considerably increase computation time.
+         * Computes until rise and set times are found, even if the sun needs more than a
+         * day for it. This can considerably increase computation time.
          *
          * @return itself
          */
@@ -259,6 +263,11 @@ public class SunTimes {
             Double noon = null;
             Double nadir = null;
             double ye;
+            double lastXeAbs = Double.MAX_VALUE;
+            double noonXeAbs = Double.MAX_VALUE;
+            double nadirXeAbs = Double.MAX_VALUE;
+            double noonYe = 0.0;
+            double nadirYe = 0.0;
 
             double y_minus = correctedSunHeight(jd);
 
@@ -289,16 +298,24 @@ public class SunTimes {
                     }
                 }
 
-                double xe = qi.getXe();
-                if (xe > -1.01 && xe < 1.01) {
-                    if (ye < 0.0) {
-                        nadir = xe + hour;
-                    } else {
-                        noon = xe + hour;
+                if (hour < 24) {
+                    double xeAbs = Math.abs(qi.getXe());
+                    if (xeAbs < lastXeAbs) {
+                        double xeHour = qi.getXe() + hour;
+                        if (qi.isMaximum() && xeAbs < noonXeAbs) {
+                            noon = xeHour;
+                            noonXeAbs = xeAbs;
+                            noonYe = ye;
+                        } else if (!qi.isMaximum() && xeAbs < nadirXeAbs) {
+                            nadir = xeHour;
+                            nadirXeAbs = xeAbs;
+                            nadirYe = ye;
+                        }
                     }
+                    lastXeAbs = xeAbs;
                 }
 
-                if (rise != null && set != null && noon != null && nadir != null) {
+                if (hour >= 24 && rise != null && set != null) {
                     break;
                 }
 
@@ -308,8 +325,11 @@ public class SunTimes {
             return new SunTimes(
                     rise != null ? jd.atHour(rise).getDate() : null,
                     set != null ? jd.atHour(set).getDate() : null,
-                    noon != null ? jd.atHour(noon).getDate() : null,
-                    nadir != null ? jd.atHour(nadir).getDate() : null);
+                    jd.atHour(noon).getDate(),
+                    jd.atHour(nadir).getDate(),
+                    nadir == null || nadirYe > 0.0,
+                    noon == null || noonYe < 0.0
+                );
         }
 
         /**
@@ -334,6 +354,8 @@ public class SunTimes {
 
     /**
      * Sunrise time. {@code null} if the sun does not rise that day.
+     * <p>
+     * Always returns a sunrise time if {@link Parameters#fullCycle()} was set.
      */
     public Date getRise() {
         return rise != null ? new Date(rise.getTime()) : null;
@@ -341,41 +363,55 @@ public class SunTimes {
 
     /**
      * Sunset time. {@code null} if the sun does not set that day.
+     * <p>
+     * Always returns a sunset time if {@link Parameters#fullCycle()} was set.
      */
     public Date getSet() {
         return set != null ? new Date(set.getTime()) : null;
     }
 
     /**
-     * The time when the sun reaches its highest point. {@code null} if the sun never
-     * rises on that day.
+     * The time when the sun reaches its highest point within the next 24 hours.
+     * <p>
+     * Use {@link #isAlwaysDown()} to find out if the highest point is still below the
+     * twilight angle.
+     * <p>
+     * Note that {@link Parameters#fullCycle()} does not affect this result.
      */
     public Date getNoon() {
-        return noon != null ? new Date(noon.getTime()) : null;
+        return new Date(noon.getTime());
     }
 
     /**
-     * The time when the sun reaches its lowest point. {@code null} if the sun never sets
-     * on that day.
+     * The time when the sun reaches its lowest point within the next 24 hours.
+     * <p>
+     * Use {@link #isAlwaysUp()} to find out if the lowest point is still above the
+     * twilight angle.
+     * <p>
+     * Note that {@link Parameters#fullCycle()} does not affect this result.
      */
     public Date getNadir() {
-        return nadir != null ? new Date(nadir.getTime()) : null;
+        return new Date(nadir.getTime());
     }
 
     /**
      * {@code true} if the sun never rises/sets, but is always above the twilight angle
-     * that day. Always returns {@code false} if {@link Parameters#fullCycle()} is used.
+     * within the next 24 hours.
+     * <p>
+     * Note that {@link Parameters#fullCycle()} does not affect this result.
      */
     public boolean isAlwaysUp() {
-        return rise == null && set == null && noon != null;
+        return alwaysUp;
     }
 
     /**
      * {@code true} if the sun never rises/sets, but is always below the twilight angle
-     * that day. Always returns {@code false} if {@link Parameters#fullCycle()} is used.
+     * within the next 24 hours.
+     * <p>
+     * Note that {@link Parameters#fullCycle()} does not affect this result.
      */
     public boolean isAlwaysDown() {
-        return rise == null && set == null && nadir != null;
+        return alwaysDown;
     }
 
     @Override
@@ -385,8 +421,8 @@ public class SunTimes {
         sb.append(", set=").append(set);
         sb.append(", noon=").append(noon);
         sb.append(", nadir=").append(nadir);
-        sb.append(", alwaysUp=").append(isAlwaysUp());
-        sb.append(", alwaysDown=").append(isAlwaysDown());
+        sb.append(", alwaysUp=").append(alwaysUp);
+        sb.append(", alwaysDown=").append(alwaysDown);
         sb.append(']');
         return sb.toString();
     }

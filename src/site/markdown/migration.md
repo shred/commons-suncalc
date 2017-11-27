@@ -2,6 +2,11 @@
 
 This document will help you migrate your code to the latest _suncalc_ version.
 
+## Version 2.1
+
+* `SunTimes`'s `getNoon()` and `getNadir()` now always give a result, even if the sun stays below or above the twilight angle, respectively. To emulate the old behavior, use `isAlwaysUp()` and `isAlwaysDown()` (e.g. `Date noon = !sun.isAlwaysDown() ? sun.getNoon() : null`).
+* At `SunTimes` and `MoonTimes`, the methods `isAlwaysUp()`, `isAlwaysDown()`, `getNoon()` and `getNadir()` ignore the `fullCycle` option now, and always consider the next 24 hours only.
+
 ## Version 2.0
 
 > **NOTE:** Version 2.0 is a major rewrite. It uses different and (hopefully) more accurate formulae than the previous version. If you rely on reproducable results (e.g. in unit tests), be careful when upgrading. The results may differ up to several minutes between both versions.

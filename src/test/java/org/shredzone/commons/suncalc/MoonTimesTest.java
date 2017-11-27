@@ -47,7 +47,7 @@ public class MoonTimesTest {
         assertThat("rise", mt2.getRise(), DateMatcher.is("2017-07-14T05:45:33Z"));
         assertThat("set", mt2.getSet(), DateMatcher.is("2017-07-14T11:26:12Z"));
         assertThat("alwaysup", mt2.isAlwaysUp(), is(false));
-        assertThat("alwaysdown", mt2.isAlwaysDown(), is(false));
+        assertThat("alwaysdown", mt2.isAlwaysDown(), is(true));
 
         MoonTimes mt3 = MoonTimes.compute().on(2017, 7, 14).utc().at(ALERT).execute();
         assertThat("rise", mt3.getRise(), DateMatcher.is("2017-07-14T05:45:33Z"));
@@ -62,7 +62,7 @@ public class MoonTimesTest {
         MoonTimes mt5 = MoonTimes.compute().on(2017, 7, 18).utc().at(ALERT).fullCycle().execute();
         assertThat("rise", mt5.getRise(), DateMatcher.is("2017-07-27T11:59:07Z"));
         assertThat("set", mt5.getSet(), DateMatcher.is("2017-07-27T04:07:14Z"));
-        assertThat("alwaysup", mt5.isAlwaysUp(), is(false));
+        assertThat("alwaysup", mt5.isAlwaysUp(), is(true));
         assertThat("alwaysdown", mt5.isAlwaysDown(), is(false));
     }
 

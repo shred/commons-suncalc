@@ -33,12 +33,14 @@ public final class MoonTimes {
 
     private final Date rise;
     private final Date set;
-    private final double ye;
+    private final boolean alwaysUp;
+    private final boolean alwaysDown;
 
-    private MoonTimes(Date rise, Date set, double ye) {
+    private MoonTimes(Date rise, Date set, boolean alwaysUp, boolean alwaysDown) {
         this.rise = rise;
         this.set = set;
-        this.ye = ye;
+        this.alwaysUp = alwaysUp;
+        this.alwaysDown = alwaysDown;
     }
 
     /**
@@ -104,6 +106,8 @@ public final class MoonTimes {
             Double rise = null;
             Double set = null;
             double ye = 0.0;
+            boolean alwaysUp = false;
+            boolean alwaysDown = false;
 
             double y_minus = correctedMoonHeight(jd);
 
@@ -134,6 +138,11 @@ public final class MoonTimes {
                     }
                 }
 
+                if (hour == 23 && rise == null && set == null) {
+                    alwaysUp = ye >= 0.0;
+                    alwaysDown = ye < 0.0;
+                }
+
                 if (rise != null && set != null) {
                     break;
                 }
@@ -144,7 +153,8 @@ public final class MoonTimes {
             return new MoonTimes(
                     rise != null ? jd.atHour(rise).getDate() : null,
                     set != null ? jd.atHour(set).getDate() : null,
-                    ye);
+                    alwaysUp,
+                    alwaysDown);
         }
 
         /**
@@ -177,19 +187,23 @@ public final class MoonTimes {
     }
 
     /**
-     * {@code true} if the moon never rises/sets, but is always above the horizon that
-     * day. Always returns {@code false} if {@link Parameters#fullCycle()} is used.
+     * {@code true} if the moon never rises/sets, but is always above the horizon within
+     * the next 24 hours.
+     * <p>
+     * Note that {@link Parameters#fullCycle()} does not affect this result.
      */
     public boolean isAlwaysUp() {
-        return rise == null && set == null && ye > 0.0;
+        return alwaysUp;
     }
 
     /**
-     * {@code true} if the moon never rises/sets, but is always below the horizon that
-     * day. Always returns {@code false} if {@link Parameters#fullCycle()} is used.
+     * {@code true} if the moon never rises/sets, but is always below the horizon within
+     * the next 24 hours.
+     * <p>
+     * Note that {@link Parameters#fullCycle()} does not affect this result.
      */
     public boolean isAlwaysDown() {
-        return rise == null && set == null && ye <= 0.0;
+        return alwaysDown;
     }
 
     @Override
@@ -197,8 +211,8 @@ public final class MoonTimes {
         StringBuilder sb = new StringBuilder();
         sb.append("MoonTimes[rise=").append(rise);
         sb.append(", set=").append(set);
-        sb.append(", alwaysUp=").append(isAlwaysUp());
-        sb.append(", alwaysDown=").append(isAlwaysDown());
+        sb.append(", alwaysUp=").append(alwaysUp);
+        sb.append(", alwaysDown=").append(alwaysDown);
         sb.append(']');
         return sb.toString();
     }

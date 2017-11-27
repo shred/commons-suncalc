@@ -78,19 +78,19 @@ public class SunTimesTest {
     @Test
     public void testAlert() {
         SunTimes t1 = SunTimes.compute().at(ALERT).on(2017, 8, 10).utc().execute();
-        assertTimes(t1, null, null, "2017-08-10T16:12:47Z");
+        assertTimes(t1, null, null, "2017-08-10T16:12:47Z", true);
 
         SunTimes t2 = SunTimes.compute().at(ALERT).on(2017, 9, 24).utc().execute();
         assertTimes(t2, "2017-09-24T09:54:29Z", "2017-09-24T22:01:58Z", "2017-09-24T16:00:23Z");
 
         SunTimes t3 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc().execute();
-        assertTimes(t3, null, null, null);
+        assertTimes(t3, null, null, "2017-02-10T16:25:05Z", false);
 
         SunTimes t4 = SunTimes.compute().at(ALERT).on(2017, 8, 10).utc().fullCycle().execute();
-        assertTimes(t4, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-09-05T16:05:21Z");
+        assertTimes(t4, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-08-10T16:12:47Z", true);
 
         SunTimes t5 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc().fullCycle().execute();
-        assertTimes(t5, "2017-02-27T15:24:18Z", "2017-02-27T17:23:46Z", "2017-02-27T16:23:41Z");
+        assertTimes(t5, "2017-02-27T15:24:18Z", "2017-02-27T17:23:46Z", "2017-02-10T16:25:05Z", false);
 
         SunTimes t6 = SunTimes.compute().at(ALERT).on(2017, 9, 6).utc().oneDay().execute();
         assertTimes(t6, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-09-06T16:04:59Z");
@@ -158,6 +158,10 @@ public class SunTimesTest {
     }
 
     private void assertTimes(SunTimes t, String rise, String set, String noon) {
+        assertTimes(t, rise, set, noon, null);
+    }
+
+    private void assertTimes(SunTimes t, String rise, String set, String noon, Boolean alwaysUp) {
         if (rise != null) {
             assertThat("sunrise", t.getRise(), DateMatcher.is(rise));
         } else {
@@ -170,14 +174,15 @@ public class SunTimesTest {
             assertThat("sunset", t.getSet(), is(nullValue()));
         }
 
-        if (noon != null) {
-            assertThat("noon", t.getNoon(), DateMatcher.is(noon));
-        } else {
-            assertThat("noon", t.getNoon(), is(nullValue()));
-        }
+        assertThat("noon", t.getNoon(), DateMatcher.is(noon));
 
-        assertThat("always-down", t.isAlwaysDown(), is(rise == null && set == null && noon == null));
-        assertThat("always-up", t.isAlwaysUp(), is(rise == null && set == null && noon != null));
+        if (alwaysUp != null) {
+            assertThat("always-down", t.isAlwaysDown(), is(!alwaysUp));
+            assertThat("always-up", t.isAlwaysUp(), is(alwaysUp));
+        } else {
+            assertThat("always-down", t.isAlwaysDown(), is(false));
+            assertThat("always-up", t.isAlwaysUp(), is(false));
+        }
     }
 
 }
