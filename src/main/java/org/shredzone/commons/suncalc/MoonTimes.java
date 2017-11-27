@@ -105,7 +105,6 @@ public final class MoonTimes {
 
             Double rise = null;
             Double set = null;
-            double ye = 0.0;
             boolean alwaysUp = false;
             boolean alwaysDown = false;
 
@@ -117,7 +116,7 @@ public final class MoonTimes {
                 double y_plus = correctedMoonHeight(jd.atHour(hour + 1.0));
 
                 QuadraticInterpolation qi = new QuadraticInterpolation(y_minus, y_0, y_plus);
-                ye = qi.getYe();
+                double ye = qi.getYe();
 
                 if (qi.getNumberOfRoots() == 1) {
                     if (y_minus < 0.0) {
