@@ -108,7 +108,7 @@ public final class MoonTimes {
             double y_minus = correctedMoonHeight(jd);
 
             int maxHours = fullCycle ? 365 * 24 : 24;
-            for (int hour = 1; hour <= maxHours; hour += 2) {
+            for (int hour = 1; hour < maxHours; hour += 2) {
                 double y_0 = correctedMoonHeight(jd.atHour(hour));
                 double y_plus = correctedMoonHeight(jd.atHour(hour + 1.0));
 
@@ -117,13 +117,21 @@ public final class MoonTimes {
 
                 if (qi.getNumberOfRoots() == 1) {
                     if (y_minus < 0.0) {
-                        rise = qi.getRoot1() + hour;
+                        if (rise == null) {
+                            rise = qi.getRoot1() + hour;
+                        }
                     } else {
-                        set = qi.getRoot1() + hour;
+                        if (set == null) {
+                            set = qi.getRoot1() + hour;
+                        }
                     }
                 } else if (qi.getNumberOfRoots() == 2) {
-                    rise = hour + (ye < 0.0 ? qi.getRoot2() : qi.getRoot1());
-                    set = hour + (ye < 0.0 ? qi.getRoot1() : qi.getRoot2());
+                    if (rise == null) {
+                        rise = hour + (ye < 0.0 ? qi.getRoot2() : qi.getRoot1());
+                    }
+                    if (set == null) {
+                        set = hour + (ye < 0.0 ? qi.getRoot1() : qi.getRoot2());
+                    }
                 }
 
                 if (rise != null && set != null) {

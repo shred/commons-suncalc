@@ -17,9 +17,11 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.shredzone.commons.suncalc.Locations.*;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -110,6 +112,49 @@ public class SunTimesTest {
     public void testSingapore() {
         SunTimes t1 = SunTimes.compute().at(SINGAPORE).on(2017, 8, 10).utc().execute();
         assertTimes(t1, "2017-08-10T23:05:06Z", "2017-08-10T11:14:56Z", "2017-08-10T05:08:44Z");
+    }
+
+    @Test
+    public void testSequence() {
+        long acceptableError = 62 * 1000L;
+
+        Date riseBefore = createDate(2017, 11, 25, 7, 4);
+        Date riseAfter = createDate(2017, 11, 26, 7, 6);
+        Date setBefore = createDate(2017, 11, 25, 15, 33);
+        Date setAfter = createDate(2017, 11, 26, 15, 32);
+
+        for (int hour = 0; hour < 24; hour++) {
+            for (int minute = 0; minute < 60; minute++) {
+                SunTimes times = SunTimes.compute()
+                            .at(COLOGNE)
+                            .on(2017, 11, 25, hour, minute, 0).utc()
+                            .fullCycle()
+                            .execute();
+
+                if (hour < 7 || (hour == 7 && minute <= 4)) {
+                    long diff = Math.abs(times.getRise().getTime() - riseBefore.getTime());
+                    assertThat("rise @" + hour + ":" + minute, diff, is(lessThan(acceptableError)));
+                } else {
+                    long diff = Math.abs(times.getRise().getTime() - riseAfter.getTime());
+                    assertThat("rise @" + hour + ":" + minute, diff, is(lessThan(acceptableError)));
+                }
+
+                if (hour < 15 || (hour == 15 && minute <= 33)) {
+                    long diff = Math.abs(times.getSet().getTime() - setBefore.getTime());
+                    assertThat("set @" + hour + ":" + minute, diff, is(lessThan(acceptableError)));
+                } else {
+                    long diff = Math.abs(times.getSet().getTime() - setAfter.getTime());
+                    assertThat("set @" + hour + ":" + minute, diff, is(lessThan(acceptableError)));
+                }
+            }
+        }
+    }
+
+    private Date createDate(int year, int month, int day, int hour, int minute) {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        cal.clear();
+        cal.set(year, month - 1, day, hour, minute, 0);
+        return cal.getTime();
     }
 
     private void assertTimes(SunTimes t, String rise, String set, String noon) {

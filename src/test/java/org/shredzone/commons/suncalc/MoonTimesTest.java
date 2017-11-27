@@ -13,9 +13,13 @@
  */
 package org.shredzone.commons.suncalc;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.shredzone.commons.suncalc.Locations.*;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import org.junit.Test;
 
@@ -85,6 +89,49 @@ public class MoonTimesTest {
         MoonTimes mt = MoonTimes.compute().on(2017, 7, 13).utc().at(SINGAPORE).execute();
         assertThat("rise", mt.getRise(), DateMatcher.is("2017-07-13T14:35:11Z"));
         assertThat("set", mt.getSet(), DateMatcher.is("2017-07-13T02:08:54Z"));
+    }
+
+    @Test
+    public void testSequence() {
+        long acceptableError = 60 * 1000L;
+
+        Date riseBefore = createDate(2017, 11, 25, 12, 0);
+        Date riseAfter = createDate(2017, 11, 26, 12, 29);
+        Date setBefore = createDate(2017, 11, 25, 21, 49);
+        Date setAfter = createDate(2017, 11, 26, 22, 55);
+
+        for (int hour = 0; hour < 24; hour++) {
+            for (int minute = 0; minute < 60; minute++) {
+                MoonTimes times = MoonTimes.compute()
+                            .at(COLOGNE)
+                            .on(2017, 11, 25, hour, minute, 0).utc()
+                            .fullCycle()
+                            .execute();
+
+                if (hour < 12 || (hour == 12 && minute == 0)) {
+                    long diff = Math.abs(times.getRise().getTime() - riseBefore.getTime());
+                    assertThat("rise @" + hour + ":" + minute, diff, is(lessThan(acceptableError)));
+                } else {
+                    long diff = Math.abs(times.getRise().getTime() - riseAfter.getTime());
+                    assertThat("rise @" + hour + ":" + minute, diff, is(lessThan(acceptableError)));
+                }
+
+                if (hour < 21 || (hour == 21 && minute <= 49)) {
+                    long diff = Math.abs(times.getSet().getTime() - setBefore.getTime());
+                    assertThat("set @" + hour + ":" + minute, diff, is(lessThan(acceptableError)));
+                } else {
+                    long diff = Math.abs(times.getSet().getTime() - setAfter.getTime());
+                    assertThat("set @" + hour + ":" + minute, diff, is(lessThan(acceptableError)));
+                }
+            }
+        }
+    }
+
+    private Date createDate(int year, int month, int day, int hour, int minute) {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        cal.clear();
+        cal.set(year, month - 1, day, hour, minute, 0);
+        return cal.getTime();
     }
 
 }
