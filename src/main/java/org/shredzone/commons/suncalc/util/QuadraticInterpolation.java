@@ -25,6 +25,7 @@ public class QuadraticInterpolation {
     private final double root1;
     private final double root2;
     private final int nRoot;
+    private final boolean maximum;
 
     /**
      * Creates a new quadratic equation.
@@ -43,6 +44,7 @@ public class QuadraticInterpolation {
 
         xe = -b / (2.0 * a);
         ye = (a * xe + b) * xe + c;
+        maximum = a < 0.0;
         double dis = b * b - 4.0 * a * c;
 
         int rootCount = 0;
@@ -110,6 +112,16 @@ public class QuadraticInterpolation {
      */
     public int getNumberOfRoots() {
         return nRoot;
+    }
+
+    /**
+     * Returns whether the extremum is a minimum or a maximum.
+     *
+     * @return {@code true}: Extremum at xe is a maximum. {@code false}: Extremum at xe is
+     *         a minimum.
+     */
+    public boolean isMaximum() {
+        return maximum;
     }
 
 }

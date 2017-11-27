@@ -26,7 +26,7 @@ public class QuadraticInterpolationTest {
     private static final double ERROR = 0.001;
 
     @Test
-    public void testTwoRoots() {
+    public void testTwoRootsAndMinimum() {
         QuadraticInterpolation qi = new QuadraticInterpolation(1.0, -1.0, 1.0);
 
         assertThat(qi.getNumberOfRoots(), is(2));
@@ -34,6 +34,19 @@ public class QuadraticInterpolationTest {
         assertThat(qi.getRoot2(), is(closeTo( 0.707, ERROR)));
         assertThat(qi.getXe(), is(closeTo( 0.0, ERROR)));
         assertThat(qi.getYe(), is(closeTo(-1.0, ERROR)));
+        assertThat(qi.isMaximum(), is(false));
+    }
+
+    @Test
+    public void testTwoRootsAndMaximum() {
+        QuadraticInterpolation qi = new QuadraticInterpolation(-1.0, 1.0, -1.0);
+
+        assertThat(qi.getNumberOfRoots(), is(2));
+        assertThat(qi.getRoot1(), is(closeTo(-0.707, ERROR)));
+        assertThat(qi.getRoot2(), is(closeTo( 0.707, ERROR)));
+        assertThat(qi.getXe(), is(closeTo(0.0, ERROR)));
+        assertThat(qi.getYe(), is(closeTo(1.0, ERROR)));
+        assertThat(qi.isMaximum(), is(true));
     }
 
     @Test
@@ -44,6 +57,7 @@ public class QuadraticInterpolationTest {
         assertThat(qi.getRoot1(), is(closeTo( 0.0, ERROR)));
         assertThat(qi.getXe(), is(closeTo( 1.5, ERROR)));
         assertThat(qi.getYe(), is(closeTo(-1.125, ERROR)));
+        assertThat(qi.isMaximum(), is(false));
     }
 
     @Test
