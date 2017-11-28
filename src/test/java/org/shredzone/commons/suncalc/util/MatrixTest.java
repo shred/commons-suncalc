@@ -14,9 +14,9 @@
 package org.shredzone.commons.suncalc.util;
 
 import static java.lang.Math.PI;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import org.assertj.core.data.Offset;
 import org.junit.Test;
 
 /**
@@ -24,7 +24,7 @@ import org.junit.Test;
  */
 public class MatrixTest {
 
-    private static final double ERROR = 0.001;
+    private static final Offset<Double> ERROR = Offset.offset(0.001);
     private static final double PI_HALF = PI / 2.0;
 
     @Test
@@ -143,9 +143,9 @@ public class MatrixTest {
         Matrix mx = Matrix.rotateX(PI_HALF);
         Vector vc = new Vector(5.0, 8.0, -3.0);
         Vector result = mx.multiply(vc);
-        assertThat(result.getX(), is(closeTo( 5.0, ERROR)));
-        assertThat(result.getY(), is(closeTo(-3.0, ERROR)));
-        assertThat(result.getZ(), is(closeTo(-8.0, ERROR)));
+        assertThat(result.getX()).isCloseTo( 5.0, ERROR);
+        assertThat(result.getY()).isCloseTo(-3.0, ERROR);
+        assertThat(result.getZ()).isCloseTo(-8.0, ERROR);
     }
 
     @Test
@@ -154,12 +154,12 @@ public class MatrixTest {
         Matrix mx2 = Matrix.rotateX(PI_HALF);
         Matrix mx3 = Matrix.identity();
 
-        assertThat(mx1.equals(mx2), is(false));
-        assertThat(mx1.equals(mx3), is(true));
-        assertThat(mx2.equals(mx3), is(false));
-        assertThat(mx3.equals(mx1), is(true));
-        assertThat(mx1.equals(null), is(false));
-        assertThat(mx1.equals(new Object()), is(false));
+        assertThat(mx1.equals(mx2)).isFalse();
+        assertThat(mx1.equals(mx3)).isTrue();
+        assertThat(mx2.equals(mx3)).isFalse();
+        assertThat(mx3.equals(mx1)).isTrue();
+        assertThat(mx1.equals(null)).isFalse();
+        assertThat(mx1.equals(new Object())).isFalse();
     }
 
     @Test
@@ -168,26 +168,27 @@ public class MatrixTest {
         int mx2 = Matrix.rotateX(PI_HALF).hashCode();
         int mx3 = Matrix.identity().hashCode();
 
-        assertThat(mx1, not(equalTo(0)));
-        assertThat(mx2, not(equalTo(0)));
-        assertThat(mx3, not(equalTo(0)));
-        assertThat(mx1, not(equalTo(mx2)));
-        assertThat(mx1, is(equalTo(mx3)));
+        assertThat(mx1).isNotEqualTo(0);
+        assertThat(mx2).isNotEqualTo(0);
+        assertThat(mx3).isNotEqualTo(0);
+        assertThat(mx1).isNotEqualTo(mx2);
+        assertThat(mx1).isEqualTo(mx3);
     }
 
     @Test
     public void testToString() {
         Matrix mx = Matrix.identity();
 
-        assertThat(mx.toString(), is("[[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]"));
+        assertThat(mx.toString()).isEqualTo("[[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]");
     }
 
     private void assertValues(Matrix mx, double... values) {
         for (int ix = 0; ix < values.length; ix++) {
             int r = ix / 3;
             int c = ix % 3;
-            assertThat("r=" + r +", c=" + c,
-                    mx.get(r, c), is(closeTo(values[ix], ERROR)));
+            assertThat(mx.get(r, c))
+                .as("r=%d, c=%d", r, c)
+                .isCloseTo(values[ix], ERROR);
         }
     }
 

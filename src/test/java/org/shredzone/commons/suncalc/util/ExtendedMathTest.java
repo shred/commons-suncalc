@@ -13,10 +13,10 @@
  */
 package org.shredzone.commons.suncalc.util;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
+import org.assertj.core.data.Offset;
 import org.junit.Test;
 
 /**
@@ -24,31 +24,31 @@ import org.junit.Test;
  */
 public class ExtendedMathTest {
 
-    private static final double ERROR = 0.001;
+    private static final Offset<Double> ERROR = Offset.offset(0.001);
 
     @Test
     public void testFrac() {
-        assertThat(frac(   1.0 ), is(closeTo( 0.0 , ERROR)));
-        assertThat(frac(   0.5 ), is(closeTo( 0.5 , ERROR)));
-        assertThat(frac( 123.25), is(closeTo( 0.25, ERROR)));
-        assertThat(frac(   0.0 ), is(closeTo( 0.0 , ERROR)));
-        assertThat(frac(  -1.0 ), is(closeTo( 0.0 , ERROR)));
-        assertThat(frac(  -0.5 ), is(closeTo(-0.5 , ERROR)));
-        assertThat(frac(-123.25), is(closeTo(-0.25, ERROR)));
+        assertThat(frac(   1.0 )).isCloseTo( 0.0 , ERROR);
+        assertThat(frac(   0.5 )).isCloseTo( 0.5 , ERROR);
+        assertThat(frac( 123.25)).isCloseTo( 0.25, ERROR);
+        assertThat(frac(   0.0 )).isCloseTo( 0.0 , ERROR);
+        assertThat(frac(  -1.0 )).isCloseTo( 0.0 , ERROR);
+        assertThat(frac(  -0.5 )).isCloseTo(-0.5 , ERROR);
+        assertThat(frac(-123.25)).isCloseTo(-0.25, ERROR);
     }
 
     @Test
     public void testIsZero() {
-        assertThat(isZero( 1.0   ), is(false));
-        assertThat(isZero( 0.0001), is(false));
-        assertThat(isZero( 0.0   ), is(true));
-        assertThat(isZero(-0.0   ), is(true));
-        assertThat(isZero(-0.0001), is(false));
-        assertThat(isZero(-1.0   ), is(false));
-        assertThat(isZero( Double.NaN), is(false));
-        assertThat(isZero(-Double.NaN), is(false));
-        assertThat(isZero( Double.POSITIVE_INFINITY), is(false));
-        assertThat(isZero( Double.NEGATIVE_INFINITY), is(false));
+        assertThat(isZero( 1.0   )).isFalse();
+        assertThat(isZero( 0.0001)).isFalse();
+        assertThat(isZero( 0.0   )).isTrue();
+        assertThat(isZero(-0.0   )).isTrue();
+        assertThat(isZero(-0.0001)).isFalse();
+        assertThat(isZero(-1.0   )).isFalse();
+        assertThat(isZero( Double.NaN)).isFalse();
+        assertThat(isZero(-Double.NaN)).isFalse();
+        assertThat(isZero( Double.POSITIVE_INFINITY)).isFalse();
+        assertThat(isZero( Double.NEGATIVE_INFINITY)).isFalse();
     }
 
 }

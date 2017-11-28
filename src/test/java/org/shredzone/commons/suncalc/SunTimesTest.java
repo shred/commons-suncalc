@@ -13,8 +13,7 @@
  */
 package org.shredzone.commons.suncalc;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.shredzone.commons.suncalc.Locations.*;
 
 import java.util.Calendar;
@@ -23,7 +22,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.hamcrest.Matcher;
+import org.assertj.core.api.AbstractDateAssert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.shredzone.commons.suncalc.SunTimes.Twilight;
 
@@ -32,47 +32,52 @@ import org.shredzone.commons.suncalc.SunTimes.Twilight;
  */
 public class SunTimesTest {
 
+    @BeforeClass
+    public static void init() {
+        AbstractDateAssert.registerCustomDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
+    }
+
     @Test
     public void testCologne() {
-        Map<Twilight, Matcher<Date>> riseTimes = new EnumMap<>(Twilight.class);
-        riseTimes.put(Twilight.ASTRONOMICAL, DateMatcher.is("2017-08-10T01:44:18Z"));
-        riseTimes.put(Twilight.NAUTICAL,     DateMatcher.is("2017-08-10T02:44:33Z"));
-        riseTimes.put(Twilight.CIVIL,        DateMatcher.is("2017-08-10T03:34:01Z"));
-        riseTimes.put(Twilight.BLUE_HOUR,    DateMatcher.is("2017-08-10T03:48:59Z"));
-        riseTimes.put(Twilight.VISUAL,       DateMatcher.is("2017-08-10T04:11:36Z"));
-        riseTimes.put(Twilight.VISUAL_LOWER, DateMatcher.is("2017-08-10T04:15:17Z"));
-        riseTimes.put(Twilight.HORIZON,      DateMatcher.is("2017-08-10T04:17:27Z"));
-        riseTimes.put(Twilight.GOLDEN_HOUR,  DateMatcher.is("2017-08-10T04:58:31Z"));
+        Map<Twilight, String> riseTimes = new EnumMap<>(Twilight.class);
+        riseTimes.put(Twilight.ASTRONOMICAL, "2017-08-10T01:44:18Z");
+        riseTimes.put(Twilight.NAUTICAL,     "2017-08-10T02:44:33Z");
+        riseTimes.put(Twilight.CIVIL,        "2017-08-10T03:34:01Z");
+        riseTimes.put(Twilight.BLUE_HOUR,    "2017-08-10T03:48:59Z");
+        riseTimes.put(Twilight.VISUAL,       "2017-08-10T04:11:36Z");
+        riseTimes.put(Twilight.VISUAL_LOWER, "2017-08-10T04:15:17Z");
+        riseTimes.put(Twilight.HORIZON,      "2017-08-10T04:17:27Z");
+        riseTimes.put(Twilight.GOLDEN_HOUR,  "2017-08-10T04:58:31Z");
 
-        Map<Twilight, Matcher<Date>> setTimes = new EnumMap<>(Twilight.class);
-        setTimes.put(Twilight.GOLDEN_HOUR,   DateMatcher.is("2017-08-10T18:15:34Z"));
-        setTimes.put(Twilight.HORIZON,       DateMatcher.is("2017-08-10T18:56:26Z"));
-        setTimes.put(Twilight.VISUAL_LOWER,  DateMatcher.is("2017-08-10T18:58:37Z"));
-        setTimes.put(Twilight.VISUAL,        DateMatcher.is("2017-08-10T19:02:20Z"));
-        setTimes.put(Twilight.BLUE_HOUR,     DateMatcher.is("2017-08-10T19:25:16Z"));
-        setTimes.put(Twilight.CIVIL,         DateMatcher.is("2017-08-10T19:40:13Z"));
-        setTimes.put(Twilight.NAUTICAL,      DateMatcher.is("2017-08-10T20:28:24Z"));
-        setTimes.put(Twilight.ASTRONOMICAL,  DateMatcher.is("2017-08-10T21:28:43Z"));
+        Map<Twilight, String> setTimes = new EnumMap<>(Twilight.class);
+        setTimes.put(Twilight.GOLDEN_HOUR,   "2017-08-10T18:15:34Z");
+        setTimes.put(Twilight.HORIZON,       "2017-08-10T18:56:26Z");
+        setTimes.put(Twilight.VISUAL_LOWER,  "2017-08-10T18:58:37Z");
+        setTimes.put(Twilight.VISUAL,        "2017-08-10T19:02:20Z");
+        setTimes.put(Twilight.BLUE_HOUR,     "2017-08-10T19:25:16Z");
+        setTimes.put(Twilight.CIVIL,         "2017-08-10T19:40:13Z");
+        setTimes.put(Twilight.NAUTICAL,      "2017-08-10T20:28:24Z");
+        setTimes.put(Twilight.ASTRONOMICAL,  "2017-08-10T21:28:43Z");
 
         for (Twilight angle : Twilight.values()) {
             SunTimes times = SunTimes.compute().at(COLOGNE).on(2017, 8, 10).utc()
                             .twilight(angle).execute();
-            assertThat(angle.name() + "-rise", times.getRise(), riseTimes.get(angle));
-            assertThat(angle.name() + "-set", times.getSet(), setTimes.get(angle));
-            assertThat("noon", times.getNoon(), DateMatcher.is("2017-08-10T11:37:57Z"));
-            assertThat("nadir", times.getNadir(), DateMatcher.is("2017-08-10T23:37:59Z"));
-            assertThat("always-down", times.isAlwaysDown(), is(false));
-            assertThat("always-up", times.isAlwaysUp(), is(false));
+            assertThat(times.getRise()).as("%s-rise", angle.name()).isEqualTo(riseTimes.get(angle));
+            assertThat(times.getSet()).as("%s-set", angle.name()).isEqualTo(setTimes.get(angle));
+            assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:57Z");
+            assertThat(times.getNadir()).as("nadir").isEqualTo("2017-08-10T23:37:59Z");
+            assertThat(times.isAlwaysDown()).as("always-down").isFalse();
+            assertThat(times.isAlwaysUp()).as("always-up").isFalse();
         }
 
         SunTimes times = SunTimes.compute().at(COLOGNE).on(2017, 8, 10).utc()
                         .twilight(-4.0).execute();
-        assertThat("rise", times.getRise(), DateMatcher.is("2017-08-10T03:48:59Z"));
-        assertThat("set", times.getSet(), DateMatcher.is("2017-08-10T19:25:16Z"));
-        assertThat("noon", times.getNoon(), DateMatcher.is("2017-08-10T11:37:57Z"));
-        assertThat("nadir", times.getNadir(), DateMatcher.is("2017-08-10T23:37:59Z"));
-        assertThat("always-down", times.isAlwaysDown(), is(false));
-        assertThat("always-up", times.isAlwaysUp(), is(false));
+        assertThat(times.getRise()).as("rise").isEqualTo("2017-08-10T03:48:59Z");
+        assertThat(times.getSet()).as("set").isEqualTo("2017-08-10T19:25:16Z");
+        assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:57Z");
+        assertThat(times.getNadir()).as("nadir").isEqualTo("2017-08-10T23:37:59Z");
+        assertThat(times.isAlwaysDown()).as("always-down").isFalse();
+        assertThat(times.isAlwaysUp()).as("always-up").isFalse();
     }
 
     @Test
@@ -133,18 +138,18 @@ public class SunTimesTest {
 
                 if (hour < 7 || (hour == 7 && minute <= 4)) {
                     long diff = Math.abs(times.getRise().getTime() - riseBefore.getTime());
-                    assertThat("rise @" + hour + ":" + minute, diff, is(lessThan(acceptableError)));
+                    assertThat(diff).as("rise @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 } else {
                     long diff = Math.abs(times.getRise().getTime() - riseAfter.getTime());
-                    assertThat("rise @" + hour + ":" + minute, diff, is(lessThan(acceptableError)));
+                    assertThat(diff).as("rise @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 }
 
                 if (hour < 15 || (hour == 15 && minute <= 33)) {
                     long diff = Math.abs(times.getSet().getTime() - setBefore.getTime());
-                    assertThat("set @" + hour + ":" + minute, diff, is(lessThan(acceptableError)));
+                    assertThat(diff).as("set @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 } else {
                     long diff = Math.abs(times.getSet().getTime() - setAfter.getTime());
-                    assertThat("set @" + hour + ":" + minute, diff, is(lessThan(acceptableError)));
+                    assertThat(diff).as("set @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 }
             }
         }
@@ -163,25 +168,25 @@ public class SunTimesTest {
 
     private void assertTimes(SunTimes t, String rise, String set, String noon, Boolean alwaysUp) {
         if (rise != null) {
-            assertThat("sunrise", t.getRise(), DateMatcher.is(rise));
+            assertThat(t.getRise()).as("sunrise").isEqualTo(rise);
         } else {
-            assertThat("sunrise", t.getRise(), is(nullValue()));
+            assertThat(t.getRise()).as("sunrise").isNull();
         }
 
         if (set != null) {
-            assertThat("sunset", t.getSet(), DateMatcher.is(set));
+            assertThat(t.getSet()).as("sunset").isEqualTo(set);
         } else {
-            assertThat("sunset", t.getSet(), is(nullValue()));
+            assertThat(t.getSet()).as("sunset").isNull();
         }
 
-        assertThat("noon", t.getNoon(), DateMatcher.is(noon));
+        assertThat(t.getNoon()).as("noon").isEqualTo(noon);
 
         if (alwaysUp != null) {
-            assertThat("always-down", t.isAlwaysDown(), is(!alwaysUp));
-            assertThat("always-up", t.isAlwaysUp(), is(alwaysUp));
+            assertThat(t.isAlwaysDown()).as("always-down").isNotEqualTo(alwaysUp);
+            assertThat(t.isAlwaysUp()).as("always-up").isEqualTo(alwaysUp);
         } else {
-            assertThat("always-down", t.isAlwaysDown(), is(false));
-            assertThat("always-up", t.isAlwaysUp(), is(false));
+            assertThat(t.isAlwaysDown()).as("always-down").isFalse();
+            assertThat(t.isAlwaysUp()).as("always-up").isFalse();
         }
     }
 
