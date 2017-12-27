@@ -149,6 +149,10 @@ public class BaseBuilderTest {
         assertDate(p, 2012, 3, 11, 0, 0, 0, TimeZone.getDefault());
         assertThat(r).isSameAs(p);
 
+        r = p.on(2012, 1, 24, 1, 33, 12).plusDays(100);
+        assertDate(p, 2012, 5, 3, 1, 33, 12, TimeZone.getDefault());
+        assertThat(r).isSameAs(p);
+
         r = p.on(2016, 4, 10, 14, 11, 59);
         assertDate(p, 2016, 4, 10, 14, 11, 59, TimeZone.getDefault());
         assertThat(r).isSameAs(p);
@@ -187,6 +191,17 @@ public class BaseBuilderTest {
                 NOW.get(Calendar.DAY_OF_MONTH),
                 0, 0, 0,
                 NOW.getTimeZone());
+        assertThat(r).isSameAs(p);
+
+        r = p.on(2000, 2, 2, 3, 4, 5).tomorrow();
+        Calendar tomorrow = (Calendar) NOW.clone();
+        tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+        assertDate(p,
+                tomorrow.get(Calendar.YEAR),
+                tomorrow.get(Calendar.MONTH) + 1,
+                tomorrow.get(Calendar.DAY_OF_MONTH),
+                0, 0, 0,
+                tomorrow.getTimeZone());
         assertThat(r).isSameAs(p);
 
         r = p.on(2000, 3, 3, 4, 5, 6).on(NOW);
@@ -236,7 +251,7 @@ public class BaseBuilderTest {
     private static class TestBuilder extends BaseBuilder<TestBuilder> {
         @Override
         protected Calendar createCalendar() {
-            return NOW;
+            return (Calendar) NOW.clone();
         }
     }
 

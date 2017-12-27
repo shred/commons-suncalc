@@ -68,9 +68,22 @@ public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T> {
     }
 
     @Override
+    public T plusDays(int days) {
+        cal.add(Calendar.DAY_OF_MONTH, days);
+        return (T) this;
+    }
+
+    @Override
     public T today() {
         now();
         midnight();
+        return (T) this;
+    }
+
+    @Override
+    public T tomorrow() {
+        today();
+        plusDays(1);
         return (T) this;
     }
 

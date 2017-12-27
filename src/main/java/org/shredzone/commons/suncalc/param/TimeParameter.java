@@ -85,6 +85,16 @@ public interface TimeParameter<T> {
     T on(Date date);
 
     /**
+     * Adds a number of days to the current date.
+     *
+     * @param days
+     *            Number of days to add
+     * @return itself
+     * @since 2.2
+     */
+    T plusDays(int days);
+
+    /**
      * Sets today, midnight.
      * <p>
      * It is the same as <code>now().midnight()</code>.
@@ -92,6 +102,16 @@ public interface TimeParameter<T> {
      * @return itself
      */
     T today();
+
+    /**
+     * Sets tomorrow, midnight.
+     * <p>
+     * It is the same as <code>now().midnight().plusDays(1)</code>.
+     *
+     * @return itself
+     * @since 2.2
+     */
+    T tomorrow();
 
     /**
      * Sets the current date and time. This is the default.
