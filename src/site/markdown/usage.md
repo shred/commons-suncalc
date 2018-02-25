@@ -79,9 +79,36 @@ SunPosition.compute().at(COLOGNE);
 
 All available setters are listed in the [JavaDocs](./apidocs/org/shredzone/commons/suncalc/param/LocationParameter.html). If no location-based parameter is given, 0° is used for both latitude and longitude, which is not very useful in most cases. However, these parameters are not mandatory.
 
-### Special Parameters
+### Time Range
 
-Some classes offer further parameters. Please see the JavaDocs of their `Parameters` classes:
+[SunTimes](./apidocs/org/shredzone/commons/suncalc/SunTimes.Parameters.html) and [MoonTimes](./apidocs/org/shredzone/commons/suncalc/MoonTimes.Parameters.html) only consider the next 24 hours. If the sun or moon does not rise or set within that time span, the appropriate getters return `null`. You can check if the sun or moon is always above or below the horizon, by checking `isAlwaysUp()` and `isAlwaysDown()`.
 
-* [SunTimes](./apidocs/org/shredzone/commons/suncalc/SunTimes.Parameters.html)
-* [MoonTimes](./apidocs/org/shredzone/commons/suncalc/MoonTimes.Parameters.html)
+If you need both the rise and set time, you can set the `fullCycle()` parameter. The calculation then runs until both times are found, even if several days in the future. However, depending on the date and geolocation, this calculation could take considerably more time and computing power.
+
+Note that `fullCycle()` only affects the result of `getRise()` and `getSet()`. The methods `isAlwaysUp()`, `isAlwaysDown()`, `getNoon()` and `getNadir()` will still only consider the next 24 hours.
+
+### Twilight
+
+By default, [SunTimes](./apidocs/org/shredzone/commons/suncalc/SunTimes.Parameters.html) calculates the time of the visual sunrise and sunset. This means that `getRise()` returns the instant when the sun just starts to rise above the horizon, and `getSet()` returns the instant when the sun just disappeared from the horizon. [Atmospheric refraction](https://en.wikipedia.org/wiki/Atmospheric_refraction) is taken into account.
+
+There are other interesting [twilight](https://en.wikipedia.org/wiki/Twilight) angles available. You can set them via the `twilight()` parameter, by using one of the [SunTimes.Twilight](./apidocs/org/shredzone/commons/suncalc/SunTimes.Twilight.html) constants:
+
+| Constant       | Description | Angle |
+| -------------- | --- | ---:|
+| `ASTRONOMICAL` | [Astronomical twilight](https://en.wikipedia.org/wiki/Twilight#Astronomical_twilight) | -18° |
+| `NAUTICAL`     | [Nautical twilight](https://en.wikipedia.org/wiki/Twilight#Nautical_twilight) | -12° |
+| `CIVIL`        | [Civil twilight](https://en.wikipedia.org/wiki/Twilight#Civil_twilight) | -6° |
+| `HORIZON`      | The true moment when the center of the sun crosses the horizon. | 0° |
+| `GOLDEN_HOUR`  | [Golden Hour](https://en.wikipedia.org/wiki/Golden_hour_%28photography%29) | 6° |
+| `BLUE_HOUR`    | [Blue Hour](https://en.wikipedia.org/wiki/Blue_hour) | -4° |
+| `VISUAL`       | **Default:** The moment when the visual upper edge of the sun crosses the horizon. | |
+| `VISUAL_LOWER` | The moment when the visual lower edge of the sun crosses the horizon. | |
+
+Alternatively you can also pass any other angle (in degrees) to `twilight()`.
+
+Example:
+```java
+SunTimes.compute().twilight(SunTimes.Twilight.GOLDEN_HOUR);
+```
+
+Note that only `VISUAL` and `VISUAL_LOWER` compensate atmospheric refraction. All other twilights do not, and refer to the center of the sun.
