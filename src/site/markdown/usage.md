@@ -107,6 +107,7 @@ There are other interesting [twilight](https://en.wikipedia.org/wiki/Twilight) a
 Alternatively you can also pass any other angle (in degrees) to `twilight()`.
 
 Example:
+
 ```java
 SunTimes.compute().twilight(SunTimes.Twilight.GOLDEN_HOUR);
 ```
