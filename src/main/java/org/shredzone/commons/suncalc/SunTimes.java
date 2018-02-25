@@ -325,8 +325,8 @@ public class SunTimes {
             return new SunTimes(
                     rise != null ? jd.atHour(rise).getDate() : null,
                     set != null ? jd.atHour(set).getDate() : null,
-                    jd.atHour(noon).getDate(),
-                    jd.atHour(nadir).getDate(),
+                    noon != null ? jd.atHour(noon).getDate() : null,
+                    nadir != null ? jd.atHour(nadir).getDate() : null,
                     nadir == null || nadirYe > 0.0,
                     noon == null || noonYe < 0.0
                 );

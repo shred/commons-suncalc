@@ -95,10 +95,12 @@ public class Vector {
             r *          sin(θ)
         );
 
-        result.φ = φ;
-        result.θ = θ;
-        result.r = r;
-        result.hasPolar = true;
+        synchronized (result) {
+            result.φ = φ;
+            result.θ = θ;
+            result.r = r;
+            result.hasPolar = true;
+        }
 
         return result;
     }
