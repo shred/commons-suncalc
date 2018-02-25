@@ -2,6 +2,10 @@
 
 This document will help you migrate your code to the latest _suncalc_ version.
 
+## Version 2.2
+
+* Classes and methods now have [JSR 305](https://jcp.org/en/jsr/detail?id=305) annotations for null references, thread safety and immutability. If you're using tools like Spotbugs, or null-safe languages like Kotlin, you may get errors now if you dereference a nullable result without checking.
+
 ## Version 2.1
 
 * `SunTimes`'s `getNoon()` and `getNadir()` now always give a result, even if the sun stays below or above the twilight angle, respectively. To emulate the old behavior, use `isAlwaysUp()` and `isAlwaysDown()` (e.g. `Date noon = !sun.isAlwaysDown() ? sun.getNoon() : null`).
