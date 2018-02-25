@@ -114,19 +114,25 @@ public class MoonTimesTest {
                             .fullCycle()
                             .execute();
 
+                Date rise = times.getRise();
+                Date set = times.getSet();
+
+                assertThat(rise).isNotNull();
+                assertThat(set).isNotNull();
+
                 if (hour < 12 || (hour == 12 && minute == 0)) {
-                    long diff = Math.abs(times.getRise().getTime() - riseBefore.getTime());
+                    long diff = Math.abs(rise.getTime() - riseBefore.getTime());
                     assertThat(diff).as("rise @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 } else {
-                    long diff = Math.abs(times.getRise().getTime() - riseAfter.getTime());
+                    long diff = Math.abs(rise.getTime() - riseAfter.getTime());
                     assertThat(diff).as("rise @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 }
 
                 if (hour < 21 || (hour == 21 && minute <= 49)) {
-                    long diff = Math.abs(times.getSet().getTime() - setBefore.getTime());
+                    long diff = Math.abs(set.getTime() - setBefore.getTime());
                     assertThat(diff).as("set @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 } else {
-                    long diff = Math.abs(times.getSet().getTime() - setAfter.getTime());
+                    long diff = Math.abs(set.getTime() - setAfter.getTime());
                     assertThat(diff).as("set @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 }
             }

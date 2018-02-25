@@ -16,20 +16,23 @@ package org.shredzone.commons.suncalc.util;
 import static java.lang.Math.*;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * A three dimensional vector.
  * <p>
  * Objects are is immutable and threadsafe.
  */
+@ParametersAreNonnullByDefault
+@Immutable
 public class Vector {
 
     private final double x;
     private final double y;
     private final double z;
-    private boolean hasPolar = false;
-    private double φ;
-    private double θ;
-    private double r;
+    private final Polar polar = new Polar();
 
     /**
      * Creates a new {@link Vector} of the given cartesian coordinates.
@@ -94,14 +97,7 @@ public class Vector {
             r * sin(φ) * cosθ,
             r *          sin(θ)
         );
-
-        synchronized (result) {
-            result.φ = φ;
-            result.θ = θ;
-            result.r = r;
-            result.hasPolar = true;
-        }
-
+        result.polar.setPolar(φ, θ, r);
         return result;
     }
 
@@ -130,24 +126,21 @@ public class Vector {
      * Returns the azimuthal angle (φ) in radians.
      */
     public double getPhi() {
-        computePolar();
-        return φ;
+        return polar.getPhi();
     }
 
     /**
      * Returns the polar angle (θ) in radians.
      */
     public double getTheta() {
-        computePolar();
-        return θ;
+        return polar.getTheta();
     }
 
     /**
      * Returns the polar radial distance (r).
      */
     public double getR() {
-        computePolar();
-        return r;
+        return polar.getR();
     }
 
     /**
@@ -247,37 +240,6 @@ public class Vector {
         return sqrt(dot(this));
     }
 
-    /**
-     * Ensures that the polar coordinates are available.
-     */
-    private synchronized void computePolar() {
-        if (hasPolar) {
-            return;
-        }
-
-        double ρSqr = x * x + y * y;
-
-        r = sqrt(ρSqr + z * z);
-
-        if (isZero(x) && isZero(y)) {
-            φ = 0.0;
-        } else {
-            φ = atan2(y, x);
-        }
-
-        if (φ < 0.0) {
-            φ += PI2;
-        }
-
-        if (isZero(z) && isZero(ρSqr)) {
-            θ = 0.0;
-        } else {
-            θ = atan2(z, sqrt(ρSqr));
-        }
-
-        hasPolar = true;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj == null || !(obj instanceof Vector)) {
@@ -300,6 +262,58 @@ public class Vector {
     @Override
     public String toString() {
         return "(x=" + x + ", y=" + y + ", z=" + z + ")";
+    }
+
+    /**
+     * Helper class for lazily computing the polar coordinates in an immutable Vector
+     * object.
+     */
+    @ThreadSafe
+    private class Polar {
+        private Double φ = null;
+        private Double θ = null;
+        private Double r = null;
+
+        public synchronized void setPolar(double φ, double θ, double r) {
+            this.φ = φ;
+            this.θ = θ;
+            this.r = r;
+        }
+
+        public synchronized double getPhi() {
+            if (φ == null) {
+                if (isZero(x) && isZero(y)) {
+                    φ = 0.0;
+                } else {
+                    φ = atan2(y, x);
+                }
+
+                if (φ < 0.0) {
+                    φ += PI2;
+                }
+            }
+            return φ;
+        }
+
+        public synchronized double getTheta() {
+            if (θ == null) {
+                double ρSqr = x * x + y * y;
+
+                if (isZero(z) && isZero(ρSqr)) {
+                    θ = 0.0;
+                } else {
+                    θ = atan2(z, sqrt(ρSqr));
+                }
+            }
+            return θ;
+        }
+
+        public synchronized double getR() {
+            if (r == null) {
+                r = sqrt(x * x + y * y + z * z);
+            }
+            return r;
+        }
     }
 
 }

@@ -15,9 +15,12 @@ package org.shredzone.commons.suncalc.util;
 
 import static java.lang.Math.*;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
  * Contains constants and mathematical operations that are not available in {@link Math}.
  */
+@ParametersAreNonnullByDefault
 public final class ExtendedMath {
 
     /**
