@@ -31,13 +31,4 @@
     <artifactId>maven-fluido-skin</artifactId>
     <version>1.7</version>
   </skin>
-
-  <custom>
-    <fluidoSkin>
-      <gitHub>
-        <projectId>shred/commons-suncalc</projectId>
-        <ribbonOrientation>right</ribbonOrientation>
-      </gitHub>
-    </fluidoSkin>
-  </custom>
 </project>
