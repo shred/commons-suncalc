@@ -36,11 +36,13 @@ public class SunPosition {
 
     private final double azimuth;
     private final double altitude;
+    private final double trueAltitude;
     private final double distance;
 
-    private SunPosition(double azimuth, double altitude, double distance) {
+    private SunPosition(double azimuth, double altitude, double trueAltitude, double distance) {
         this.azimuth = (toDegrees(azimuth) + 180.0) % 360.0;
         this.altitude = toDegrees(altitude);
+        this.trueAltitude = toDegrees(trueAltitude);
         this.distance = distance;
     }
 
@@ -78,18 +80,36 @@ public class SunPosition {
             Vector horizontal = equatorialToHorizontal(h, c.getTheta(), c.getR(), phi);
             double hRef = refraction(horizontal.getTheta());
 
-            return new SunPosition(horizontal.getPhi(), horizontal.getTheta() + hRef, horizontal.getR());
+            return new SunPosition(horizontal.getPhi(),
+                            horizontal.getTheta() + hRef,
+                            horizontal.getTheta(),
+                            horizontal.getR());
         }
     }
 
     /**
-     * Sun altitude above the horizon, in degrees.
+     * The visible sun altitude above the horizon, in degrees.
      * <p>
      * {@code 0.0} means the sun's center is at the horizon, {@code 90.0} at the zenith
-     * (straight over your head).
+     * (straight over your head). Atmospheric refraction is taken into account.
+     *
+     * @see #getTrueAltitude()
      */
     public double getAltitude() {
         return altitude;
+    }
+
+    /**
+     * The true sun altitude above the horizon, in degrees.
+     * <p>
+     * {@code 0.0} means the sun's center is at the horizon, {@code 90.0} at the zenith
+     * (straight over your head).
+     *
+     * @see #getAltitude()
+     * @since 2.3
+     */
+    public double getTrueAltitude() {
+        return trueAltitude;
     }
 
     /**
@@ -114,6 +134,7 @@ public class SunPosition {
         StringBuilder sb = new StringBuilder();
         sb.append("SunPosition[azimuth=").append(azimuth);
         sb.append("°, altitude=").append(altitude);
+        sb.append("°, true altitude=").append(trueAltitude);
         sb.append("°, distance=").append(distance).append(" km]");
         return sb.toString();
     }

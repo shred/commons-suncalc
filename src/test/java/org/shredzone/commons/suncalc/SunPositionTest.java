@@ -35,6 +35,7 @@ public class SunPositionTest {
                         .execute();
         assertThat(sp1.getAzimuth()).as("azimuth").isCloseTo(239.8, ERROR);
         assertThat(sp1.getAltitude()).as("altitude").isCloseTo(48.6, ERROR);
+        assertThat(sp1.getTrueAltitude()).as("trueAltitude").isCloseTo(48.6, ERROR);
 
         SunPosition sp2 = SunPosition.compute()
                         .on(2017, 7, 12, 13, 37, 0)
@@ -43,6 +44,7 @@ public class SunPositionTest {
                         .execute();
         assertThat(sp2.getAzimuth()).as("azimuth").isCloseTo(179.6, ERROR);
         assertThat(sp2.getAltitude()).as("altitude").isCloseTo(61.0, ERROR);
+        assertThat(sp2.getTrueAltitude()).as("trueAltitude").isCloseTo(61.0, ERROR);
     }
 
     @Test
@@ -54,6 +56,7 @@ public class SunPositionTest {
                         .execute();
         assertThat(sp1.getAzimuth()).as("azimuth").isCloseTo(87.5, ERROR);
         assertThat(sp1.getAltitude()).as("altitude").isCloseTo(21.8, ERROR);
+        assertThat(sp1.getTrueAltitude()).as("trueAltitude").isCloseTo(21.8, ERROR);
 
         SunPosition sp2 = SunPosition.compute()
                         .on(2017, 7, 12, 12, 14, 0)
@@ -62,6 +65,7 @@ public class SunPositionTest {
                         .execute();
         assertThat(sp2.getAzimuth()).as("azimuth").isCloseTo(179.7, ERROR);
         assertThat(sp2.getAltitude()).as("altitude").isCloseTo(29.4, ERROR);
+        assertThat(sp2.getTrueAltitude()).as("trueAltitude").isCloseTo(29.4, ERROR);
     }
 
     @Test
@@ -73,6 +77,7 @@ public class SunPositionTest {
                         .execute();
         assertThat(sp1.getAzimuth()).as("azimuth").isCloseTo(107.3, ERROR);
         assertThat(sp1.getAltitude()).as("altitude").isCloseTo(-51.3, ERROR);
+        assertThat(sp1.getTrueAltitude()).as("trueAltitude").isCloseTo(-51.3, ERROR);
 
         SunPosition sp2 = SunPosition.compute()
                         .on(2017, 7, 12, 12, 26, 0)
@@ -81,6 +86,16 @@ public class SunPositionTest {
                         .execute();
         assertThat(sp2.getAzimuth()).as("azimuth").isCloseTo(0.1, ERROR);
         assertThat(sp2.getAltitude()).as("altitude").isCloseTo(26.8, ERROR);
+        assertThat(sp2.getTrueAltitude()).as("trueAltitude").isCloseTo(26.8, ERROR);
+
+        SunPosition sp3 = SunPosition.compute()
+                        .on(2017, 7, 12, 7, 50, 0)
+                        .at(WELLINGTON)
+                        .timezone(WELLINGTON_TZ)
+                        .execute();
+        assertThat(sp3.getAzimuth()).as("azimuth").isCloseTo(60.0, ERROR);
+        assertThat(sp3.getAltitude()).as("altitude").isCloseTo(0.6, ERROR);
+        assertThat(sp3.getTrueAltitude()).as("trueAltitude").isCloseTo(0.1, ERROR);
     }
 
     @Test
@@ -92,6 +107,7 @@ public class SunPositionTest {
                         .execute();
         assertThat(sp1.getAzimuth()).as("azimuth").isCloseTo(280.1, ERROR);
         assertThat(sp1.getAltitude()).as("altitude").isCloseTo(25.4, ERROR);
+        assertThat(sp1.getTrueAltitude()).as("trueAltitude").isCloseTo(25.4, ERROR);
 
         SunPosition sp2 = SunPosition.compute()
                         .on(2017, 2, 7, 13, 44, 0)
@@ -100,6 +116,7 @@ public class SunPositionTest {
                         .execute();
         assertThat(sp2.getAzimuth()).as("azimuth").isCloseTo(0.2, ERROR);
         assertThat(sp2.getAltitude()).as("altitude").isCloseTo(50.2, ERROR);
+        assertThat(sp2.getTrueAltitude()).as("trueAltitude").isCloseTo(50.2, ERROR);
     }
 
     @Test
@@ -111,6 +128,7 @@ public class SunPositionTest {
                         .execute();
         assertThat(sp1.getAzimuth()).as("azimuth").isCloseTo(60.4, ERROR);
         assertThat(sp1.getAltitude()).as("altitude").isCloseTo(43.5, ERROR);
+        assertThat(sp1.getTrueAltitude()).as("trueAltitude").isCloseTo(43.5, ERROR);
 
         SunPosition sp2 = SunPosition.compute()
                         .on(2017, 7, 12, 13, 10, 0)
@@ -119,6 +137,7 @@ public class SunPositionTest {
                         .execute();
         assertThat(sp2.getAzimuth()).as("azimuth").isCloseTo(0.2, ERROR);
         assertThat(sp2.getAltitude()).as("altitude").isCloseTo(69.4, ERROR);
+        assertThat(sp2.getTrueAltitude()).as("trueAltitude").isCloseTo(69.4, ERROR);
     }
 
     @Test
