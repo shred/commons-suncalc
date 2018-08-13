@@ -60,6 +60,33 @@ public class JulianDate {
     }
 
     /**
+     * Returns a {@link JulianDate} of the given modified Julian date.
+     *
+     * @param mjd
+     *            Modified Julian Date
+     * @return {@link JulianDate} instance.
+     * @since 2.3
+     */
+    public JulianDate atModifiedJulianDate(double mjd) {
+        Calendar clone = getCalendar();
+        clone.setTimeInMillis(Math.round((mjd - 40587.0) * 86400000.0));
+        clone.clear(Calendar.MILLISECOND);
+        return new JulianDate(clone);
+    }
+
+    /**
+     * Returns a {@link JulianDate} of the given Julian century.
+     *
+     * @param jc
+     *            Julian Century
+     * @return {@link JulianDate} instance.
+     * @since 2.3
+     */
+    public JulianDate atJulianCentury(double jc) {
+        return atModifiedJulianDate(jc * 36525.0 + 51544.5);
+    }
+
+    /**
      * Returns this {@link JulianDate} as {@link Date} object.
      *
      * @return {@link Date} of this {@link JulianDate}.

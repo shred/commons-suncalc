@@ -105,6 +105,26 @@ public class JulianDateTest {
         assertThat(jd2.getTrueAnomaly()).isCloseTo(PI, offset(0.1));
     }
 
+    @Test
+    public void testAtModifiedJulianDate() {
+        JulianDate jd1 = new JulianDate(of(2017, 8, 19, 15, 6, 16, "UTC"));
+
+        JulianDate jd2 = new JulianDate(Calendar.getInstance(TimeZone.getTimeZone("UTC")))
+                        .atModifiedJulianDate(jd1.getModifiedJulianDate());
+
+        assertThat(jd2.getDate()).isEqualTo(jd1.getDate());
+    }
+
+    @Test
+    public void testAtJulianCentury() {
+        JulianDate jd1 = new JulianDate(of(2017, 1, 1, 0, 0, 0, "UTC"));
+
+        JulianDate jd2 = new JulianDate(Calendar.getInstance(TimeZone.getTimeZone("UTC")))
+                        .atJulianCentury(jd1.getJulianCentury());
+
+        assertThat(jd2.getDate()).isEqualTo(jd1.getDate());
+    }
+
     private Calendar of(int year, int month, int day, int hour, int minute, int second, String zone) {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(zone));
         cal.clear();
