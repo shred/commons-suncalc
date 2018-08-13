@@ -96,6 +96,19 @@ public class JulianDate {
     }
 
     /**
+     * Returns this {@link JulianDate} as {@link Date} object, rounded to full minutes.
+     *
+     * @return Rounded {@link Date} of this {@link JulianDate}.
+     * @since 2.3
+     */
+    public Date getDateRounded() {
+        Calendar clone = getCalendar();
+        clone.add(Calendar.SECOND, 30);
+        clone.set(Calendar.SECOND, 0);
+        return clone.getTime();
+    }
+
+    /**
      * Returns this {@link JulianDate} as {@link Calendar} object.
      *
      * @return New {@link Calendar} instance of this {@link JulianDate}.
