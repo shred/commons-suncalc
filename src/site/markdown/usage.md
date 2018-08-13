@@ -1,9 +1,10 @@
 # Usage
 
-`commons-suncalc` offers five astronomical calculations:
+`commons-suncalc` offers six astronomical calculations:
 
 * [SunTimes](./apidocs/org/shredzone/commons/suncalc/SunTimes.html): Sunrise, sunset, noon and nadir times.
 * [MoonTimes](./apidocs/org/shredzone/commons/suncalc/MoonTimes.html): Moonrise and moonset times.
+* [MoonPhase](./apidocs/org/shredzone/commons/suncalc/MoonPhase.html): Date and time of new moon, full moon and half moons.
 * [SunPosition](./apidocs/org/shredzone/commons/suncalc/SunPosition.html): Position of the sun.
 * [MoonPosition](./apidocs/org/shredzone/commons/suncalc/MoonPosition.html): Position of the moon.
 * [MoonIllumination](./apidocs/org/shredzone/commons/suncalc/MoonIllumination.html): Moon phase and angle.
@@ -113,3 +114,22 @@ SunTimes.compute().twilight(SunTimes.Twilight.GOLDEN_HOUR);
 ```
 
 Note that only `VISUAL` and `VISUAL_LOWER` compensate atmospheric refraction. All other twilights do not, and refer to the center of the sun.
+
+### Phase
+
+By default, [MoonPhase](./apidocs/org/shredzone/commons/suncalc/MoonPhase.Parameters.html) calculates the date of the next new moon. If you want to compute the date of another phase, you can set it via the `phase()` parameter, by using one of the [MoonPhase.Phase](./apidocs/org/shredzone/commons/suncalc/MoonPhase.Phase.html) constants:
+
+| Constant        | Description | Angle |
+| --------------- | --- | ---:|
+| `NEW_MOON`      | Moon is not illuminated (new moon) | 0° |
+| `FIRST_QUARTER` | Half of the waxing moon is illuminated | 90° |
+| `FULL_MOON`     | Moon is fully illuminated | 180° |
+| `LAST_QUARTER`  | Half of the waning moon is illuminated | 270° |
+
+Alternatively you can also pass any other angle (in degrees) to `phase()`.
+
+Example:
+
+```java
+MoonPhase.compute().phase(MoonPhase.Phase.FULL_MOON);
+```
