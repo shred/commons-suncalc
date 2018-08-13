@@ -36,13 +36,13 @@ public final class Sun {
     }
 
     /**
-     * Calculates the geocentric position of the sun.
+     * Calculates the equatorial position of the sun.
      *
      * @param date
      *            {@link JulianDate} to be used
      * @return {@link Vector} containing the sun position
      */
-    public static Vector position(JulianDate date) {
+    public static Vector positionEquatorial(JulianDate date) {
         double T = date.getJulianCentury();
         double M = PI2 * frac(0.993133 + 99.997361 * T);
         double L = PI2 * frac(0.7859453 + M / PI2
@@ -51,8 +51,19 @@ public final class Sun {
         double d = SUN_DISTANCE
             * (1 - 0.016718 * cos(date.getTrueAnomaly()));
 
+        return Vector.ofPolar(L, 0.0, d);
+    }
+
+    /**
+     * Calculates the geocentric position of the sun.
+     *
+     * @param date
+     *            {@link JulianDate} to be used
+     * @return {@link Vector} containing the sun position
+     */
+    public static Vector position(JulianDate date) {
         Matrix rotateMatrix = equatorialToEcliptical(date).transpose();
-        return rotateMatrix.multiply(Vector.ofPolar(L, 0.0, d));
+        return rotateMatrix.multiply(positionEquatorial(date));
     }
 
     /**

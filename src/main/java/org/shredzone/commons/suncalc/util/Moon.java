@@ -35,13 +35,13 @@ public final class Moon {
     }
 
     /**
-     * Calculates the geocentric position of the moon.
+     * Calculates the equatorial position of the moon.
      *
      * @param date
      *            {@link JulianDate} to be used
-     * @return {@link Vector} of geocentric moon position
+     * @return {@link Vector} of equatorial moon position
      */
-    public static Vector position(JulianDate date) {
+    public static Vector positionEquatorial(JulianDate date) {
         double T  = date.getJulianCentury();
         double L0 =       frac(0.606433 + 1336.855225 * T);
         double l  = PI2 * frac(0.374897 + 1325.552410 * T);
@@ -79,8 +79,19 @@ public final class Moon {
 
         double dt = 385000.6 - 20905.0 * cos(l);
 
+        return Vector.ofPolar(l_Moon, b_Moon, dt);
+    }
+
+    /**
+     * Calculates the geocentric position of the moon.
+     *
+     * @param date
+     *            {@link JulianDate} to be used
+     * @return {@link Vector} of geocentric moon position
+     */
+    public static Vector position(JulianDate date) {
         Matrix rotateMatrix = equatorialToEcliptical(date).transpose();
-        return rotateMatrix.multiply(Vector.ofPolar(l_Moon, b_Moon, dt));
+        return rotateMatrix.multiply(positionEquatorial(date));
     }
 
     /**
