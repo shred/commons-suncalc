@@ -18,9 +18,12 @@ import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
+
+import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
 
 /**
  * This class contains a Julian Date representation of a date.
@@ -96,15 +99,33 @@ public class JulianDate {
     }
 
     /**
-     * Returns this {@link JulianDate} as {@link Date} object, rounded to full minutes.
+     * Returns this {@link JulianDate} as truncated {@link Date} object.
      *
+     * @param unit
+     *            {@link Unit} to truncate to
      * @return Rounded {@link Date} of this {@link JulianDate}.
      * @since 2.3
      */
-    public Date getDateRounded() {
+    public Date getDateTruncated(Unit unit) {
+        Objects.requireNonNull(unit);
+
         Calendar clone = getCalendar();
-        clone.add(Calendar.SECOND, 30);
-        clone.set(Calendar.SECOND, 0);
+        clone.set(Calendar.MILLISECOND, 0);
+
+        if (unit == Unit.MINUTES || unit == Unit.HOURS || unit == Unit.DAYS) {
+            clone.add(Calendar.SECOND, 30);
+            clone.set(Calendar.SECOND, 0);
+        }
+
+        if (unit == Unit.HOURS || unit == Unit.DAYS) {
+            clone.add(Calendar.MINUTE, 30);
+            clone.set(Calendar.MINUTE, 0);
+        }
+
+        if (unit == Unit.DAYS) {
+            clone.set(Calendar.HOUR_OF_DAY, 0);
+        }
+
         return clone.getTime();
     }
 

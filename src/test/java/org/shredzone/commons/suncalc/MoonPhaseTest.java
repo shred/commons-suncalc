@@ -19,6 +19,7 @@ import org.assertj.core.api.AbstractDateAssert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.shredzone.commons.suncalc.MoonPhase.Phase;
+import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
 
 /**
  * Unit tests for {@link MoonPhase}.
@@ -36,9 +37,10 @@ public class MoonPhaseTest {
                         .on(2017, 9, 1)
                         .utc()
                         .phase(Phase.NEW_MOON)
+                        .truncatedTo(Unit.SECONDS)
                         .execute();
 
-        assertThat(mp.getTime()).isEqualTo("2017-09-20T05:30:00Z");
+        assertThat(mp.getTime()).isEqualTo("2017-09-20T05:29:30Z");
     }
 
     @Test
@@ -47,9 +49,10 @@ public class MoonPhaseTest {
                         .on(2017, 9, 1)
                         .utc()
                         .phase(Phase.FIRST_QUARTER)
+                        .truncatedTo(Unit.SECONDS)
                         .execute();
 
-        assertThat(mp.getTime()).isEqualTo("2017-09-28T02:53:00Z");
+        assertThat(mp.getTime()).isEqualTo("2017-09-28T02:52:40Z");
     }
 
     @Test
@@ -58,9 +61,10 @@ public class MoonPhaseTest {
                         .on(2017, 9, 1)
                         .utc()
                         .phase(Phase.FULL_MOON)
+                        .truncatedTo(Unit.SECONDS)
                         .execute();
 
-        assertThat(mp.getTime()).isEqualTo("2017-09-06T07:08:00Z");
+        assertThat(mp.getTime()).isEqualTo("2017-09-06T07:07:44Z");
     }
 
     @Test
@@ -69,9 +73,10 @@ public class MoonPhaseTest {
                         .on(2017, 9, 1)
                         .utc()
                         .phase(Phase.LAST_QUARTER)
+                        .truncatedTo(Unit.SECONDS)
                         .execute();
 
-        assertThat(mp.getTime()).isEqualTo("2017-09-13T06:29:00Z");
+        assertThat(mp.getTime()).isEqualTo("2017-09-13T06:28:35Z");
     }
 
 }

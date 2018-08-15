@@ -24,6 +24,7 @@ import javax.annotation.concurrent.Immutable;
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
+import org.shredzone.commons.suncalc.param.TimeResultParameter;
 import org.shredzone.commons.suncalc.util.BaseBuilder;
 import org.shredzone.commons.suncalc.util.JulianDate;
 import org.shredzone.commons.suncalc.util.Moon;
@@ -64,6 +65,7 @@ public final class MoonTimes {
     public static interface Parameters extends
             LocationParameter<Parameters>,
             TimeParameter<Parameters>,
+            TimeResultParameter<Parameters>,
             Builder<MoonTimes> {
 
         /**
@@ -156,8 +158,8 @@ public final class MoonTimes {
             }
 
             return new MoonTimes(
-                    rise != null ? jd.atHour(rise).getDate() : null,
-                    set != null ? jd.atHour(set).getDate() : null,
+                    rise != null ? jd.atHour(rise).getDateTruncated(getTruncatedTo()) : null,
+                    set != null ? jd.atHour(set).getDateTruncated(getTruncatedTo()) : null,
                     alwaysUp,
                     alwaysDown);
         }

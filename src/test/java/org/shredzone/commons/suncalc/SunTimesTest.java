@@ -26,6 +26,7 @@ import org.assertj.core.api.AbstractDateAssert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.shredzone.commons.suncalc.SunTimes.Twilight;
+import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
 
 /**
  * Unit tests for {@link SunTimes}.
@@ -61,7 +62,8 @@ public class SunTimesTest {
 
         for (Twilight angle : Twilight.values()) {
             SunTimes times = SunTimes.compute().at(COLOGNE).on(2017, 8, 10).utc()
-                            .twilight(angle).execute();
+                            .twilight(angle)
+                            .truncatedTo(Unit.SECONDS).execute();
             assertThat(times.getRise()).as("%s-rise", angle.name()).isEqualTo(riseTimes.get(angle));
             assertThat(times.getSet()).as("%s-set", angle.name()).isEqualTo(setTimes.get(angle));
             assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:57Z");
@@ -71,7 +73,8 @@ public class SunTimesTest {
         }
 
         SunTimes times = SunTimes.compute().at(COLOGNE).on(2017, 8, 10).utc()
-                        .twilight(-4.0).execute();
+                        .twilight(-4.0)
+                        .truncatedTo(Unit.SECONDS).execute();
         assertThat(times.getRise()).as("rise").isEqualTo("2017-08-10T03:48:59Z");
         assertThat(times.getSet()).as("set").isEqualTo("2017-08-10T19:25:16Z");
         assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:57Z");
@@ -82,40 +85,49 @@ public class SunTimesTest {
 
     @Test
     public void testAlert() {
-        SunTimes t1 = SunTimes.compute().at(ALERT).on(2017, 8, 10).utc().execute();
+        SunTimes t1 = SunTimes.compute().at(ALERT).on(2017, 8, 10).utc()
+                        .truncatedTo(Unit.SECONDS).execute();
         assertTimes(t1, null, null, "2017-08-10T16:12:47Z", true);
 
-        SunTimes t2 = SunTimes.compute().at(ALERT).on(2017, 9, 24).utc().execute();
+        SunTimes t2 = SunTimes.compute().at(ALERT).on(2017, 9, 24).utc()
+                        .truncatedTo(Unit.SECONDS).execute();
         assertTimes(t2, "2017-09-24T09:54:29Z", "2017-09-24T22:01:58Z", "2017-09-24T16:00:23Z");
 
-        SunTimes t3 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc().execute();
+        SunTimes t3 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc()
+                        .truncatedTo(Unit.SECONDS).execute();
         assertTimes(t3, null, null, "2017-02-10T16:25:05Z", false);
 
-        SunTimes t4 = SunTimes.compute().at(ALERT).on(2017, 8, 10).utc().fullCycle().execute();
+        SunTimes t4 = SunTimes.compute().at(ALERT).on(2017, 8, 10).utc()
+                        .fullCycle().truncatedTo(Unit.SECONDS).execute();
         assertTimes(t4, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-08-10T16:12:47Z", true);
 
-        SunTimes t5 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc().fullCycle().execute();
+        SunTimes t5 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc()
+                        .fullCycle().truncatedTo(Unit.SECONDS).execute();
         assertTimes(t5, "2017-02-27T15:24:18Z", "2017-02-27T17:23:46Z", "2017-02-10T16:25:05Z", false);
 
-        SunTimes t6 = SunTimes.compute().at(ALERT).on(2017, 9, 6).utc().oneDay().execute();
+        SunTimes t6 = SunTimes.compute().at(ALERT).on(2017, 9, 6).utc().oneDay()
+                        .truncatedTo(Unit.SECONDS).execute();
         assertTimes(t6, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-09-06T16:04:59Z");
     }
 
     @Test
     public void testWellington() {
-        SunTimes t1 = SunTimes.compute().at(WELLINGTON).on(2017, 8, 10).utc().execute();
+        SunTimes t1 = SunTimes.compute().at(WELLINGTON).on(2017, 8, 10).utc()
+                        .truncatedTo(Unit.SECONDS).execute();
         assertTimes(t1, "2017-08-10T19:17:16Z", "2017-08-10T05:34:50Z", "2017-08-10T00:26:26Z");
     }
 
     @Test
     public void testPuertoWilliams() {
-        SunTimes t1 = SunTimes.compute().at(PUERTO_WILLIAMS).on(2017, 8, 10).utc().execute();
+        SunTimes t1 = SunTimes.compute().at(PUERTO_WILLIAMS).on(2017, 8, 10).utc()
+                        .truncatedTo(Unit.SECONDS).execute();
         assertTimes(t1, "2017-08-10T12:01:48Z", "2017-08-10T21:10:36Z", "2017-08-10T16:36:12Z");
     }
 
     @Test
     public void testSingapore() {
-        SunTimes t1 = SunTimes.compute().at(SINGAPORE).on(2017, 8, 10).utc().execute();
+        SunTimes t1 = SunTimes.compute().at(SINGAPORE).on(2017, 8, 10).utc()
+                        .truncatedTo(Unit.SECONDS).execute();
         assertTimes(t1, "2017-08-10T23:05:06Z", "2017-08-10T11:14:56Z", "2017-08-10T05:08:44Z");
     }
 
@@ -134,6 +146,7 @@ public class SunTimesTest {
                             .at(COLOGNE)
                             .on(2017, 11, 25, hour, minute, 0).utc()
                             .fullCycle()
+                            .truncatedTo(Unit.SECONDS)
                             .execute();
 
                 Date rise = times.getRise();

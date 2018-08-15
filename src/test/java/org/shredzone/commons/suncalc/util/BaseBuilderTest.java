@@ -24,6 +24,7 @@ import org.assertj.core.api.AbstractDateAssert;
 import org.assertj.core.data.Offset;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
 
 /**
  * Unit tests for {@link BaseBuilder}.
@@ -224,6 +225,18 @@ public class BaseBuilderTest {
                 NOW.get(Calendar.MINUTE),
                 NOW.get(Calendar.SECOND),
                 NOW.getTimeZone());
+        assertThat(r).isSameAs(p);
+    }
+
+    @Test
+    public void testTimeResultParameters() {
+        TestBuilder p = new TestBuilder();
+        TestBuilder r;
+
+        assertThat(p.getTruncatedTo()).isEqualTo(Unit.MINUTES);
+
+        r = p.truncatedTo(Unit.HOURS);
+        assertThat(r.getTruncatedTo()).isEqualTo(Unit.HOURS);
         assertThat(r).isSameAs(p);
     }
 

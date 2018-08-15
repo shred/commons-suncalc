@@ -4,6 +4,7 @@ This document will help you migrate your code to the latest _suncalc_ version.
 
 ## Version 2.3
 
+* All `Date` results are now rounded to the nearest full minute. This was done so _suncalc_ does not pretend a higher precision than it can actually deliver. If your code relies on the seconds (e.g. in unit tests), you can add `truncateTo(TimeResultParameter.Unit.SECONDS)` to the builder chain to get the same results as from the previous version.
 * `MoonPhase` calculation was added. If you have previously used other ways to compute e.g. the date of new moon, you may want to migrate to the new class.
 
 ## Version 2.2

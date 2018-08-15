@@ -25,6 +25,7 @@ import javax.annotation.concurrent.Immutable;
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
+import org.shredzone.commons.suncalc.param.TimeResultParameter;
 import org.shredzone.commons.suncalc.util.BaseBuilder;
 import org.shredzone.commons.suncalc.util.JulianDate;
 import org.shredzone.commons.suncalc.util.QuadraticInterpolation;
@@ -70,6 +71,7 @@ public class SunTimes {
     public static interface Parameters extends
             LocationParameter<Parameters>,
             TimeParameter<Parameters>,
+            TimeResultParameter<Parameters>,
             Builder<SunTimes> {
 
         /**
@@ -329,10 +331,10 @@ public class SunTimes {
             }
 
             return new SunTimes(
-                    rise != null ? jd.atHour(rise).getDate() : null,
-                    set != null ? jd.atHour(set).getDate() : null,
-                    noon != null ? jd.atHour(noon).getDate() : null,
-                    nadir != null ? jd.atHour(nadir).getDate() : null,
+                    rise != null ? jd.atHour(rise).getDateTruncated(getTruncatedTo()) : null,
+                    set != null ? jd.atHour(set).getDateTruncated(getTruncatedTo()) : null,
+                    noon != null ? jd.atHour(noon).getDateTruncated(getTruncatedTo()) : null,
+                    nadir != null ? jd.atHour(nadir).getDateTruncated(getTruncatedTo()) : null,
                     nadir == null || nadirYe > 0.0,
                     noon == null || noonYe < 0.0
                 );

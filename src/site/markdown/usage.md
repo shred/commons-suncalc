@@ -88,6 +88,21 @@ If you need both the rise and set time, you can set the `fullCycle()` parameter.
 
 Note that `fullCycle()` only affects the result of `getRise()` and `getSet()`. The methods `isAlwaysUp()`, `isAlwaysDown()`, `getNoon()` and `getNadir()` will still only consider the next 24 hours.
 
+### Time Rounding
+
+[SunTimes](./apidocs/org/shredzone/commons/suncalc/SunTimes.Parameters.html), [MoonTimes](./apidocs/org/shredzone/commons/suncalc/MoonTimes.Parameters.html) and [MoonPhase](./apidocs/org/shredzone/commons/suncalc/MoonPhase.Parameters.html) return `Date` objects as result. By default, the result is rounded to the nearest full minute. This is so _suncalc_ does not pretend a higher precision than it can actually deliver.
+
+You can change rounding by adding a `truncateTo()` parameter. It accepts one of these constants:
+
+| Constant       | Description |
+| -------------- | --- |
+| `SECONDS` | Return a time including the calculated seconds. Note that due to the simplified formulas, _suncalc_ is never accurate to the second. |
+| `MINUTES` | Round to the nearest full minute. This is the default. |
+| `HOURS` | Round to the nearest full hour. |
+| `DAYS` | Round down to the date. Basically it truncates the time component of the result. |
+
+Even though the method is called `truncateTo()`, the time component is rounded to the nearest full minute or hour. This gives more reasonable results.
+
 ### Twilight
 
 By default, [SunTimes](./apidocs/org/shredzone/commons/suncalc/SunTimes.Parameters.html) calculates the time of the visual sunrise and sunset. This means that `getRise()` returns the instant when the sun just starts to rise above the horizon, and `getSet()` returns the instant when the sun just disappeared from the horizon. [Atmospheric refraction](https://en.wikipedia.org/wiki/Atmospheric_refraction) is taken into account.

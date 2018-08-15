@@ -24,6 +24,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
+import org.shredzone.commons.suncalc.param.TimeResultParameter;
 
 /**
  * A base implementation of {@link LocationParameter} and {@link TimeParameter}.
@@ -35,12 +36,13 @@ import org.shredzone.commons.suncalc.param.TimeParameter;
  */
 @ParametersAreNonnullByDefault
 @SuppressWarnings("unchecked")
-public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T> {
+public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T>, TimeResultParameter<T> {
 
     private double lat = 0.0;
     private double lng = 0.0;
     private double height = 0.0;
     private Calendar cal = createCalendar();
+    private Unit unit = Unit.MINUTES;
 
     @Override
     public T on(int year, int month, int date) {
@@ -177,6 +179,13 @@ public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T> {
         return (T) this;
     }
 
+    @Override
+    public T truncatedTo(Unit unit) {
+        requireNonNull(unit);
+        this.unit = unit;
+        return (T) this;
+    }
+
     /**
      * Returns the longitude.
      *
@@ -229,6 +238,16 @@ public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T> {
      */
     public JulianDate getJulianDate() {
         return new JulianDate((Calendar) cal.clone());
+    }
+
+    /**
+     * Returns the {@link Unit} to truncate to.
+     *
+     * @return {@link Unit}
+     * @since 2.3
+     */
+    public Unit getTruncatedTo() {
+        return unit;
     }
 
     /**

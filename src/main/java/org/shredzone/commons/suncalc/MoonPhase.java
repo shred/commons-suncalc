@@ -23,6 +23,7 @@ import javax.annotation.concurrent.Immutable;
 
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.TimeParameter;
+import org.shredzone.commons.suncalc.param.TimeResultParameter;
 import org.shredzone.commons.suncalc.util.BaseBuilder;
 import org.shredzone.commons.suncalc.util.JulianDate;
 import org.shredzone.commons.suncalc.util.Moon;
@@ -64,6 +65,7 @@ public class MoonPhase {
      */
     public static interface Parameters extends
             TimeParameter<Parameters>,
+            TimeResultParameter<Parameters>,
             Builder<MoonPhase> {
 
         /**
@@ -186,7 +188,7 @@ public class MoonPhase {
                 }
             });
 
-            return new MoonPhase(jd.atJulianCentury(tphase).getDateRounded());
+            return new MoonPhase(jd.atJulianCentury(tphase).getDateTruncated(getTruncatedTo()));
         }
 
         /**
