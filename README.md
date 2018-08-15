@@ -2,14 +2,6 @@
 
 A Java library for calculation of sun and moon positions and phases.
 
-## BETA!
-
-_commons-suncalc_ version 2 is a complete rewrite, and uses a different set of formulas.
-
-The calculation results of this library are tested against sample results of public astronomical calculator web-sites. However, there may still be errors in the calculations, so please use this first release with care.
-
-See the [migration guide](https://shredzone.org/maven/commons-suncalc/migration.html) for how to migrate from version 1.
-
 ## Features
 
 * Lightweight, only requires Java 1.7 or higher, no other dependencies
@@ -41,6 +33,8 @@ System.out.println("Azimuth: " + position.getAzimuth() + "°");
 ```
 
 See the [online documentation](https://shredzone.org/maven/commons-suncalc/) for API details.
+
+See the [migration guide](https://shredzone.org/maven/commons-suncalc/migration.html) for how to migrate from a previous version.
 
 ## References
 

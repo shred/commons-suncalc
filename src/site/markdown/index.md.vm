@@ -5,6 +5,13 @@ A Java library for calculation of sun and moon positions and phases.
 
 The source code can be found at [GitHub](https://github.com/shred/commons-suncalc) and is distributed under the terms of [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
+Accuracy
+--------
+
+Astronomical calculations are far more complex than throwing a few numbers into an obscure formula and then getting a fully accurate result. There is always a tradeoff between accuracy and computing time.
+
+This library has its focus on getting _acceptable_ results at low cost, so it can also run on mobile devices, or devices with a low computing power. The results have an accuracy of about a minute, which should be good enough for common applications (like sunrise/sunset timers), but is probably not sufficient for astronomical purposes.
+
 Installation
 ------------
 
@@ -25,7 +32,6 @@ dependencies {
     compile('${project.groupId}:${project.artifactId}:${project.version}')
 }
 ```
-
 
 Quick Start
 -----------
