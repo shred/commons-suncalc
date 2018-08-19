@@ -274,6 +274,16 @@ public class Vector {
         private Double θ = null;
         private Double r = null;
 
+        /**
+         * Sets polar coordinates.
+         *
+         * @param φ
+         *            Phi
+         * @param θ
+         *            Theta
+         * @param r
+         *            R
+         */
         public synchronized void setPolar(double φ, double θ, double r) {
             this.φ = φ;
             this.θ = θ;

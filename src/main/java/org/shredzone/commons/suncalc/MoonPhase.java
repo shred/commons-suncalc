@@ -203,7 +203,7 @@ public class MoonPhase {
         private double moonphase(JulianDate jd, double t) {
             Vector sun = Sun.positionEquatorial(jd.atJulianCentury(t - SUN_LIGHT_TIME_TAU));
             Vector moon = Moon.positionEquatorial(jd.atJulianCentury(t));
-            double diff = moon.getPhi() - sun.getPhi() - phase;
+            double diff = moon.getPhi() - sun.getPhi() - phase; //NOSONAR: false positive
             while (diff < 0.0) {
                 diff += PI2;
             }

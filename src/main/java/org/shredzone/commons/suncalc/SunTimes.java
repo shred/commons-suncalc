@@ -365,7 +365,8 @@ public class SunTimes {
      * <p>
      * Always returns a sunrise time if {@link Parameters#fullCycle()} was set.
      */
-    public @CheckForNull Date getRise() {
+    @CheckForNull
+    public Date getRise() {
         return rise != null ? new Date(rise.getTime()) : null;
     }
 
@@ -374,7 +375,8 @@ public class SunTimes {
      * <p>
      * Always returns a sunset time if {@link Parameters#fullCycle()} was set.
      */
-    public @CheckForNull Date getSet() {
+    @CheckForNull
+    public Date getSet() {
         return set != null ? new Date(set.getTime()) : null;
     }
 

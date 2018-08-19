@@ -182,14 +182,16 @@ public final class MoonTimes {
     /**
      * Moonrise time. {@code null} if the moon does not rise that day.
      */
-    public @CheckForNull Date getRise() {
+    @CheckForNull
+    public Date getRise() {
         return rise != null ? new Date(rise.getTime()) : null;
     }
 
     /**
      * Moonset time. {@code null} if the moon does not set that day.
      */
-    public @CheckForNull Date getSet() {
+    @CheckForNull
+    public Date getSet() {
         return set != null ? new Date(set.getTime()) : null;
     }
 
