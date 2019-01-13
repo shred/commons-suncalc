@@ -14,7 +14,6 @@
 package org.shredzone.commons.suncalc.util;
 
 import static java.lang.Math.*;
-import static java.util.Objects.requireNonNull;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -60,13 +59,18 @@ public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T>, T
 
     @Override
     public T on(Date date) {
-        cal.setTime(requireNonNull(date));
+        if (date == null) {
+            throw new NullPointerException();
+        }
+        cal.setTime(date);
         return (T) this;
     }
 
     @Override
     public T on(Calendar calendar) {
-        requireNonNull(calendar);
+        if (calendar == null) {
+            throw new NullPointerException();
+        }
         on(calendar.getTime());
         timezone(calendar.getTimeZone());
         return (T) this;
@@ -108,7 +112,10 @@ public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T>, T
 
     @Override
     public T timezone(TimeZone tz) {
-        cal.setTimeZone(requireNonNull(tz));
+        if (tz == null) {
+            throw new NullPointerException();
+        }
+        cal.setTimeZone(tz);
         return (T) this;
     }
 
@@ -181,7 +188,9 @@ public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T>, T
 
     @Override
     public T truncatedTo(Unit unit) {
-        requireNonNull(unit);
+        if (unit == null) {
+            throw new NullPointerException();
+        }
         this.unit = unit;
         return (T) this;
     }

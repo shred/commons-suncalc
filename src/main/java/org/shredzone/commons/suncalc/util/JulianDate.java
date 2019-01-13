@@ -18,7 +18,6 @@ import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
@@ -107,7 +106,9 @@ public class JulianDate {
      * @since 2.3
      */
     public Date getDateTruncated(Unit unit) {
-        Objects.requireNonNull(unit);
+        if (unit == null) {
+            throw new NullPointerException();
+        }
 
         Calendar clone = getCalendar();
         clone.set(Calendar.MILLISECOND, 0);
