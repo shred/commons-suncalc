@@ -16,7 +16,6 @@ package org.shredzone.commons.suncalc.util;
 import static java.lang.Math.*;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Calculations and constants for the Moon.
@@ -25,7 +24,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  *      (Oliver Montenbruck, Thomas Pfleger) -
  *      ISBN 978-3-540-67221-0"
  */
-@ParametersAreNonnullByDefault
+
 public final class Moon {
 
     private static final double MOON_MEAN_RADIUS = 1737.1;

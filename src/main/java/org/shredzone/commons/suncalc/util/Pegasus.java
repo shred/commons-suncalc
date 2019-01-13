@@ -15,7 +15,6 @@ package org.shredzone.commons.suncalc.util;
 
 import static java.lang.Math.abs;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Finds the root of a function by using the Pegasus method.
@@ -23,7 +22,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * @see <a href="https://en.wikipedia.org/wiki/False_position_method">regula falsi</a>
  * @since 2.3
  */
-@ParametersAreNonnullByDefault
+
 public class Pegasus {
 
     private static final int MAX_ITERATIONS = 30;

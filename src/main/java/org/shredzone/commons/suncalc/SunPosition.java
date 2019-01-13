@@ -16,9 +16,6 @@ package org.shredzone.commons.suncalc;
 import static java.lang.Math.*;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.concurrent.Immutable;
-
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
@@ -30,8 +27,7 @@ import org.shredzone.commons.suncalc.util.Vector;
 /**
  * Calculates the position of the sun.
  */
-@ParametersAreNonnullByDefault
-@Immutable
+
 public class SunPosition {
 
     private final double azimuth;

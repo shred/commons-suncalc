@@ -15,14 +15,11 @@ package org.shredzone.commons.suncalc.util;
 
 import static java.lang.Math.*;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.concurrent.Immutable;
 
 /**
  * Calculates the roots and extremum of a quadratic equation.
  */
-@ParametersAreNonnullByDefault
-@Immutable
+
 public class QuadraticInterpolation {
 
     private final double xe;

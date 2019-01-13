@@ -13,7 +13,6 @@
  */
 package org.shredzone.commons.suncalc.param;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Location based parameters.
@@ -24,7 +23,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * @param <T>
  *            Type of the final builder
  */
-@ParametersAreNonnullByDefault
+
 public interface LocationParameter<T> {
 
     /**

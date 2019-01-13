@@ -1,12 +1,12 @@
-# commons-suncalc ![build status](https://shredzone.org/badge/commons-suncalc.svg) ![maven central](https://shredzone.org/maven-central/org.shredzone.commons/commons-suncalc/badge.svg)
+# commons-suncalc
 
 A Java library for calculation of sun and moon positions and phases.
 
 ## Features
 
 * Lightweight, only requires Java 1.7 or higher, no other dependencies
-* Android compatible, requires API level 19 (KitKat) or higher
-* Available at [Maven Central](http://search.maven.org/#search|ga|1|a%3A%22commons-suncalc%22)
+* <strike>Android compatible, requires API level 19 (KitKat) or higher</strike>  It should work for older android versions now! 
+* <strike>Available at [Maven Central](http://search.maven.org/#search|ga|1|a%3A%22commons-suncalc%22)</strike> my version is not on maven... 
 * Extensive unit tests
 
 ## Accuracy
@@ -43,12 +43,6 @@ This library bases on:
 * "Astronomy on the Personal Computer", 4th edition, by Oliver Montenbruck and Thomas Pfleger
 * "Astronomical Algorithms" by Jean Meeus
 * `MoonIllumination` is based on [suncalc](https://github.com/mourner/suncalc) by Vladimir Agafonkin
-
-## Contribute
-
-* Fork the [Source code at GitHub](https://github.com/shred/commons-suncalc). Feel free to send pull requests.
-* Found a bug? [File a bug report](https://github.com/shred/commons-suncalc/issues).
-* Are you getting different results from another library or web site? If you file a bug, please try to explain why you think the _commons-suncalc_ result is wrong.
 
 ## License
 

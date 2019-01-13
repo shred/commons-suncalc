@@ -16,8 +16,6 @@ package org.shredzone.commons.suncalc.util;
 import static java.lang.Math.*;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 /**
  * Calculations and constants for the Sun.
  *
@@ -25,7 +23,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  *      (Oliver Montenbruck, Thomas Pfleger) -
  *      ISBN 978-3-540-67221-0"
  */
-@ParametersAreNonnullByDefault
+
 public final class Sun {
 
     private static final double SUN_DISTANCE = 149598000.0;

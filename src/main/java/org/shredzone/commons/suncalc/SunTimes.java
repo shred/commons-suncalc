@@ -18,10 +18,6 @@ import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
 import java.util.Date;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.concurrent.Immutable;
-
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
@@ -35,8 +31,7 @@ import org.shredzone.commons.suncalc.util.Vector;
 /**
  * Calculates the rise and set times of the sun.
  */
-@ParametersAreNonnullByDefault
-@Immutable
+
 public class SunTimes {
 
     private final Date rise;
@@ -365,7 +360,7 @@ public class SunTimes {
      * <p>
      * Always returns a sunrise time if {@link Parameters#fullCycle()} was set.
      */
-    @CheckForNull
+
     public Date getRise() {
         return rise != null ? new Date(rise.getTime()) : null;
     }
@@ -375,7 +370,7 @@ public class SunTimes {
      * <p>
      * Always returns a sunset time if {@link Parameters#fullCycle()} was set.
      */
-    @CheckForNull
+
     public Date getSet() {
         return set != null ? new Date(set.getTime()) : null;
     }

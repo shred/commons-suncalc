@@ -15,8 +15,6 @@ package org.shredzone.commons.suncalc;
 
 import static java.lang.Math.*;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.concurrent.Immutable;
 
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.TimeParameter;
@@ -39,8 +37,7 @@ import org.shredzone.commons.suncalc.util.Vector;
  * @see "Astronomical Algorithms, 2nd edition by Jean Meeus (Willmann-Bell,
  *      Richmond) 1998, Chapter 48"
  */
-@ParametersAreNonnullByDefault
-@Immutable
+
 public class MoonIllumination {
 
     private final double fraction;
