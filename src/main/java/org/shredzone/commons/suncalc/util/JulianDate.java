@@ -106,7 +106,7 @@ public class JulianDate {
      * @since 2.3
      */
     public Date getDateTruncated(Unit unit) {
-        if (unit == null) {
+        if (unit == null) { //NOSONAR: safety null check
             throw new NullPointerException();
         }
 

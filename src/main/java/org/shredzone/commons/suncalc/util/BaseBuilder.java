@@ -59,7 +59,7 @@ public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T>, T
 
     @Override
     public T on(Date date) {
-        if (date == null) {
+        if (date == null) { //NOSONAR: safety null check
             throw new NullPointerException();
         }
         cal.setTime(date);
@@ -68,7 +68,7 @@ public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T>, T
 
     @Override
     public T on(Calendar calendar) {
-        if (calendar == null) {
+        if (calendar == null) { //NOSONAR: safety null check
             throw new NullPointerException();
         }
         on(calendar.getTime());
@@ -112,7 +112,7 @@ public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T>, T
 
     @Override
     public T timezone(TimeZone tz) {
-        if (tz == null) {
+        if (tz == null) { //NOSONAR: safety null check
             throw new NullPointerException();
         }
         cal.setTimeZone(tz);
@@ -188,7 +188,7 @@ public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T>, T
 
     @Override
     public T truncatedTo(Unit unit) {
-        if (unit == null) {
+        if (unit == null) { //NOSONAR: safety null check
             throw new NullPointerException();
         }
         this.unit = unit;
