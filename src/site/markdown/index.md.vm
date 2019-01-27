@@ -33,6 +33,15 @@ dependencies {
 }
 ```
 
+Java Module
+-----------
+
+Add this line to your module descriptor:
+
+```java
+requires org.shredzone.commons.suncalc;
+```
+
 Quick Start
 -----------
 

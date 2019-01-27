@@ -51,6 +51,11 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.1.1</version>
                 <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Automatic-Module-Name>org.shredzone.commons.suncalc</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
                     <excludes>
                         <exclude>**/.gitignore</exclude>
                     </excludes>
