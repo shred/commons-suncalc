@@ -13,7 +13,8 @@
  */
 package org.shredzone.commons.suncalc;
 
-import static java.lang.Math.*;
+import static java.lang.Math.PI;
+import static java.lang.Math.toRadians;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.PI2;
 
 import java.util.Date;
@@ -63,7 +64,7 @@ public class MoonPhase {
      *
      * @since 2.3
      */
-    public static interface Parameters extends
+    public interface Parameters extends
             TimeParameter<Parameters>,
             TimeResultParameter<Parameters>,
             Builder<MoonPhase> {
@@ -120,7 +121,7 @@ public class MoonPhase {
         private final double angle;
         private final double angleRad;
 
-        private Phase(double angle) {
+        Phase(double angle) {
             this.angle = angle;
             this.angleRad = toRadians(angle);
         }

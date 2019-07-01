@@ -13,7 +13,6 @@
  */
 package org.shredzone.commons.suncalc.param;
 
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
@@ -33,6 +32,6 @@ public interface Builder<T> {
      *
      * @return Result of the calculation.
      */
-    @Nonnull T execute();
+    T execute();
 
 }

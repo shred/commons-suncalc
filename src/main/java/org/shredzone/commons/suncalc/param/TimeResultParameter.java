@@ -41,7 +41,7 @@ public interface TimeResultParameter<T> {
      *
      * @since 2.3
      */
-    public enum Unit {
+    enum Unit {
 
         /**
          * Round to the nearest full second. Note that due to the simplified formulas used
@@ -63,7 +63,7 @@ public interface TimeResultParameter<T> {
          * Round down to the full day. Note that, unlike the other {@link Unit}, the
          * result is always rounded down to full days.
          */
-        DAYS;
+        DAYS
 
     }
 

@@ -13,11 +13,13 @@
  */
 package org.shredzone.commons.suncalc;
 
-import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.apparentRefraction;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.parallax;
 
 import java.util.Date;
 
 import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
@@ -43,7 +45,8 @@ public final class MoonTimes {
     private final boolean alwaysUp;
     private final boolean alwaysDown;
 
-    private MoonTimes(Date rise, Date set, boolean alwaysUp, boolean alwaysDown) {
+    private MoonTimes(@Nullable Date rise, @Nullable Date set, boolean alwaysUp,
+                      boolean alwaysDown) {
         this.rise = rise;
         this.set = set;
         this.alwaysUp = alwaysUp;

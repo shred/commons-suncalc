@@ -65,7 +65,7 @@ public class MoonIllumination {
     /**
      * Collects all parameters for {@link MoonIllumination}.
      */
-    public static interface Parameters extends
+    public interface Parameters extends
             TimeParameter<Parameters>,
             Builder<MoonIllumination> {
     }

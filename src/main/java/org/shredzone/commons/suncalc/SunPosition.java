@@ -13,8 +13,10 @@
  */
 package org.shredzone.commons.suncalc;
 
-import static java.lang.Math.*;
-import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
+import static java.lang.Math.toDegrees;
+import static java.lang.Math.toRadians;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.equatorialToHorizontal;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.refraction;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
@@ -58,7 +60,7 @@ public class SunPosition {
     /**
      * Collects all parameters for {@link SunPosition}.
      */
-    public static interface Parameters extends
+    public interface Parameters extends
             LocationParameter<Parameters>,
             TimeParameter<Parameters>,
             Builder<SunPosition> {

@@ -14,7 +14,8 @@
 package org.shredzone.commons.suncalc;
 
 import static java.lang.Math.*;
-import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.equatorialToHorizontal;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.refraction;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
@@ -58,7 +59,7 @@ public class MoonPosition {
     /**
      * Collects all parameters for {@link MoonPosition}.
      */
-    public static interface Parameters extends
+    public interface Parameters extends
             LocationParameter<Parameters>,
             TimeParameter<Parameters>,
             Builder<MoonPosition> {
