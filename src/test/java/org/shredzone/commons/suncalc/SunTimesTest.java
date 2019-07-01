@@ -42,22 +42,22 @@ public class SunTimesTest {
     public void testCologne() {
         Map<Twilight, String> riseTimes = new EnumMap<>(Twilight.class);
         riseTimes.put(Twilight.ASTRONOMICAL, "2017-08-10T01:44:18Z");
-        riseTimes.put(Twilight.NAUTICAL,     "2017-08-10T02:44:33Z");
+        riseTimes.put(Twilight.NAUTICAL,     "2017-08-10T02:44:57Z");
         riseTimes.put(Twilight.CIVIL,        "2017-08-10T03:34:01Z");
         riseTimes.put(Twilight.BLUE_HOUR,    "2017-08-10T03:48:59Z");
-        riseTimes.put(Twilight.VISUAL,       "2017-08-10T04:11:36Z");
-        riseTimes.put(Twilight.VISUAL_LOWER, "2017-08-10T04:15:17Z");
-        riseTimes.put(Twilight.HORIZON,      "2017-08-10T04:17:27Z");
-        riseTimes.put(Twilight.GOLDEN_HOUR,  "2017-08-10T04:58:31Z");
+        riseTimes.put(Twilight.VISUAL,       "2017-08-10T04:11:49Z");
+        riseTimes.put(Twilight.VISUAL_LOWER, "2017-08-10T04:15:33Z");
+        riseTimes.put(Twilight.HORIZON,      "2017-08-10T04:17:44Z");
+        riseTimes.put(Twilight.GOLDEN_HOUR,  "2017-08-10T04:58:33Z");
 
         Map<Twilight, String> setTimes = new EnumMap<>(Twilight.class);
-        setTimes.put(Twilight.GOLDEN_HOUR,   "2017-08-10T18:15:34Z");
-        setTimes.put(Twilight.HORIZON,       "2017-08-10T18:56:26Z");
-        setTimes.put(Twilight.VISUAL_LOWER,  "2017-08-10T18:58:37Z");
+        setTimes.put(Twilight.GOLDEN_HOUR,   "2017-08-10T18:15:49Z");
+        setTimes.put(Twilight.HORIZON,       "2017-08-10T18:56:30Z");
+        setTimes.put(Twilight.VISUAL_LOWER,  "2017-08-10T18:58:39Z");
         setTimes.put(Twilight.VISUAL,        "2017-08-10T19:02:20Z");
         setTimes.put(Twilight.BLUE_HOUR,     "2017-08-10T19:25:16Z");
         setTimes.put(Twilight.CIVIL,         "2017-08-10T19:40:13Z");
-        setTimes.put(Twilight.NAUTICAL,      "2017-08-10T20:28:24Z");
+        setTimes.put(Twilight.NAUTICAL,      "2017-08-10T20:28:56Z");
         setTimes.put(Twilight.ASTRONOMICAL,  "2017-08-10T21:28:43Z");
 
         for (Twilight angle : Twilight.values()) {
@@ -66,7 +66,7 @@ public class SunTimesTest {
                             .truncatedTo(Unit.SECONDS).execute();
             assertThat(times.getRise()).as("%s-rise", angle.name()).isEqualTo(riseTimes.get(angle));
             assertThat(times.getSet()).as("%s-set", angle.name()).isEqualTo(setTimes.get(angle));
-            assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:57Z");
+            assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:38Z");
             assertThat(times.getNadir()).as("nadir").isEqualTo("2017-08-10T23:37:59Z");
             assertThat(times.isAlwaysDown()).as("always-down").isFalse();
             assertThat(times.isAlwaysUp()).as("always-up").isFalse();
@@ -77,7 +77,7 @@ public class SunTimesTest {
                         .truncatedTo(Unit.SECONDS).execute();
         assertThat(times.getRise()).as("rise").isEqualTo("2017-08-10T03:48:59Z");
         assertThat(times.getSet()).as("set").isEqualTo("2017-08-10T19:25:16Z");
-        assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:57Z");
+        assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:38Z");
         assertThat(times.getNadir()).as("nadir").isEqualTo("2017-08-10T23:37:59Z");
         assertThat(times.isAlwaysDown()).as("always-down").isFalse();
         assertThat(times.isAlwaysUp()).as("always-up").isFalse();
@@ -91,7 +91,7 @@ public class SunTimesTest {
 
         SunTimes t2 = SunTimes.compute().at(ALERT).on(2017, 9, 24).utc()
                         .truncatedTo(Unit.SECONDS).execute();
-        assertTimes(t2, "2017-09-24T09:54:29Z", "2017-09-24T22:01:58Z", "2017-09-24T16:00:23Z");
+        assertTimes(t2, "2017-09-24T09:54:29Z", "2017-09-24T22:02:01Z", "2017-09-24T15:59:16Z");
 
         SunTimes t3 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc()
                         .truncatedTo(Unit.SECONDS).execute();
@@ -121,7 +121,7 @@ public class SunTimesTest {
     public void testPuertoWilliams() {
         SunTimes t1 = SunTimes.compute().at(PUERTO_WILLIAMS).on(2017, 8, 10).utc()
                         .truncatedTo(Unit.SECONDS).execute();
-        assertTimes(t1, "2017-08-10T12:01:48Z", "2017-08-10T21:10:36Z", "2017-08-10T16:36:12Z");
+        assertTimes(t1, "2017-08-10T12:01:51Z", "2017-08-10T21:10:36Z", "2017-08-10T16:36:12Z");
     }
 
     @Test
@@ -129,6 +129,13 @@ public class SunTimesTest {
         SunTimes t1 = SunTimes.compute().at(SINGAPORE).on(2017, 8, 10).utc()
                         .truncatedTo(Unit.SECONDS).execute();
         assertTimes(t1, "2017-08-10T23:05:06Z", "2017-08-10T11:14:56Z", "2017-08-10T05:08:44Z");
+    }
+
+    @Test
+    public void testMartinique() {
+        SunTimes t1 = SunTimes.compute().at(MARTINIQUE).on(2019, 7, 1).utc()
+                .truncatedTo(Unit.SECONDS).execute();
+        assertTimes(t1, "2019-07-01T09:38:35Z", "2019-07-01T22:37:23Z", "2019-07-01T16:06:08Z");
     }
 
     @Test

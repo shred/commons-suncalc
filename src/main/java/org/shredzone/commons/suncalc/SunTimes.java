@@ -14,11 +14,13 @@
 package org.shredzone.commons.suncalc;
 
 import static java.lang.Math.toRadians;
-import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.apparentRefraction;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.parallax;
 
 import java.util.Date;
 
 import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
@@ -46,7 +48,8 @@ public class SunTimes {
     private final boolean alwaysUp;
     private final boolean alwaysDown;
 
-    private SunTimes(Date rise, Date set, Date noon, Date nadir, boolean alwaysUp,
+    private SunTimes(@Nullable Date rise, @Nullable Date set, @Nullable Date noon,
+                     @Nullable Date nadir, boolean alwaysUp,
             boolean alwaysDown) {
         this.rise = rise;
         this.set = set;
@@ -68,7 +71,7 @@ public class SunTimes {
     /**
      * Collects all parameters for {@link SunTimes}.
      */
-    public static interface Parameters extends
+    public interface Parameters extends
             LocationParameter<Parameters>,
             TimeParameter<Parameters>,
             TimeResultParameter<Parameters>,
@@ -184,11 +187,11 @@ public class SunTimes {
         private final double angleRad;
         private final Double position;
 
-        private Twilight(double angle) {
+        Twilight(double angle) {
             this(angle, null);
         }
 
-        private Twilight(double angle, Double position) {
+        Twilight(double angle, @Nullable Double position) {
             this.angle = angle;
             this.angleRad = toRadians(angle);
             this.position = position;
@@ -221,6 +224,7 @@ public class SunTimes {
          * means upper edge of the sun. {@code -1.0} means lower edge of the sun.
          * {@code null} means the angular position is not topocentric.
          */
+        @CheckForNull
         private Double getAngularPosition() {
             return position;
         }
@@ -271,16 +275,13 @@ public class SunTimes {
             Double noon = null;
             Double nadir = null;
             double ye;
-            double lastXeAbs = Double.MAX_VALUE;
-            double noonXeAbs = Double.MAX_VALUE;
-            double nadirXeAbs = Double.MAX_VALUE;
             double noonYe = 0.0;
             double nadirYe = 0.0;
 
             double y_minus = correctedSunHeight(jd);
 
             int maxHours = fullCycle ? 365 * 24 : 24;
-            for (int hour = 1; hour < maxHours; hour += 2) {
+            for (int hour = 1; hour < maxHours; hour++) {
                 double y_0 = correctedSunHeight(jd.atHour(hour));
                 double y_plus = correctedSunHeight(jd.atHour(hour + 1.0));
 
@@ -308,26 +309,23 @@ public class SunTimes {
 
                 if (hour < 24) {
                     double xeAbs = Math.abs(qi.getXe());
-                    if (xeAbs < lastXeAbs) {
+                    if (xeAbs <= 1.0) {
                         double xeHour = qi.getXe() + hour;
-                        if (qi.isMaximum() && xeAbs < noonXeAbs) {
+                        if (qi.isMaximum()) {
                             noon = xeHour;
-                            noonXeAbs = xeAbs;
                             noonYe = ye;
-                        } else if (!qi.isMaximum() && xeAbs < nadirXeAbs) {
+                        } else {
                             nadir = xeHour;
-                            nadirXeAbs = xeAbs;
                             nadirYe = ye;
                         }
                     }
-                    lastXeAbs = xeAbs;
                 }
 
                 if (hour >= 24 && rise != null && set != null) {
                     break;
                 }
 
-                y_minus = y_plus;
+                y_minus = y_0;
             }
 
             return new SunTimes(
@@ -389,7 +387,7 @@ public class SunTimes {
      * Note that {@link Parameters#fullCycle()} does not affect this result.
      */
     public Date getNoon() {
-        return new Date(noon.getTime());
+        return noon != null ? new Date(noon.getTime()) : null;
     }
 
     /**
@@ -401,7 +399,7 @@ public class SunTimes {
      * Note that {@link Parameters#fullCycle()} does not affect this result.
      */
     public Date getNadir() {
-        return new Date(nadir.getTime());
+        return nadir != null ? new Date(nadir.getTime()) : null;
     }
 
     /**

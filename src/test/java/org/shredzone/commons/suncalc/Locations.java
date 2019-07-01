@@ -54,4 +54,10 @@ public final class Locations {
     public static final double[] SINGAPORE = new double[] { 1.283333, 103.833333 };
     public static final TimeZone SINGAPORE_TZ = TimeZone.getTimeZone("Asia/Singapore");
 
+    /**
+     * Martinique. To test a fix for issue #13.
+     */
+    public static final double[] MARTINIQUE = new double[] { 14.640725, -61.0112 };
+    public static final TimeZone MARTINIQUE_TZ = TimeZone.getTimeZone("America/Martinique");
+
 }
