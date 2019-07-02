@@ -212,6 +212,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <!-- Workaround: Java 9's javadoc search is broken if no module is defined -->
     <profiles>
         <profile>
@@ -219,13 +220,24 @@
             <activation>
                 <jdk>[9,)</jdk>
             </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <source>8</source>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
             <reporting>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
-                            <additionalJOption combine.self="override">--no-module-directories</additionalJOption>
+                            <source>8</source>
                         </configuration>
                     </plugin>
                 </plugins>
