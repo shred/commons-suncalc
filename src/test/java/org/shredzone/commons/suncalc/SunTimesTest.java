@@ -139,6 +139,13 @@ public class SunTimesTest {
     }
 
     @Test
+    public void testSydney() {
+        SunTimes t1 = SunTimes.compute().at(SYDNEY).on(2019, 7, 3).timezone(SYDNEY_TZ)
+                .truncatedTo(Unit.SECONDS).fullCycle().execute();
+        assertTimes(t1, "2019-07-02T21:00:35Z", "2019-07-03T06:58:02Z", "2019-07-03T01:59:18Z");
+    }
+
+    @Test
     public void testSequence() {
         long acceptableError = 62 * 1000L;
 

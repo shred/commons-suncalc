@@ -274,9 +274,9 @@ public class SunTimes {
             Double set = null;
             Double noon = null;
             Double nadir = null;
+            boolean alwaysUp = true;
+            boolean alwaysDown = true;
             double ye;
-            double noonYe = 0.0;
-            double nadirYe = 0.0;
 
             double y_minus = correctedSunHeight(jd);
 
@@ -308,15 +308,18 @@ public class SunTimes {
                 }
 
                 if (hour < 24) {
+                    if (y_0 > 0.0) {
+                        alwaysDown = false;
+                    } else {
+                        alwaysUp = false;
+                    }
                     double xeAbs = Math.abs(qi.getXe());
                     if (xeAbs <= 1.0) {
                         double xeHour = qi.getXe() + hour;
                         if (qi.isMaximum()) {
                             noon = xeHour;
-                            noonYe = ye;
                         } else {
                             nadir = xeHour;
-                            nadirYe = ye;
                         }
                     }
                 }
@@ -333,8 +336,8 @@ public class SunTimes {
                     set != null ? jd.atHour(set).getDateTruncated(getTruncatedTo()) : null,
                     noon != null ? jd.atHour(noon).getDateTruncated(getTruncatedTo()) : null,
                     nadir != null ? jd.atHour(nadir).getDateTruncated(getTruncatedTo()) : null,
-                    nadir == null || nadirYe > 0.0,
-                    noon == null || noonYe < 0.0
+                    alwaysUp,
+                    alwaysDown
                 );
         }
 

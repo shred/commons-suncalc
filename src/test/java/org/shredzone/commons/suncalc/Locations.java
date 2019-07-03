@@ -60,4 +60,10 @@ public final class Locations {
     public static final double[] MARTINIQUE = new double[] { 14.640725, -61.0112 };
     public static final TimeZone MARTINIQUE_TZ = TimeZone.getTimeZone("America/Martinique");
 
+    /**
+     * Sydney. To test a fix for issue #14.
+     */
+    public static final double[] SYDNEY = new double[] { -33.744272, 151.231291 };
+    public static final TimeZone SYDNEY_TZ = TimeZone.getTimeZone("Australia/Sydney");
+
 }
