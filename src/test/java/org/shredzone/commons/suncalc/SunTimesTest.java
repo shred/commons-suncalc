@@ -112,28 +112,28 @@ public class SunTimesTest {
 
     @Test
     public void testWellington() {
-        SunTimes t1 = SunTimes.compute().at(WELLINGTON).on(2017, 8, 10).utc()
+        SunTimes t1 = SunTimes.compute().at(WELLINGTON).on(2017, 8, 10).timezone(WELLINGTON_TZ)
                         .truncatedTo(Unit.SECONDS).execute();
-        assertTimes(t1, "2017-08-10T19:17:16Z", "2017-08-10T05:34:50Z", "2017-08-10T00:26:26Z");
+        assertTimes(t1, "2017-08-09T19:18:33Z", "2017-08-10T05:34:50Z", "2017-08-10T00:26:26Z");
     }
 
     @Test
     public void testPuertoWilliams() {
-        SunTimes t1 = SunTimes.compute().at(PUERTO_WILLIAMS).on(2017, 8, 10).utc()
+        SunTimes t1 = SunTimes.compute().at(PUERTO_WILLIAMS).on(2017, 8, 10).timezone(PUERTO_WILLIAMS_TZ)
                         .truncatedTo(Unit.SECONDS).execute();
         assertTimes(t1, "2017-08-10T12:01:51Z", "2017-08-10T21:10:36Z", "2017-08-10T16:36:12Z");
     }
 
     @Test
     public void testSingapore() {
-        SunTimes t1 = SunTimes.compute().at(SINGAPORE).on(2017, 8, 10).utc()
+        SunTimes t1 = SunTimes.compute().at(SINGAPORE).on(2017, 8, 10).timezone(SINGAPORE_TZ)
                         .truncatedTo(Unit.SECONDS).execute();
-        assertTimes(t1, "2017-08-10T23:05:06Z", "2017-08-10T11:14:56Z", "2017-08-10T05:08:44Z");
+        assertTimes(t1, "2017-08-09T23:05:13Z", "2017-08-10T11:14:56Z", "2017-08-10T05:08:44Z");
     }
 
     @Test
     public void testMartinique() {
-        SunTimes t1 = SunTimes.compute().at(MARTINIQUE).on(2019, 7, 1).utc()
+        SunTimes t1 = SunTimes.compute().at(MARTINIQUE).on(2019, 7, 1).timezone(MARTINIQUE_TZ)
                 .truncatedTo(Unit.SECONDS).execute();
         assertTimes(t1, "2019-07-01T09:38:35Z", "2019-07-01T22:37:23Z", "2019-07-01T16:06:08Z");
     }
@@ -141,7 +141,7 @@ public class SunTimesTest {
     @Test
     public void testSydney() {
         SunTimes t1 = SunTimes.compute().at(SYDNEY).on(2019, 7, 3).timezone(SYDNEY_TZ)
-                .truncatedTo(Unit.SECONDS).fullCycle().execute();
+                .truncatedTo(Unit.SECONDS).execute();
         assertTimes(t1, "2019-07-02T21:00:35Z", "2019-07-03T06:58:02Z", "2019-07-03T01:59:18Z");
     }
 
