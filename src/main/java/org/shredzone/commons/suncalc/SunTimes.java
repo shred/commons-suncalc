@@ -274,11 +274,16 @@ public class SunTimes {
             Double set = null;
             Double noon = null;
             Double nadir = null;
-            boolean alwaysUp = true;
-            boolean alwaysDown = true;
+            boolean alwaysUp = false;
+            boolean alwaysDown = false;
             double ye;
 
             double y_minus = correctedSunHeight(jd);
+            if (y_minus > 0.0) {
+                alwaysUp = true;
+            } else {
+                alwaysDown = true;
+            }
 
             int maxHours = fullCycle ? 365 * 24 : 24;
             for (int hour = 1; hour < maxHours; hour++) {
@@ -308,11 +313,6 @@ public class SunTimes {
                 }
 
                 if (hour < 24) {
-                    if (y_0 > 0.0) {
-                        alwaysDown = false;
-                    } else {
-                        alwaysUp = false;
-                    }
                     double xeAbs = Math.abs(qi.getXe());
                     if (xeAbs <= 1.0) {
                         double xeHour = qi.getXe() + hour;
@@ -321,6 +321,15 @@ public class SunTimes {
                         } else {
                             nadir = xeHour;
                         }
+                    }
+                }
+
+                if (hour == 23) {
+                    if (rise != null) {
+                        alwaysDown = false;
+                    }
+                    if (set != null) {
+                        alwaysUp = false;
                     }
                 }
 
