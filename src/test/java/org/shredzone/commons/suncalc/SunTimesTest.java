@@ -67,7 +67,7 @@ public class SunTimesTest {
             assertThat(times.getRise()).as("%s-rise", angle.name()).isEqualTo(riseTimes.get(angle));
             assertThat(times.getSet()).as("%s-set", angle.name()).isEqualTo(setTimes.get(angle));
             assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:38Z");
-            assertThat(times.getNadir()).as("nadir").isEqualTo("2017-08-10T23:37:59Z");
+            assertThat(times.getNadir()).as("nadir").isEqualTo("2017-08-10T23:37:51Z");
             assertThat(times.isAlwaysDown()).as("always-down").isFalse();
             assertThat(times.isAlwaysUp()).as("always-up").isFalse();
         }
@@ -78,7 +78,7 @@ public class SunTimesTest {
         assertThat(times.getRise()).as("rise").isEqualTo("2017-08-10T03:48:59Z");
         assertThat(times.getSet()).as("set").isEqualTo("2017-08-10T19:25:16Z");
         assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:38Z");
-        assertThat(times.getNadir()).as("nadir").isEqualTo("2017-08-10T23:37:59Z");
+        assertThat(times.getNadir()).as("nadir").isEqualTo("2017-08-10T23:37:51Z");
         assertThat(times.isAlwaysDown()).as("always-down").isFalse();
         assertThat(times.isAlwaysUp()).as("always-up").isFalse();
     }
@@ -143,6 +143,51 @@ public class SunTimesTest {
         SunTimes t1 = SunTimes.compute().at(SYDNEY).on(2019, 7, 3).timezone(SYDNEY_TZ)
                 .truncatedTo(Unit.SECONDS).execute();
         assertTimes(t1, "2019-07-02T21:00:35Z", "2019-07-03T06:58:02Z", "2019-07-03T01:59:18Z");
+    }
+
+    @Test
+    public void testJustBeforeJustAfter() {
+        // Thanks to @isomeme for providing the test cases for issue #18.
+
+        long shortDuration = 2 * 60 * 1000L;
+        long longDuration = 30 * 60 * 1000L;
+        SunTimes.Parameters param = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
+                .on(2020, 5, 3).truncatedTo(Unit.SECONDS);
+        Date noon = param.execute().getNoon();
+        Date noonNextDay = param.plusDays(1).execute().getNoon();
+        long acceptableError = 65 * 1000L;
+
+        Date wellBeforeNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
+                .on(new Date(noon.getTime() - longDuration))
+                .truncatedTo(Unit.SECONDS).execute().getNoon();
+        assertThat(Math.abs(wellBeforeNoon.getTime() - noon.getTime()))
+                .as("wellBeforeNoon").isLessThan(acceptableError);
+
+        Date justBeforeNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
+                .on(new Date(noon.getTime() - shortDuration))
+                .truncatedTo(Unit.SECONDS).execute().getNoon();
+        assertThat(Math.abs(justBeforeNoon.getTime() - noon.getTime()))
+                .as("justBeforeNoon").isLessThan(acceptableError);
+
+        Date justAfterNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
+                .on(new Date(noon.getTime() + shortDuration))
+                .truncatedTo(Unit.SECONDS).execute().getNoon();
+        assertThat(Math.abs(justAfterNoon.getTime() - noonNextDay.getTime()))
+                .as("justAfterNoon").isLessThan(acceptableError);
+
+        Date wellAfterNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
+                .on(new Date(noon.getTime() + longDuration))
+                .truncatedTo(Unit.SECONDS).execute().getNoon();
+        assertThat(Math.abs(wellAfterNoon.getTime() - noonNextDay.getTime()))
+                .as("wellAfterNoon").isLessThan(acceptableError);
+
+        Date nadirWellAfterNoon = SunTimes.compute().on(wellAfterNoon).timezone(SANTA_MONICA_TZ)
+                .at(SANTA_MONICA).execute().getNadir();
+        Date nadirJustBeforeNadir = SunTimes.compute()
+                .on(new Date(nadirWellAfterNoon.getTime() - shortDuration))
+                .at(SANTA_MONICA).timezone(SANTA_MONICA_TZ).execute().getNadir();
+        assertThat(Math.abs(nadirWellAfterNoon.getTime() - nadirJustBeforeNadir.getTime()))
+                .as("nadir").isLessThan(acceptableError);
     }
 
     @Test

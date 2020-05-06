@@ -278,48 +278,59 @@ public class SunTimes {
             boolean alwaysDown = false;
             double ye;
 
-            double y_minus = correctedSunHeight(jd);
-            if (y_minus > 0.0) {
+            int hour = 0;
+            int maxHours = fullCycle ? 365 * 24 : 24;
+
+            double y_minus = correctedSunHeight(jd.atHour(hour - 1.0));
+            double y_0 = correctedSunHeight(jd.atHour(hour));
+            double y_plus = correctedSunHeight(jd.atHour(hour + 1.0));
+
+            if (y_0 > 0.0) {
                 alwaysUp = true;
             } else {
                 alwaysDown = true;
             }
 
-            int maxHours = fullCycle ? 365 * 24 : 24;
-            for (int hour = 1; hour < maxHours; hour++) {
-                double y_0 = correctedSunHeight(jd.atHour(hour));
-                double y_plus = correctedSunHeight(jd.atHour(hour + 1.0));
-
+            while (hour <= maxHours) {
                 QuadraticInterpolation qi = new QuadraticInterpolation(y_minus, y_0, y_plus);
                 ye = qi.getYe();
 
                 if (qi.getNumberOfRoots() == 1) {
+                    double rt = qi.getRoot1() + hour;
                     if (y_minus < 0.0) {
-                        if (rise == null) {
-                            rise = qi.getRoot1() + hour;
+                        if (rise == null && rt >= 0.0) {
+                            rise = rt;
                         }
                     } else {
-                        if (set == null) {
-                            set = qi.getRoot1() + hour;
+                        if (set == null && rt >= 0.0) {
+                            set = rt;
                         }
                     }
                 } else if (qi.getNumberOfRoots() == 2) {
                     if (rise == null) {
-                        rise = hour + (ye < 0.0 ? qi.getRoot2() : qi.getRoot1());
+                        double rt = hour + (ye < 0.0 ? qi.getRoot2() : qi.getRoot1());
+                        if (rt >= 0.0) {
+                            rise = rt;
+                        }
                     }
                     if (set == null) {
-                        set = hour + (ye < 0.0 ? qi.getRoot1() : qi.getRoot2());
+                        double rt = hour + (ye < 0.0 ? qi.getRoot1() : qi.getRoot2());
+                        if (rt >= 0.0) {
+                            set = rt;
+                        }
                     }
                 }
 
-                if (hour < 24) {
+                if (hour <= 24) {
                     double xeAbs = Math.abs(qi.getXe());
                     if (xeAbs <= 1.0) {
                         double xeHour = qi.getXe() + hour;
-                        if (qi.isMaximum()) {
-                            noon = xeHour;
-                        } else {
-                            nadir = xeHour;
+                        if (xeHour >= 0.0 && xeHour < 24.0) {
+                            if (qi.isMaximum()) {
+                                noon = xeHour;
+                            } else {
+                                nadir = xeHour;
+                            }
                         }
                     }
                 }
@@ -337,7 +348,19 @@ public class SunTimes {
                     break;
                 }
 
+                hour++;
                 y_minus = y_0;
+                y_0 = y_plus;
+                y_plus = correctedSunHeight(jd.atHour(hour + 1.0));
+            }
+
+            if (!fullCycle) {
+                if (rise != null && rise >= 24.0) {
+                    rise = null;
+                }
+                if (set != null && set >= 24.0) {
+                    set = null;
+                }
             }
 
             return new SunTimes(

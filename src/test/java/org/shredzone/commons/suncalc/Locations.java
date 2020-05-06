@@ -66,4 +66,10 @@ public final class Locations {
     public static final double[] SYDNEY = new double[] { -33.744272, 151.231291 };
     public static final TimeZone SYDNEY_TZ = TimeZone.getTimeZone("Australia/Sydney");
 
+    /**
+     * Santa Monica, CA. To test a fix for issue #18.
+     */
+    public static final double[] SANTA_MONICA = new double[] { 34.0, -118.5 };
+    public static final TimeZone SANTA_MONICA_TZ = TimeZone.getTimeZone("PDT");
+
 }
