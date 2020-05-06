@@ -64,7 +64,7 @@
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>3.1.10</version>
+                <version>3.1.12.2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -76,7 +76,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>animal-sniffer-maven-plugin</artifactId>
-                <version>1.17</version>
+                <version>1.18</version>
                 <executions>
                     <execution>
                         <id>check-jdk</id>
@@ -122,6 +122,16 @@
                         <version>1.8</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <doclint>syntax,reference</doclint>
+                    <linksource>true</linksource>
+                    <locale>en</locale>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -177,9 +187,8 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.1.1</version>
                 <configuration>
-                    <detectLinks>true</detectLinks>
                     <doclint>syntax,reference</doclint>
                     <linksource>true</linksource>
                     <locale>en</locale>
@@ -188,7 +197,7 @@
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>3.1.10</version>
+                <version>3.1.12.2</version>
             </plugin>
         </plugins>
     </reporting>
@@ -218,7 +227,24 @@
         <profile>
             <id>java-9</id>
             <activation>
-                <jdk>[9,)</jdk>
+                <jdk>[9,10]</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <additionalJOption combine.self="override">--no-module-directories</additionalJOption>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>java-11</id>
+            <activation>
+                <jdk>[11,)</jdk>
             </activation>
             <build>
                 <plugins>
@@ -231,17 +257,6 @@
                     </plugin>
                 </plugins>
             </build>
-            <reporting>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <source>8</source>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </reporting>
         </profile>
     </profiles>
 </project>
