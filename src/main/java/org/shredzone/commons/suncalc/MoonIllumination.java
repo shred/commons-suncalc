@@ -28,16 +28,6 @@ import org.shredzone.commons.suncalc.util.Vector;
 
 /**
  * Calculates the illumination of the moon.
- * <p>
- * <em>NOTE:</em> This implementation will change in one of the next versions. Methods
- * may give other results, or disappear completely.
- *
- * @see <a href="http://idlastro.gsfc.nasa.gov/ftp/pro/astro/mphase.pro">Formulas the
- *      calculations base on</a>
- * @see <a href="http://aa.quae.nl/en/reken/hemelpositie.html">Formulas used for moon
- *      calculations</a>
- * @see "Astronomical Algorithms, 2nd edition by Jean Meeus (Willmann-Bell,
- *      Richmond) 1998, Chapter 48"
  */
 @ParametersAreNonnullByDefault
 @Immutable
@@ -80,16 +70,13 @@ public class MoonIllumination {
             JulianDate t = getJulianDate();
             Vector s = Sun.position(t);
             Vector m = Moon.position(t);
-
-            double phi = acos(sin(s.getTheta()) * sin(m.getTheta()) + cos(s.getTheta()) * cos(m.getTheta()) * cos(s.getPhi() - m.getPhi()));
-            double inc = atan2(s.getR() * sin(phi), m.getR() - s.getR() * cos(phi));
-            double angle = atan2(cos(s.getTheta()) * sin(s.getPhi() - m.getPhi()), sin(s.getTheta()) * cos(m.getTheta()) -
-                    cos(s.getTheta()) * sin(m.getTheta()) * cos(s.getPhi() - m.getPhi()));
+            double phi = PI - acos(m.dot(s) / (m.getR() * s.getR()));
+            Vector sunMoon = m.cross(s);
 
             return new MoonIllumination(
-                            (1 + cos(inc)) / 2,
-                            360.0 * (0.5 * inc * signum(angle) / PI),
-                            toDegrees(angle));
+                            (1 + cos(phi)) / 2,
+                            toDegrees(phi * signum(sunMoon.getTheta())),
+                            toDegrees(sunMoon.getTheta()));
         }
     }
 
@@ -110,14 +97,13 @@ public class MoonIllumination {
     }
 
     /**
-     * Midpoint angle in degrees of the illuminated limb of the moon reckoned eastward
-     * from the north point of the disk; the moon is waxing if the angle is negative, and
-     * waning if positive.
+     * The angle of the moon illumination relative to earth. The moon is waxing if the
+     * angle is negative, and waning if positive.
      * <p>
      * By subtracting {@link MoonPosition#getParallacticAngle()} from {@link #getAngle()},
      * one can get the zenith angle of the moons bright limb (anticlockwise). The zenith
-     * angle can be used do draw the moon shape from the observers perspective (e.g. moon
-     * lying on its back).
+     * angle can be used do draw the moon shape from the observers perspective (e.g. the
+     * moon lying on its back).
      */
     public double getAngle() {
         return angle;

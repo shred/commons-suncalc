@@ -33,8 +33,8 @@ public class MoonIlluminationTest {
                         .timezone(COLOGNE_TZ)
                         .execute();
         assertThat(mi.getFraction()).as("fraction").isCloseTo(0.0, ERROR);
-        assertThat(mi.getPhase()).as("phase").isCloseTo(175.9, ERROR); // -180.0
-        assertThat(mi.getAngle()).as("angle").isCloseTo(2.0, ERROR);
+        assertThat(mi.getPhase()).as("phase").isCloseTo(176.0, ERROR); // -180.0
+        assertThat(mi.getAngle()).as("angle").isCloseTo(1.8, ERROR);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class MoonIlluminationTest {
                         .timezone(COLOGNE_TZ)
                         .execute();
         assertThat(mi.getFraction()).as("fraction").isCloseTo(0.5, ERROR);
-        assertThat(mi.getPhase()).as("phase").isCloseTo(-89.9, ERROR); // -90.0
+        assertThat(mi.getPhase()).as("phase").isCloseTo(-90.0, ERROR);
         assertThat(mi.getAngle()).as("angle").isCloseTo(-66.9, ERROR);
     }
 
@@ -55,8 +55,8 @@ public class MoonIlluminationTest {
                         .timezone(COLOGNE_TZ)
                         .execute();
         assertThat(mi.getFraction()).as("fraction").isCloseTo(1.0, ERROR);
-        assertThat(mi.getPhase()).as("phase").isCloseTo(-3.1, ERROR); // 0.0
-        assertThat(mi.getAngle()).as("angle").isCloseTo(-7.4, ERROR);
+        assertThat(mi.getPhase()).as("phase").isCloseTo(-3.2, ERROR); // 0.0
+        assertThat(mi.getAngle()).as("angle").isCloseTo(-7.0, ERROR);
     }
 
     @Test
@@ -66,8 +66,8 @@ public class MoonIlluminationTest {
                         .timezone(COLOGNE_TZ)
                         .execute();
         assertThat(mi.getFraction()).as("fraction").isCloseTo(0.5, ERROR);
-        assertThat(mi.getPhase()).as("phase").isCloseTo(89.8, ERROR); // 90.0
-        assertThat(mi.getAngle()).as("angle").isCloseTo(68.7, ERROR);
+        assertThat(mi.getPhase()).as("phase").isCloseTo(90.0, ERROR);
+        assertThat(mi.getAngle()).as("angle").isCloseTo(68.1, ERROR);
     }
 
 }

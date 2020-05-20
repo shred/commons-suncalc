@@ -42,7 +42,6 @@ This library bases on:
 
 * "Astronomy on the Personal Computer", 4th edition, by Oliver Montenbruck and Thomas Pfleger
 * "Astronomical Algorithms" by Jean Meeus
-* `MoonIllumination` is based on [suncalc](https://github.com/mourner/suncalc) by Vladimir Agafonkin
 
 ## Contribute
 
