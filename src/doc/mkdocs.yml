@@ -1,0 +1,21 @@
+site_name: commons-suncalc
+site_author: Richard Körber
+site_url: https://commons.shredzone.org/suncalc
+site_dir: target/site/
+repo_url: https://github.com/shred/commons-suncalc
+edit_uri: ''
+use_directory_urls: false
+theme:
+    name: readthedocs
+    custom_dir: theme/
+    highlightjs: false
+markdown_extensions:
+  - admonition
+  - codehilite
+  - toc:
+      permalink: true
+nav:
+  - 'index.md'
+  - 'usage.md'
+  - 'JavaDocs': apidocs/index.html
+  - 'migration.md'

@@ -3,4 +3,4 @@ image: maven:3-jdk-11-slim
 
 build:
   script:
-    - mvn -B clean install site:site 
+    - mvn -B clean install javadoc:javadoc javadoc:test-javadoc
