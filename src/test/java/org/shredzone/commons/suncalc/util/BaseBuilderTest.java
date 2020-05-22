@@ -14,7 +14,8 @@
 package org.shredzone.commons.suncalc.util;
 
 import static java.lang.Math.toRadians;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -24,6 +25,7 @@ import org.assertj.core.api.AbstractDateAssert;
 import org.assertj.core.data.Offset;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.shredzone.commons.suncalc.Locations;
 import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
 
 /**
@@ -238,6 +240,49 @@ public class BaseBuilderTest {
         r = p.truncatedTo(Unit.HOURS);
         assertThat(r.getTruncatedTo()).isEqualTo(Unit.HOURS);
         assertThat(r).isSameAs(p);
+    }
+
+    @Test
+    public void testCopy() {
+        Date now = new Date();
+        Date tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000L);
+        Date yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000L);
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+
+        // Set test parameters
+        TestBuilder p1 = new TestBuilder();
+        p1.at(Locations.COLOGNE);
+        p1.on(now);
+        p1.timezone(tz);
+        p1.height(123.0);
+
+        // Make sure copy has identical values
+        TestBuilder p2 = p1.copy();
+        assertThat(p2.getLatitude()).isEqualTo(Locations.COLOGNE[0]);
+        assertThat(p2.getLongitude()).isEqualTo(Locations.COLOGNE[1]);
+        assertThat(p2.getJulianDate().getDate()).isEqualTo(now);
+        assertThat(p2.getJulianDate().getCalendar().getTimeZone()).isEqualTo(tz);
+        assertThat(p2.getHeight()).isEqualTo(123.0);
+
+        // Make sure changes to p1 won't affect p2
+        p1.at(Locations.SINGAPORE);
+        p1.on(tomorrow);
+        assertThat(p1.getLatitude()).isEqualTo(Locations.SINGAPORE[0]);
+        assertThat(p1.getLongitude()).isEqualTo(Locations.SINGAPORE[1]);
+        assertThat(p1.getJulianDate().getDate()).isEqualTo(tomorrow);
+        assertThat(p2.getLatitude()).isEqualTo(Locations.COLOGNE[0]);
+        assertThat(p2.getLongitude()).isEqualTo(Locations.COLOGNE[1]);
+        assertThat(p2.getJulianDate().getDate()).isEqualTo(now);
+
+        // Make sure changes to p2 won't affect p1
+        p2.at(Locations.WELLINGTON);
+        p2.on(yesterday);
+        assertThat(p1.getLatitude()).isEqualTo(Locations.SINGAPORE[0]);
+        assertThat(p1.getLongitude()).isEqualTo(Locations.SINGAPORE[1]);
+        assertThat(p1.getJulianDate().getDate()).isEqualTo(tomorrow);
+        assertThat(p2.getLatitude()).isEqualTo(Locations.WELLINGTON[0]);
+        assertThat(p2.getLongitude()).isEqualTo(Locations.WELLINGTON[1]);
+        assertThat(p2.getJulianDate().getDate()).isEqualTo(yesterday);
     }
 
     private void assertLatLng(TestBuilder p, double lat, double lng, double height) {

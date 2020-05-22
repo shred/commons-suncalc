@@ -19,6 +19,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
 import org.shredzone.commons.suncalc.param.Builder;
+import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
 import org.shredzone.commons.suncalc.util.BaseBuilder;
 import org.shredzone.commons.suncalc.util.JulianDate;
@@ -56,6 +57,7 @@ public class MoonIllumination {
      * Collects all parameters for {@link MoonIllumination}.
      */
     public interface Parameters extends
+            GenericParameter<Parameters>,
             TimeParameter<Parameters>,
             Builder<MoonIllumination> {
     }
@@ -77,6 +79,11 @@ public class MoonIllumination {
                             (1 + cos(phi)) / 2,
                             toDegrees(phi * signum(sunMoon.getTheta())),
                             toDegrees(sunMoon.getTheta()));
+        }
+
+        @Override
+        public Parameters copy() {
+            return null;
         }
     }
 

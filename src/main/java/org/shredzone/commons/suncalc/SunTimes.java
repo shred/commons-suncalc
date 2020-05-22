@@ -25,6 +25,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
 import org.shredzone.commons.suncalc.param.Builder;
+import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
 import org.shredzone.commons.suncalc.param.TimeResultParameter;
@@ -72,6 +73,7 @@ public class SunTimes {
      * Collects all parameters for {@link SunTimes}.
      */
     public interface Parameters extends
+            GenericParameter<Parameters>,
             LocationParameter<Parameters>,
             TimeParameter<Parameters>,
             TimeResultParameter<Parameters>,

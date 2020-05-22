@@ -13,7 +13,8 @@
  */
 package org.shredzone.commons.suncalc.util;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.toRadians;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -21,6 +22,7 @@ import java.util.TimeZone;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
 import org.shredzone.commons.suncalc.param.TimeResultParameter;
@@ -35,7 +37,8 @@ import org.shredzone.commons.suncalc.param.TimeResultParameter;
  */
 @ParametersAreNonnullByDefault
 @SuppressWarnings("unchecked")
-public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T>, TimeResultParameter<T> {
+public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>,
+        TimeParameter<T>, TimeResultParameter<T>, Cloneable {
 
     private double lat = 0.0;
     private double lng = 0.0;
@@ -195,6 +198,15 @@ public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T>, T
         return (T) this;
     }
 
+    @Override
+    public T copy() {
+        try {
+            return (T) clone();
+        } catch (CloneNotSupportedException ex) {
+            throw new RuntimeException(ex); // Should never be thrown anyway
+        }
+    }
+
     /**
      * Returns the longitude.
      *
@@ -284,6 +296,13 @@ public class BaseBuilder<T> implements LocationParameter<T>, TimeParameter<T>, T
     private static double dms(int d, int m, double s) {
         double sig = d < 0 ? -1.0 : 1.0;
         return sig * ((abs(s) / 60.0 + abs(m)) / 60.0 + abs(d));
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        BaseBuilder<T> b = (BaseBuilder<T>) super.clone();
+        b.cal = (Calendar) this.cal.clone();
+        return b;
     }
 
 }

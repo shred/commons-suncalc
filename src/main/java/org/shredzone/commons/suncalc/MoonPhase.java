@@ -23,6 +23,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
 import org.shredzone.commons.suncalc.param.Builder;
+import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
 import org.shredzone.commons.suncalc.param.TimeResultParameter;
 import org.shredzone.commons.suncalc.util.BaseBuilder;
@@ -65,6 +66,7 @@ public class MoonPhase {
      * @since 2.3
      */
     public interface Parameters extends
+            GenericParameter<Parameters>,
             TimeParameter<Parameters>,
             TimeResultParameter<Parameters>,
             Builder<MoonPhase> {
