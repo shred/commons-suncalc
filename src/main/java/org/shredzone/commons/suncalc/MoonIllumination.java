@@ -80,11 +80,6 @@ public class MoonIllumination {
                             toDegrees(phi * signum(sunMoon.getTheta())),
                             toDegrees(sunMoon.getTheta()));
         }
-
-        @Override
-        public Parameters copy() {
-            return null;
-        }
     }
 
     /**
