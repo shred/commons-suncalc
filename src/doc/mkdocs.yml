@@ -17,5 +17,7 @@ markdown_extensions:
 nav:
   - 'index.md'
   - 'usage.md'
+  - 'examples.md'
+  - 'faq.md'
   - 'JavaDocs': apidocs/index.html
   - 'migration.md'

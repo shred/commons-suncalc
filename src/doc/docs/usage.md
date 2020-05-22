@@ -74,7 +74,24 @@ SunPosition.compute().now();
 SunPosition.compute().today().timezone("Europe/Berlin");
 ```
 
-All available setters are listed in the [JavaDocs](./apidocs/org/shredzone/commons/suncalc/param/TimeParameter.html). If no time-based parameter is given, the current date and time, and the system's time zone is used.
+The available time-based parameters are:
+
+* `on(int year, int month, int date)`: Midnight of the given date. Note that `month` is counted from 1 (1 = January, 2 = February, …).
+* `on(int year, int month, int date, int hour, int minute, int second)`: Given date and time.
+* `on(Calendar cal)`: Date, time and timezone as given in the `Calendar`. The `Calender` is copied and can safely be modified after that.
+* `on(Date date)`: Date and time as given in the `Date`.
+* `plusDays(int days)`: Adds the given number of days to the current date. `days` can also be negative, of course.
+* `now()`: The current system date and time. This is the default.
+* `midnight()`: Past midnight of the current date. It just truncates the time.
+* `today()`: Identical to `.now().midnight()`.
+* `tomorrow()`: Identical to `today().plusDays(1)`.
+* `timezone(TimeZone tz)`: Use the given timezone.
+* `timezone(String id)`: Same as above, but accepts a `String` for your convenience.
+* `localTime()`: The system's timezone. This is the default.
+* `utc()`: UTC timezone. Identical to `timezone("UTC")`.
+* `sameTimeAs(TimeParameter<?> t)`: Copies the current date, time, and timezone from any other parameter object. Note that subsequent changes to the other object are not adopted.
+
+If no time-based parameter is given, the current date and time, and the system's time zone is used.
 
 !!! NOTE
     The accuracy of the results is decreasing for dates that are far in the future, or far in the past.
@@ -95,7 +112,16 @@ final double[] COLOGNE = new double[] { 50.938056, 6.956944 };
 SunPosition.compute().at(COLOGNE);
 ```
 
-All available setters are listed in the [JavaDocs](./apidocs/org/shredzone/commons/suncalc/param/LocationParameter.html).
+The available location-based parameters are:
+
+* `at(double lat, double lng)`: Latitude and longitude to be used for computation.
+* `at(double[] coords)`: Accepts an array of 2 values (latitude, longitude) or 3 values (latitude, longitude, height).
+* `latitude(double lat)`: Verbose way to set the latitude only.
+* `longitude(double lng)`: Verbose way to set the longitude only.
+* `latitude(int d, int m, double s)`: Set the latitude in degrees, minutes, seconds and fraction of seconds.
+* `longitude(int d, int m, double s)`: Set the longitude in degrees, minutes, seconds and fraction of seconds.
+* `height(double h)`: Height above sea level, in meters. It has just a minor influence on the result, and can thus just be left out. Sea level is used by default.
+* `sameLocationAs(LocationParameter<?> l)`: Copies the current location and height from any other parameter object. Note that subsequent changes to the other object are not adoped.
 
 !!! WARNING
     The location parameters are not mandatory. However, if they are not given, 0° is assumed as latitude and longitude, which is not very useful in most cases. Do not forget to set the parameters!
