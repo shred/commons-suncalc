@@ -108,4 +108,15 @@ public interface LocationParameter<T> {
      */
     T height(double h);
 
+    /**
+     * Uses the same location as given in the {@link LocationParameter} at this moment.
+     * <p>
+     * Changes to the source parameter will not affect this parameter, though.
+     *
+     * @param l  {@link LocationParameter} to be used.
+     * @return itself
+     * @since 2.8
+     */
+    T sameLocationAs(LocationParameter<?> l);
+
 }

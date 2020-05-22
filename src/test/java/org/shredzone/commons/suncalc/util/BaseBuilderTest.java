@@ -81,6 +81,10 @@ public class BaseBuilderTest {
         r = p.at(new double[] { 1.22, -3.44, 323.0 });
         assertLatLng(p, 1.22, -3.44, 323.0);
         assertThat(r).isSameAs(p);
+
+        TestBuilder s = new TestBuilder();
+        s.sameLocationAs(p);
+        assertLatLng(s, 1.22, -3.44, 323.0);
     }
 
     @Test
@@ -228,6 +232,17 @@ public class BaseBuilderTest {
                 NOW.get(Calendar.SECOND),
                 NOW.getTimeZone());
         assertThat(r).isSameAs(p);
+
+        TestBuilder s = new TestBuilder();
+        s.sameTimeAs(p);
+        assertDate(s,
+                NOW.get(Calendar.YEAR),
+                NOW.get(Calendar.MONTH) + 1,
+                NOW.get(Calendar.DAY_OF_MONTH),
+                NOW.get(Calendar.HOUR_OF_DAY),
+                NOW.get(Calendar.MINUTE),
+                NOW.get(Calendar.SECOND),
+                NOW.getTimeZone());
     }
 
     @Test

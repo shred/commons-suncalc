@@ -199,6 +199,27 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
     }
 
     @Override
+    public T sameTimeAs(TimeParameter<?> t) {
+        if (! (t instanceof BaseBuilder)) {
+            throw new IllegalArgumentException("Cannot read the TimeParameter");
+        }
+        this.cal = (Calendar) ((BaseBuilder<?>) t).cal.clone();
+        return (T) this;
+    }
+
+    @Override
+    public T sameLocationAs(LocationParameter<?> l) {
+        if (! (l instanceof BaseBuilder)) {
+            throw new IllegalArgumentException("Cannot read the LocationParameter");
+        }
+        BaseBuilder<?> origin = (BaseBuilder<?>) l;
+        this.lat = origin.lat;
+        this.lng = origin.lng;
+        this.height = origin.height;
+        return (T) this;
+    }
+
+    @Override
     public T copy() {
         try {
             return (T) clone();

@@ -165,4 +165,15 @@ public interface TimeParameter<T> {
      */
     T utc();
 
+    /**
+     * Uses the same time as given in the {@link TimeParameter}.
+     * <p>
+     * Changes to the source parameter will not affect this parameter, though.
+     *
+     * @param t  {@link TimeParameter} to be used.
+     * @return itself
+     * @since 2.8
+     */
+    T sameTimeAs(TimeParameter<?> t);
+
 }
