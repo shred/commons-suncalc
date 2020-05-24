@@ -19,11 +19,7 @@ import static org.shredzone.commons.suncalc.util.ExtendedMath.parallax;
 
 import java.util.Date;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.concurrent.Immutable;
-
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.LocationParameter;
@@ -38,14 +34,12 @@ import org.shredzone.commons.suncalc.util.Vector;
 /**
  * Calculates the rise and set times of the sun.
  */
-@ParametersAreNonnullByDefault
-@Immutable
 public class SunTimes {
 
-    private final Date rise;
-    private final Date set;
-    private final Date noon;
-    private final Date nadir;
+    private final @Nullable Date rise;
+    private final @Nullable Date set;
+    private final @Nullable Date noon;
+    private final @Nullable Date nadir;
     private final boolean alwaysUp;
     private final boolean alwaysDown;
 
@@ -187,7 +181,7 @@ public class SunTimes {
 
         private final double angle;
         private final double angleRad;
-        private final Double position;
+        private final @Nullable Double position;
 
         Twilight(double angle) {
             this(angle, null);
@@ -226,7 +220,7 @@ public class SunTimes {
          * means upper edge of the sun. {@code -1.0} means lower edge of the sun.
          * {@code null} means the angular position is not topocentric.
          */
-        @CheckForNull
+        @Nullable
         private Double getAngularPosition() {
             return position;
         }
@@ -238,7 +232,7 @@ public class SunTimes {
      */
     private static class SunTimesBuilder extends BaseBuilder<Parameters> implements Parameters {
         private double angle = Twilight.VISUAL.getAngleRad();
-        private Double position = Twilight.VISUAL.getAngularPosition();
+        private @Nullable Double position = Twilight.VISUAL.getAngularPosition();
         private boolean fullCycle = false;
         private double refraction = apparentRefraction(0.0);
 
@@ -400,7 +394,7 @@ public class SunTimes {
      * <p>
      * Always returns a sunrise time if {@link Parameters#fullCycle()} was set.
      */
-    @CheckForNull
+    @Nullable
     public Date getRise() {
         return rise != null ? new Date(rise.getTime()) : null;
     }
@@ -410,7 +404,7 @@ public class SunTimes {
      * <p>
      * Always returns a sunset time if {@link Parameters#fullCycle()} was set.
      */
-    @CheckForNull
+    @Nullable
     public Date getSet() {
         return set != null ? new Date(set.getTime()) : null;
     }
@@ -423,6 +417,7 @@ public class SunTimes {
      * <p>
      * Note that {@link Parameters#fullCycle()} does not affect this result.
      */
+    @Nullable
     public Date getNoon() {
         return noon != null ? new Date(noon.getTime()) : null;
     }
@@ -435,6 +430,7 @@ public class SunTimes {
      * <p>
      * Note that {@link Parameters#fullCycle()} does not affect this result.
      */
+    @Nullable
     public Date getNadir() {
         return nadir != null ? new Date(nadir.getTime()) : null;
     }

@@ -13,20 +13,16 @@
  */
 package org.shredzone.commons.suncalc.util;
 
-import static java.lang.Math.*;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 import java.util.Arrays;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.concurrent.Immutable;
 
 /**
  * A three dimensional matrix.
  * <p>
  * Objects are immutable and threadsafe.
  */
-@ParametersAreNonnullByDefault
-@Immutable
 public class Matrix {
 
     private final double[] mx;

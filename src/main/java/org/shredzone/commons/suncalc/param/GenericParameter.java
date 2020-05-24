@@ -13,15 +13,12 @@
  */
 package org.shredzone.commons.suncalc.param;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 /**
  * Generic parameters and options.
  *
  * @param <T>
  *            Type of the final builder
  */
-@ParametersAreNonnullByDefault
 public interface GenericParameter<T> {
 
     /**

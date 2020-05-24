@@ -14,19 +14,16 @@
 package org.shredzone.commons.suncalc.util;
 
 import static java.lang.Math.*;
-import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.PI2;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.isZero;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * A three dimensional vector.
  * <p>
  * Objects are is immutable and threadsafe.
  */
-@ParametersAreNonnullByDefault
-@Immutable
 public class Vector {
 
     private final double x;
@@ -268,11 +265,10 @@ public class Vector {
      * Helper class for lazily computing the polar coordinates in an immutable Vector
      * object.
      */
-    @ThreadSafe
     private class Polar {
-        private Double φ = null;
-        private Double θ = null;
-        private Double r = null;
+        private @Nullable Double φ = null;
+        private @Nullable Double θ = null;
+        private @Nullable Double r = null;
 
         /**
          * Sets polar coordinates.

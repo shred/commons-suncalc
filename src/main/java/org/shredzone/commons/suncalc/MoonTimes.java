@@ -18,11 +18,7 @@ import static org.shredzone.commons.suncalc.util.ExtendedMath.parallax;
 
 import java.util.Date;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.concurrent.Immutable;
-
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.LocationParameter;
@@ -37,12 +33,10 @@ import org.shredzone.commons.suncalc.util.Vector;
 /**
  * Calculates the times of the moon.
  */
-@ParametersAreNonnullByDefault
-@Immutable
 public final class MoonTimes {
 
-    private final Date rise;
-    private final Date set;
+    private final @Nullable Date rise;
+    private final @Nullable Date set;
     private final boolean alwaysUp;
     private final boolean alwaysDown;
 
@@ -207,7 +201,7 @@ public final class MoonTimes {
     /**
      * Moonrise time. {@code null} if the moon does not rise that day.
      */
-    @CheckForNull
+    @Nullable
     public Date getRise() {
         return rise != null ? new Date(rise.getTime()) : null;
     }
@@ -215,7 +209,7 @@ public final class MoonTimes {
     /**
      * Moonset time. {@code null} if the moon does not set that day.
      */
-    @CheckForNull
+    @Nullable
     public Date getSet() {
         return set != null ? new Date(set.getTime()) : null;
     }

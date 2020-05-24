@@ -19,9 +19,6 @@ import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.concurrent.Immutable;
-
 import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
 
 /**
@@ -29,8 +26,6 @@ import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
  * <p>
  * Objects are immutable and threadsafe.
  */
-@ParametersAreNonnullByDefault
-@Immutable
 public class JulianDate {
 
     private final Calendar cal;

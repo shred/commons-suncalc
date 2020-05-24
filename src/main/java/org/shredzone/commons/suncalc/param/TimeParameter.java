@@ -17,8 +17,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 /**
  * Time based parameters.
  * <p>
@@ -28,7 +26,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * @param <T>
  *            Type of the final builder
  */
-@ParametersAreNonnullByDefault
 public interface TimeParameter<T> {
 
     /**

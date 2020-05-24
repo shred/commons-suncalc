@@ -19,9 +19,6 @@ import static org.shredzone.commons.suncalc.util.ExtendedMath.PI2;
 
 import java.util.Date;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.concurrent.Immutable;
-
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
@@ -41,8 +38,6 @@ import org.shredzone.commons.suncalc.util.Vector;
  *
  * @since 2.3
  */
-@ParametersAreNonnullByDefault
-@Immutable
 public class MoonPhase {
 
     private final Date time;

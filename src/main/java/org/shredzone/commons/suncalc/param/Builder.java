@@ -13,15 +13,12 @@
  */
 package org.shredzone.commons.suncalc.param;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 /**
  * An interface for the method that eventually executes the calculation.
  *
  * @param <T>
  *            Result type
  */
-@ParametersAreNonnullByDefault
 public interface Builder<T> {
 
     /**

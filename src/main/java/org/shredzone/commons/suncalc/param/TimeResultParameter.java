@@ -13,8 +13,6 @@
  */
 package org.shredzone.commons.suncalc.param;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 /**
  * Result time based parameters.
  * <p>
@@ -24,7 +22,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
  *            Type of the final builder
  * @since 2.3
  */
-@ParametersAreNonnullByDefault
 public interface TimeResultParameter<T> {
 
     /**
