@@ -13,12 +13,16 @@
  */
 package org.shredzone.commons.suncalc.util;
 
-import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.LocationParameter;
@@ -40,116 +44,58 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
     private double lat = 0.0;
     private double lng = 0.0;
     private double height = 0.0;
-    private Calendar cal = createCalendar();
+    private ZonedDateTime dateTime = ZonedDateTime.now();
     private Unit unit = Unit.MINUTES;
 
     @Override
-    public T on(int year, int month, int date) {
-        cal.clear();
-        cal.set(year, month - 1, date);
+    public T on(ZonedDateTime dateTime) {
+        this.dateTime = Objects.requireNonNull(dateTime, "dateTime");
         return (T) this;
+    }
+
+    @Override
+    public T on(LocalDateTime dateTime) {
+        Objects.requireNonNull(dateTime, "dateTime");
+        return on(ZonedDateTime.of(dateTime, this.dateTime.getZone()));
+    }
+
+    @Override
+    public T on(LocalDate date) {
+        Objects.requireNonNull(date, "date");
+        return on(ZonedDateTime.of(date, LocalTime.MIDNIGHT, dateTime.getZone()));
+    }
+
+    @Override
+    public T on(Instant instant) {
+        Objects.requireNonNull(instant, "instant");
+        return on(ZonedDateTime.ofInstant(instant, dateTime.getZone()));
     }
 
     @Override
     public T on(int year, int month, int date, int hour, int minute, int second) {
-        cal.clear();
-        cal.set(year, month - 1, date, hour, minute, second);
-        return (T) this;
-    }
-
-    @Override
-    public T on(Date date) {
-        if (date == null) { //NOSONAR: safety null check
-            throw new NullPointerException();
-        }
-        cal.setTime(date);
-        return (T) this;
-    }
-
-    @Override
-    public T on(Calendar calendar) {
-        if (calendar == null) { //NOSONAR: safety null check
-            throw new NullPointerException();
-        }
-        on(calendar.getTime());
-        timezone(calendar.getTimeZone());
-        return (T) this;
-    }
-
-    @Override
-    public T plusDays(int days) {
-        cal.add(Calendar.DAY_OF_MONTH, days);
-        return (T) this;
-    }
-
-    @Override
-    public T today() {
-        now();
-        midnight();
-        return (T) this;
-    }
-
-    @Override
-    public T tomorrow() {
-        today();
-        plusDays(1);
-        return (T) this;
+        return on(ZonedDateTime.of(year, month, date, hour, minute, second, 0, dateTime.getZone()));
     }
 
     @Override
     public T now() {
-        return on(createCalendar());
+        return on(ZonedDateTime.now(dateTime.getZone()));
+    }
+
+    @Override
+    public T plusDays(int days) {
+        return on(dateTime.plusDays(days));
     }
 
     @Override
     public T midnight() {
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
+        return on(dateTime.truncatedTo(ChronoUnit.DAYS));
+    }
+
+    @Override
+    public T timezone(ZoneId tz) {
+        Objects.requireNonNull(tz, "tz");
+        on(dateTime.withZoneSameLocal(tz));
         return (T) this;
-    }
-
-    @Override
-    public T timezone(TimeZone tz) {
-        if (tz == null) { //NOSONAR: safety null check
-            throw new NullPointerException();
-        }
-        cal.setTimeZone(tz);
-        return (T) this;
-    }
-
-    @Override
-    public T timezone(String id) {
-        return timezone(TimeZone.getTimeZone(id));
-    }
-
-    @Override
-    public T utc() {
-        return timezone("UTC");
-    }
-
-    @Override
-    public T localTime() {
-        return timezone(TimeZone.getDefault());
-    }
-
-    @Override
-    public T at(double lat, double lng) {
-        latitude(lat);
-        longitude(lng);
-        return (T) this;
-    }
-
-    @Override
-    public T at(double[] coords) {
-        if (coords.length != 2 && coords.length != 3) {
-            throw new IllegalArgumentException("Array must contain 2 or 3 doubles");
-        }
-        if (coords.length == 3) {
-            height(coords[2]);
-        }
-        return at(coords[0], coords[1]);
     }
 
     @Override
@@ -171,16 +117,6 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
     }
 
     @Override
-    public T latitude(int d, int m, double s) {
-        return latitude(dms(d, m, s));
-    }
-
-    @Override
-    public T longitude(int d, int m, double s) {
-        return longitude(dms(d, m, s));
-    }
-
-    @Override
     public T height(double h) {
         this.height = h;
         return (T) this;
@@ -188,10 +124,7 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
 
     @Override
     public T truncatedTo(Unit unit) {
-        if (unit == null) { //NOSONAR: safety null check
-            throw new NullPointerException();
-        }
-        this.unit = unit;
+        this.unit = Objects.requireNonNull(unit, "unit");
         return (T) this;
     }
 
@@ -200,7 +133,7 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
         if (! (t instanceof BaseBuilder)) {
             throw new IllegalArgumentException("Cannot read the TimeParameter");
         }
-        this.cal = (Calendar) ((BaseBuilder<?>) t).cal.clone();
+        this.dateTime = ((BaseBuilder<?>) t).dateTime;
         return (T) this;
     }
 
@@ -276,51 +209,16 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
      * @return {@link JulianDate}
      */
     public JulianDate getJulianDate() {
-        return new JulianDate((Calendar) cal.clone());
+        return new JulianDate(dateTime);
     }
 
     /**
      * Returns the {@link Unit} to truncate to.
      *
      * @return {@link Unit}
-     * @since 2.3
      */
     public Unit getTruncatedTo() {
         return unit;
-    }
-
-    /**
-     * Creates a new {@link Calendar} instance containing the current instant.
-     * <p>
-     * This method can be overriden on unit tests.
-     *
-     * @return {@link Calendar} instance
-     */
-    protected Calendar createCalendar() {
-        return Calendar.getInstance();
-    }
-
-    /**
-     * Converts dms to double.
-     *
-     * @param d
-     *            Degrees. Sign is used for result.
-     * @param m
-     *            Minutes. Sign is ignored.
-     * @param s
-     *            Seconds and fractions. Sign is ignored.
-     * @return angle, in degrees
-     */
-    private static double dms(int d, int m, double s) {
-        double sig = d < 0 ? -1.0 : 1.0;
-        return sig * ((abs(s) / 60.0 + abs(m)) / 60.0 + abs(d));
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        BaseBuilder<T> b = (BaseBuilder<T>) super.clone();
-        b.cal = (Calendar) this.cal.clone();
-        return b;
     }
 
 }

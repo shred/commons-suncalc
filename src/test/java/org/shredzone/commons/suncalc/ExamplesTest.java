@@ -13,14 +13,12 @@
  */
 package org.shredzone.commons.suncalc;
 
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.TimeZone;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.shredzone.commons.suncalc.param.TimeResultParameter;
 
 /**
  * These are some examples that are meant to be executed manually.
@@ -53,27 +51,22 @@ public class ExamplesTest {
 
         SunTimes newYorkTz = SunTimes.compute()
                 .on(2020, 5, 1)             // May 1st, 2020, starting midnight
-                .timezone("America/New_York") // ...New York timezone
+                .timezone("America/New_York")   // ...New York timezone
                 .at(40.712778, -74.005833)  // Coordinates of New York
                 .execute();
         System.out.println("Sunrise in New York: " + newYorkTz.getRise());
         System.out.println("Sunset in New York:  " + newYorkTz.getSet());
-
-        DateFormat formatter = DateFormat.getDateTimeInstance();
-        formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
-        System.out.println("Sunrise in New York: " + formatter.format(newYorkTz.getRise()));
-        System.out.println("Sunset in New York:  " + formatter.format(newYorkTz.getSet()));
     }
 
     @Test
     public void testTimeWindow() {
-        // Our example takes place in Alert, Canada, so set the timezone accordingly.
-        TimeZone.setDefault(TimeZone.getTimeZone("Canada/Eastern"));
+        final double[] ALERT_CANADA = new double[] { 82.5, -62.316667 };
+        final ZoneId ALERT_TZ = ZoneId.of("Canada/Eastern");
 
-        double[] ALERT_CANADA = new double[] { 82.5, -62.316667 };
         SunTimes march = SunTimes.compute()
                 .on(2020, 3, 15)            // March 15th, 2020, starting midnight
                 .at(ALERT_CANADA)           // Coordinates are stored in an array
+                .timezone(ALERT_TZ)
                 .execute();
         System.out.println("Sunrise: " + march.getRise());
         System.out.println("Sunset:  " + march.getSet());
@@ -81,6 +74,7 @@ public class ExamplesTest {
         SunTimes june = SunTimes.compute()
                 .on(2020, 6, 15)            // June 15th, 2020, starting midnight
                 .at(ALERT_CANADA)
+                .timezone(ALERT_TZ)
                 .execute();
         System.out.println("Sunrise: " + june.getRise());
         System.out.println("Sunset:  " + june.getSet());
@@ -91,6 +85,7 @@ public class ExamplesTest {
         SunTimes juneFullCycle = SunTimes.compute()
                 .on(2020, 6, 15)            // June 15th, 2020, starting midnight
                 .at(ALERT_CANADA)
+                .timezone(ALERT_TZ)
                 .fullCycle()                // No 24h limit, we want to get the full cycle
                 .execute();
         System.out.println("Sunset:  " + juneFullCycle.getSet());
@@ -99,7 +94,7 @@ public class ExamplesTest {
 
     @Test
     public void testParameterRecycling() {
-        double[] COLOGNE = new double[] { 50.938056, 6.956944 };
+        final double[] COLOGNE = new double[] { 50.938056, 6.956944 };
 
         MoonTimes.Parameters parameters = MoonTimes.compute()
                 .at(COLOGNE)
@@ -128,19 +123,19 @@ public class ExamplesTest {
 
     @Test
     public void testGoldenHour() {
-        // Our example takes place in Singapore so set the timezone accordingly.
-        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Singapore"));
-
         SunTimes.Parameters base = SunTimes.compute()
                 .at(1.283333, 103.833333)            // Singapore
                 .twilight(SunTimes.Twilight.VISUAL)  // Visual sunrise, this is the default
-                .on(2020, 6, 1);
+                .on(2020, 6, 1)
+                .timezone("Asia/Singapore");
 
         for (int i = 0; i < 4; i++) {
-            SunTimes visible = base.copy()
+            SunTimes visible = base
+                    .copy()                          // Use a copy of base
                     .plusDays(i * 7)
                     .execute();
-            SunTimes golden = base.copy()
+            SunTimes golden = base
+                    .copy()                          // Use a copy of base
                     .twilight(SunTimes.Twilight.GOLDEN_HOUR)    // Golden Hour
                     .plusDays(i * 7)
                     .execute();
@@ -154,22 +149,24 @@ public class ExamplesTest {
 
     @Test
     public void testMoonPhase() {
-        Calendar cal = Calendar.getInstance();
-        cal.clear();
-        cal.set(2023, Calendar.JANUARY, 1);
+        LocalDate date = LocalDate.of(2023, 1, 1);
 
         MoonPhase.Parameters parameters = MoonPhase.compute()
-                .phase(MoonPhase.Phase.FULL_MOON)
-                .truncatedTo(TimeResultParameter.Unit.DAYS);
+                .phase(MoonPhase.Phase.FULL_MOON);
 
-        while (cal.get(Calendar.MONTH) < Calendar.DECEMBER) {
-            MoonPhase phase = parameters.on(cal).execute();
-            Date fullMoonAt = phase.getTime();
+        while (true) {
+            LocalDate nextFullMoon = parameters
+                    .on(date)
+                    .execute()
+                    .getTime()
+                    .toLocalDate();
+            if (nextFullMoon.getYear() == 2024) {
+                break;      // we've reached the next year
+            }
 
-            System.out.println(fullMoonAt);
+            System.out.println(nextFullMoon);
 
-            cal.setTime(fullMoonAt);
-            cal.add(Calendar.DAY_OF_MONTH, 1);
+            date = nextFullMoon.plusDays(1);
         }
     }
 

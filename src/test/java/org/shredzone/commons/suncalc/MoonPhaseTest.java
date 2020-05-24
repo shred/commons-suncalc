@@ -76,7 +76,7 @@ public class MoonPhaseTest {
                         .truncatedTo(Unit.SECONDS)
                         .execute();
 
-        assertThat(mp.getTime()).isEqualTo("2017-09-13T06:28:35Z");
+        assertThat(mp.getTime()).isEqualTo("2017-09-13T06:28:34Z");
     }
 
 }

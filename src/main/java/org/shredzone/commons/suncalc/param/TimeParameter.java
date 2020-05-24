@@ -13,8 +13,14 @@
  */
 package org.shredzone.commons.suncalc.param;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.TimeZone;
 
 /**
@@ -26,26 +32,12 @@ import java.util.TimeZone;
  * @param <T>
  *            Type of the final builder
  */
+@SuppressWarnings("unchecked")
 public interface TimeParameter<T> {
 
     /**
-     * Sets midnight of the year, month and date. Uses the system's time zone unless a
-     * different time zone is given.
-     *
-     * @param year
-     *            Year
-     * @param month
-     *            Month (1 = January, 2 = February, ...)
-     * @param date
-     *            Day of month
-     * @return itself
-     */
-    T on(int year, int month, int date);
-
-    /**
      * Sets date and time. Note that also seconds can be passed in for convenience, but
-     * the results are not that accurate. Uses the system's time zone unless a different
-     * time zone is given.
+     * the results are not that accurate.
      *
      * @param year
      *            Year
@@ -64,54 +56,79 @@ public interface TimeParameter<T> {
     T on(int year, int month, int date, int hour, int minute, int second);
 
     /**
+     * Sets midnight of the year, month and date.
+     *
+     * @param year
+     *            Year
+     * @param month
+     *            Month (1 = January, 2 = February, ...)
+     * @param date
+     *            Day of month
+     * @return itself
+     */
+    default T on(int year, int month, int date) {
+        return on(year, month, date, 0, 0, 0);
+    }
+
+    /**
+     * Uses the given {@link ZonedDateTime} instance.
+     *
+     * @param dateTime
+     *            {@link ZonedDateTime} to be used.
+     * @return itself
+     */
+    T on(ZonedDateTime dateTime);
+
+    /**
+     * Uses the given {@link LocalDateTime} instance.
+     *
+     * @param dateTime
+     *         {@link LocalDateTime} to be used.
+     * @return itself
+     */
+    T on(LocalDateTime dateTime);
+
+    /**
+     * Uses the given {@link LocalDate} instance, and assumes midnight.
+     *
+     * @param date
+     *         {@link LocalDate} to be used.
+     * @return itself
+     */
+    T on(LocalDate date);
+
+    /**
+     * Uses the given {@link Instant} instance.
+     *
+     * @param instant
+     *            {@link Instant} to be used.
+     * @return itself
+     */
+    T on(Instant instant);
+
+    /**
+     * Uses the given {@link Date} instance.
+     *
+     * @param date
+     *         {@link Date} to be used.
+     * @return itself
+     */
+    default T on(Date date) {
+        Objects.requireNonNull(date, "date");
+        return on(date.toInstant());
+    }
+
+    /**
      * Uses the given {@link Calendar} instance.
      *
      * @param cal
-     *            {@link Calendar}. A copy of the date, time, and time zone is used. The
-     *            {@link Calendar} instance may be reused after that.
+     *         {@link Calendar} to be used
      * @return itself
      */
-    T on(Calendar cal);
-
-    /**
-     * Uses the given {@link Date} instance. Uses the system's time zone unless a
-     * different time zone is given.
-     *
-     * @param date
-     *            {@link Date}. A copy of the date is used. The {@link Date} instance may
-     *            be reused after that.
-     * @return itself
-     */
-    T on(Date date);
-
-    /**
-     * Adds a number of days to the current date.
-     *
-     * @param days
-     *            Number of days to add
-     * @return itself
-     * @since 2.2
-     */
-    T plusDays(int days);
-
-    /**
-     * Sets today, midnight.
-     * <p>
-     * It is the same as <code>now().midnight()</code>.
-     *
-     * @return itself
-     */
-    T today();
-
-    /**
-     * Sets tomorrow, midnight.
-     * <p>
-     * It is the same as <code>now().midnight().plusDays(1)</code>.
-     *
-     * @return itself
-     * @since 2.2
-     */
-    T tomorrow();
+    default T on(Calendar cal) {
+        Objects.requireNonNull(cal, "cal");
+        return on(ZonedDateTime.ofInstant(cal.toInstant(), cal.getTimeZone().toZoneId()));
+    }
 
     /**
      * Sets the current date and time. This is the default.
@@ -128,39 +145,91 @@ public interface TimeParameter<T> {
     T midnight();
 
     /**
-     * Sets the given {@link TimeZone}.
+     * Adds a number of days to the current date.
+     *
+     * @param days
+     *            Number of days to add
+     * @return itself
+     */
+    T plusDays(int days);
+
+    /**
+     * Sets today, midnight.
+     * <p>
+     * It is the same as <code>now().midnight()</code>.
+     *
+     * @return itself
+     */
+    default T today() {
+        now();
+        midnight();
+        return (T) this;
+    }
+
+    /**
+     * Sets tomorrow, midnight.
+     * <p>
+     * It is the same as <code>now().midnight().plusDays(1)</code>.
+     *
+     * @return itself
+     */
+    default T tomorrow() {
+        today();
+        plusDays(1);
+        return (T) this;
+    }
+
+    /**
+     * Sets the given {@link ZoneId}. The local time is retained, so the parameter order
+     * is not important.
      *
      * @param tz
-     *            {@link TimeZone} to be used.
+     *            {@link ZoneId} to be used.
      * @return itself
      */
-    T timezone(TimeZone tz);
+    T timezone(ZoneId tz);
 
     /**
-     * Sets the given {@link TimeZone}. This is a convenience method that just invokes
-     * {@link TimeZone#getTimeZone(String)}.
+     * Sets the given timezone. This is a convenience method that just invokes
+     * {@link ZoneId#of(String)}.
      *
      * @param id
-     *            ID of the time zone. "GMT" is used if the time zone ID was not
-     *            understood.
+     *            ID of the time zone.
      * @return itself
-     * @see TimeZone#getTimeZone(String)
+     * @see ZoneId#of(String)
      */
-    T timezone(String id);
+    default T timezone(String id) {
+        return timezone(ZoneId.of(id));
+    }
 
     /**
-     * Sets the system's {@link TimeZone}. This is the default.
+     * Sets the system's timezone. This is the default.
      *
      * @return itself
      */
-    T localTime();
+    default T localTime() {
+        return timezone(ZoneId.systemDefault());
+    }
 
     /**
      * Sets the time zone to UTC.
      *
      * @return itself
      */
-    T utc();
+    default T utc() {
+        return timezone("UTC");
+    }
+
+    /**
+     * Sets the {@link TimeZone}.
+     *
+     * @param tz {@link TimeZone} to be used
+     * @return itself
+     */
+    default T timezone(TimeZone tz) {
+        Objects.requireNonNull(tz, "tz");
+        return timezone(tz.toZoneId());
+    }
 
     /**
      * Uses the same time as given in the {@link TimeParameter}.
@@ -169,7 +238,6 @@ public interface TimeParameter<T> {
      *
      * @param t  {@link TimeParameter} to be used.
      * @return itself
-     * @since 2.8
      */
     T sameTimeAs(TimeParameter<?> t);
 

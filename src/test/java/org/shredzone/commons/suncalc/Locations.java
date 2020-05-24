@@ -13,7 +13,7 @@
  */
 package org.shredzone.commons.suncalc;
 
-import java.util.TimeZone;
+import java.time.ZoneId;
 
 /**
  * Geocoordinates of some test locations.
@@ -24,52 +24,50 @@ public final class Locations {
      * Cologne, Germany. A random city on the northern hemisphere.
      */
     public static final double[] COLOGNE = new double[] { 50.938056, 6.956944 };
-    public static final TimeZone COLOGNE_TZ = TimeZone.getTimeZone("Europe/Berlin");
+    public static final ZoneId COLOGNE_TZ = ZoneId.of("Europe/Berlin");
 
     /**
      * Alert, Nunavut, Canada. The northernmost place in the world with a permanent
      * population.
      */
     public static final double[] ALERT = new double[] { 82.5, -62.316667 };
-    public static final TimeZone ALERT_TZ = TimeZone.getTimeZone("Canada/Eastern");
+    public static final ZoneId ALERT_TZ = ZoneId.of("Canada/Eastern");
 
     /**
      * Wellington, New Zealand. A random city on the southern hemisphere, close to the
      * international date line.
      */
     public static final double[] WELLINGTON = new double[] { -41.2875, 174.776111 };
-    public static final TimeZone WELLINGTON_TZ = TimeZone.getTimeZone("Pacific/Auckland");
+    public static final ZoneId WELLINGTON_TZ = ZoneId.of("Pacific/Auckland");
 
     /**
      * Puerto Williams, Chile. The southernmost town in the world.
      */
     public static final double[] PUERTO_WILLIAMS = new double[] { -54.933333, -67.616667 };
-    public static final TimeZone PUERTO_WILLIAMS_TZ = TimeZone.getTimeZone("GMT-3:00");
-    // FIXME: "America/Punta_Arenas" would be correct, but does not seem to be supported
-    // by Java yet. Only use 2017 summer time dates for unit tests for now!
+    public static final ZoneId PUERTO_WILLIAMS_TZ = ZoneId.of("America/Punta_Arenas");
 
     /**
      * Singapore. A random city close to the equator.
      */
     public static final double[] SINGAPORE = new double[] { 1.283333, 103.833333 };
-    public static final TimeZone SINGAPORE_TZ = TimeZone.getTimeZone("Asia/Singapore");
+    public static final ZoneId SINGAPORE_TZ = ZoneId.of("Asia/Singapore");
 
     /**
      * Martinique. To test a fix for issue #13.
      */
     public static final double[] MARTINIQUE = new double[] { 14.640725, -61.0112 };
-    public static final TimeZone MARTINIQUE_TZ = TimeZone.getTimeZone("America/Martinique");
+    public static final ZoneId MARTINIQUE_TZ = ZoneId.of("America/Martinique");
 
     /**
      * Sydney. To test a fix for issue #14.
      */
     public static final double[] SYDNEY = new double[] { -33.744272, 151.231291 };
-    public static final TimeZone SYDNEY_TZ = TimeZone.getTimeZone("Australia/Sydney");
+    public static final ZoneId SYDNEY_TZ = ZoneId.of("Australia/Sydney");
 
     /**
      * Santa Monica, CA. To test a fix for issue #18.
      */
     public static final double[] SANTA_MONICA = new double[] { 34.0, -118.5 };
-    public static final TimeZone SANTA_MONICA_TZ = TimeZone.getTimeZone("PDT");
+    public static final ZoneId SANTA_MONICA_TZ = ZoneId.of("America/Los_Angeles");
 
 }

@@ -17,8 +17,11 @@ import static java.lang.Math.toRadians;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 
 import org.assertj.core.api.AbstractDateAssert;
@@ -36,7 +39,7 @@ import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
 public class BaseBuilderTest {
 
     private static final Offset<Double> ERROR = Offset.offset(0.001);
-    private static final Calendar NOW = Calendar.getInstance();
+    private static final ZonedDateTime NOW = ZonedDateTime.now();
 
     @BeforeClass
     public static void init() {
@@ -91,6 +94,7 @@ public class BaseBuilderTest {
     public void testBadLocations() {
         TestBuilder p = new TestBuilder();
 
+        // At least two array records are required
         try {
             p.at(new double[] { 12.0 });
             failBecauseExceptionWasNotThrown(IllegalAccessException.class);
@@ -98,6 +102,7 @@ public class BaseBuilderTest {
             // expected
         }
 
+        // No more than three array records are permitted
         try {
             p.at(new double[] { 12.0, 34.0, 56.0, 78.0 });
             failBecauseExceptionWasNotThrown(IllegalAccessException.class);
@@ -105,6 +110,7 @@ public class BaseBuilderTest {
             // expected
         }
 
+        // Latitude out of range (negative)
         try {
             p.latitude(-90.1);
             failBecauseExceptionWasNotThrown(IllegalAccessException.class);
@@ -112,6 +118,7 @@ public class BaseBuilderTest {
             // expected
         }
 
+        // Latitude out of range (positive)
         try {
             p.latitude(90.1);
             failBecauseExceptionWasNotThrown(IllegalAccessException.class);
@@ -119,6 +126,7 @@ public class BaseBuilderTest {
             // expected
         }
 
+        // Longitude out of range (negative)
         try {
             p.longitude(-180.1);
             failBecauseExceptionWasNotThrown(IllegalAccessException.class);
@@ -126,6 +134,7 @@ public class BaseBuilderTest {
             // expected
         }
 
+        // Longitude out of range (positive)
         try {
             p.longitude(180.1);
             failBecauseExceptionWasNotThrown(IllegalAccessException.class);
@@ -139,110 +148,128 @@ public class BaseBuilderTest {
         TestBuilder p = new TestBuilder();
         TestBuilder r;
 
+        assertThat(p.getJulianDate().getDateTime()).isNotNull();
+
+        p.on(NOW);
         assertDate(p,
-                NOW.get(Calendar.YEAR),
-                NOW.get(Calendar.MONTH) + 1,
-                NOW.get(Calendar.DAY_OF_MONTH),
-                NOW.get(Calendar.HOUR_OF_DAY),
-                NOW.get(Calendar.MINUTE),
-                NOW.get(Calendar.SECOND),
-                NOW.getTimeZone());
+                NOW.getYear(),
+                NOW.getMonthValue(),
+                NOW.getDayOfMonth(),
+                NOW.getHour(),
+                NOW.getMinute(),
+                NOW.getSecond(),
+                NOW.getZone());
 
         r = p.on(2017, 8, 12);
-        assertDate(p, 2017, 8, 12, 0, 0, 0, TimeZone.getDefault());
-        assertThat(r).isSameAs(p);
-
-        r = p.on(2012, 3, 11, 8, 1, 12).midnight();
-        assertDate(p, 2012, 3, 11, 0, 0, 0, TimeZone.getDefault());
-        assertThat(r).isSameAs(p);
-
-        r = p.on(2012, 1, 24, 1, 33, 12).plusDays(100);
-        assertDate(p, 2012, 5, 3, 1, 33, 12, TimeZone.getDefault());
+        assertDate(p, 2017, 8, 12, 0, 0, 0, ZoneId.systemDefault());
         assertThat(r).isSameAs(p);
 
         r = p.on(2016, 4, 10, 14, 11, 59);
-        assertDate(p, 2016, 4, 10, 14, 11, 59, TimeZone.getDefault());
+        assertDate(p, 2016, 4, 10, 14, 11, 59, ZoneId.systemDefault());
         assertThat(r).isSameAs(p);
 
         r = p.timezone("Europe/Berlin");
-        assertDate(p, 2016, 4, 10, 14, 11, 59, TimeZone.getTimeZone("Europe/Berlin"));
+        assertDate(p, 2016, 4, 10, 14, 11, 59, ZoneId.of("Europe/Berlin"));
         assertThat(r).isSameAs(p);
 
-        r = p.timezone(TimeZone.getTimeZone("JST"));
-        assertDate(p, 2016, 4, 10, 14, 11, 59, TimeZone.getTimeZone("JST"));
+        r = p.timezone(ZoneId.of("Asia/Tokyo"));
+        assertDate(p, 2016, 4, 10, 14, 11, 59, ZoneId.of("Asia/Tokyo"));
+        assertThat(r).isSameAs(p);
+
+        r = p.timezone(TimeZone.getTimeZone("America/New_York"));
+        assertDate(p, 2016, 4, 10, 14, 11, 59, ZoneId.of("America/New_York"));
         assertThat(r).isSameAs(p);
 
         r = p.utc();
-        assertDate(p, 2016, 4, 10, 14, 11, 59, TimeZone.getTimeZone("UTC"));
+        assertDate(p, 2016, 4, 10, 14, 11, 59, ZoneId.of("UTC"));
+        assertThat(r).isSameAs(p);
+
+        r = p.on(LocalDate.of(2020, 3, 12));
+        assertDate(p, 2020, 3, 12, 0, 0, 0, ZoneId.of("UTC"));
+        assertThat(r).isSameAs(p);
+
+        r = p.on(ZonedDateTime.of(2020, 7, 11, 2, 44, 12, 0, ZoneId.of("UTC")).toInstant());
+        assertDate(p, 2020, 7, 11, 2, 44, 12, ZoneId.of("UTC"));
+        assertThat(r).isSameAs(p);
+
+        r = p.on(LocalDateTime.of(2020, 4, 1, 12, 45, 33));
+        assertDate(p, 2020, 4, 1, 12, 45, 33, ZoneId.of("UTC"));
+        assertThat(r).isSameAs(p);
+
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Berlin"));
+        cal.set(2018, Calendar.AUGUST, 12, 3, 23, 11);
+        r = p.on(cal);
+        assertDate(p, 2018, 8, 12, 3, 23, 11, ZoneId.of("Europe/Berlin"));
+        assertThat(r).isSameAs(p);
+
+        cal.set(Calendar.YEAR, 2019);
+        r = p.on(cal.getTime());
+        assertDate(p, 2019, 8, 12, 3, 23, 11, ZoneId.of("Europe/Berlin"));
         assertThat(r).isSameAs(p);
 
         r = p.localTime();
-        assertDate(p, 2016, 4, 10, 14, 11, 59, TimeZone.getDefault());
+        assertDate(p, 2019, 8, 12, 3, 23, 11, ZoneId.systemDefault());
+        assertThat(r).isSameAs(p);
+
+        r = p.on(2012, 3, 11, 8, 1, 12).midnight();
+        assertDate(p, 2012, 3, 11, 0, 0, 0, ZoneId.systemDefault());
+        assertThat(r).isSameAs(p);
+
+        r = p.on(2012, 1, 24, 1, 33, 12).plusDays(100);
+        assertDate(p, 2012, 5, 3, 1, 33, 12, ZoneId.systemDefault());
         assertThat(r).isSameAs(p);
 
         r = p.on(2000, 1, 1, 2, 3, 4).now();
         assertDate(p,
-                NOW.get(Calendar.YEAR),
-                NOW.get(Calendar.MONTH) + 1,
-                NOW.get(Calendar.DAY_OF_MONTH),
-                NOW.get(Calendar.HOUR_OF_DAY),
-                NOW.get(Calendar.MINUTE),
-                NOW.get(Calendar.SECOND),
-                NOW.getTimeZone());
+                NOW.getYear(),
+                NOW.getMonthValue(),
+                NOW.getDayOfMonth(),
+                NOW.getHour(),
+                NOW.getMinute(),
+                NOW.getSecond(),
+                NOW.getZone());
         assertThat(r).isSameAs(p);
 
         r = p.on(2000, 2, 2, 3, 4, 5).today();
         assertDate(p,
-                NOW.get(Calendar.YEAR),
-                NOW.get(Calendar.MONTH) + 1,
-                NOW.get(Calendar.DAY_OF_MONTH),
+                NOW.getYear(),
+                NOW.getMonthValue(),
+                NOW.getDayOfMonth(),
                 0, 0, 0,
-                NOW.getTimeZone());
+                NOW.getZone());
         assertThat(r).isSameAs(p);
 
         r = p.on(2000, 2, 2, 3, 4, 5).tomorrow();
-        Calendar tomorrow = (Calendar) NOW.clone();
-        tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+        ZonedDateTime tomorrow = NOW.plusDays(1);
         assertDate(p,
-                tomorrow.get(Calendar.YEAR),
-                tomorrow.get(Calendar.MONTH) + 1,
-                tomorrow.get(Calendar.DAY_OF_MONTH),
+                tomorrow.getYear(),
+                tomorrow.getMonthValue(),
+                tomorrow.getDayOfMonth(),
                 0, 0, 0,
-                tomorrow.getTimeZone());
+                tomorrow.getZone());
         assertThat(r).isSameAs(p);
 
         r = p.on(2000, 3, 3, 4, 5, 6).on(NOW);
         assertDate(p,
-                NOW.get(Calendar.YEAR),
-                NOW.get(Calendar.MONTH) + 1,
-                NOW.get(Calendar.DAY_OF_MONTH),
-                NOW.get(Calendar.HOUR_OF_DAY),
-                NOW.get(Calendar.MINUTE),
-                NOW.get(Calendar.SECOND),
-                NOW.getTimeZone());
-        assertThat(r).isSameAs(p);
-
-        r = p.on(2000, 4, 4, 5, 6, 7).on(new Date(NOW.getTimeInMillis()));
-        assertDate(p,
-                NOW.get(Calendar.YEAR),
-                NOW.get(Calendar.MONTH) + 1,
-                NOW.get(Calendar.DAY_OF_MONTH),
-                NOW.get(Calendar.HOUR_OF_DAY),
-                NOW.get(Calendar.MINUTE),
-                NOW.get(Calendar.SECOND),
-                NOW.getTimeZone());
+                NOW.getYear(),
+                NOW.getMonthValue(),
+                NOW.getDayOfMonth(),
+                NOW.getHour(),
+                NOW.getMinute(),
+                NOW.getSecond(),
+                NOW.getZone());
         assertThat(r).isSameAs(p);
 
         TestBuilder s = new TestBuilder();
         s.sameTimeAs(p);
         assertDate(s,
-                NOW.get(Calendar.YEAR),
-                NOW.get(Calendar.MONTH) + 1,
-                NOW.get(Calendar.DAY_OF_MONTH),
-                NOW.get(Calendar.HOUR_OF_DAY),
-                NOW.get(Calendar.MINUTE),
-                NOW.get(Calendar.SECOND),
-                NOW.getTimeZone());
+                NOW.getYear(),
+                NOW.getMonthValue(),
+                NOW.getDayOfMonth(),
+                NOW.getHour(),
+                NOW.getMinute(),
+                NOW.getSecond(),
+                NOW.getZone());
     }
 
     @Test
@@ -259,24 +286,21 @@ public class BaseBuilderTest {
 
     @Test
     public void testCopy() {
-        Date now = new Date();
-        Date tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000L);
-        Date yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000L);
-        TimeZone tz = TimeZone.getTimeZone("UTC");
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime tomorrow = now.plusDays(1);
+        ZonedDateTime yesterday = now.minusDays(1);
 
         // Set test parameters
         TestBuilder p1 = new TestBuilder();
         p1.at(Locations.COLOGNE);
         p1.on(now);
-        p1.timezone(tz);
         p1.height(123.0);
 
         // Make sure copy has identical values
         TestBuilder p2 = p1.copy();
         assertThat(p2.getLatitude()).isEqualTo(Locations.COLOGNE[0]);
         assertThat(p2.getLongitude()).isEqualTo(Locations.COLOGNE[1]);
-        assertThat(p2.getJulianDate().getDate()).isEqualTo(now);
-        assertThat(p2.getJulianDate().getCalendar().getTimeZone()).isEqualTo(tz);
+        assertThat(p2.getJulianDate().getDateTime()).isEqualTo(now);
         assertThat(p2.getHeight()).isEqualTo(123.0);
 
         // Make sure changes to p1 won't affect p2
@@ -284,20 +308,20 @@ public class BaseBuilderTest {
         p1.on(tomorrow);
         assertThat(p1.getLatitude()).isEqualTo(Locations.SINGAPORE[0]);
         assertThat(p1.getLongitude()).isEqualTo(Locations.SINGAPORE[1]);
-        assertThat(p1.getJulianDate().getDate()).isEqualTo(tomorrow);
+        assertThat(p1.getJulianDate().getDateTime()).isEqualTo(tomorrow);
         assertThat(p2.getLatitude()).isEqualTo(Locations.COLOGNE[0]);
         assertThat(p2.getLongitude()).isEqualTo(Locations.COLOGNE[1]);
-        assertThat(p2.getJulianDate().getDate()).isEqualTo(now);
+        assertThat(p2.getJulianDate().getDateTime()).isEqualTo(now);
 
         // Make sure changes to p2 won't affect p1
         p2.at(Locations.WELLINGTON);
         p2.on(yesterday);
         assertThat(p1.getLatitude()).isEqualTo(Locations.SINGAPORE[0]);
         assertThat(p1.getLongitude()).isEqualTo(Locations.SINGAPORE[1]);
-        assertThat(p1.getJulianDate().getDate()).isEqualTo(tomorrow);
+        assertThat(p1.getJulianDate().getDateTime()).isEqualTo(tomorrow);
         assertThat(p2.getLatitude()).isEqualTo(Locations.WELLINGTON[0]);
         assertThat(p2.getLongitude()).isEqualTo(Locations.WELLINGTON[1]);
-        assertThat(p2.getJulianDate().getDate()).isEqualTo(yesterday);
+        assertThat(p2.getJulianDate().getDateTime()).isEqualTo(yesterday);
     }
 
     private void assertLatLng(TestBuilder p, double lat, double lng, double height) {
@@ -309,22 +333,22 @@ public class BaseBuilderTest {
     }
 
     private void assertDate(TestBuilder p, int year, int month, int day,
-            int hour, int minute, int second, TimeZone tz) {
-        Calendar cal = p.getJulianDate().getCalendar();
+            int hour, int minute, int second, ZoneId tz) {
+        ZonedDateTime cal = p.getJulianDate().getDateTime();
 
-        assertThat(cal.get(Calendar.YEAR)).as("year").isEqualTo(year);
-        assertThat(cal.get(Calendar.MONTH)).as("month").isEqualTo(month - 1);
-        assertThat(cal.get(Calendar.DAY_OF_MONTH)).as("day").isEqualTo(day);
-        assertThat(cal.get(Calendar.HOUR_OF_DAY)).as("hour").isEqualTo(hour);
-        assertThat(cal.get(Calendar.MINUTE)).as("minute").isEqualTo(minute);
-        assertThat(cal.get(Calendar.SECOND)).as("second").isEqualTo(second);
-        assertThat(cal.getTimeZone()).as("timezone").isEqualTo(tz);
+        assertThat(cal.getYear()).as("year").isEqualTo(year);
+        assertThat(cal.getMonthValue()).as("month").isEqualTo(month);
+        assertThat(cal.getDayOfMonth()).as("day").isEqualTo(day);
+        assertThat(cal.getHour()).as("hour").isEqualTo(hour);
+        assertThat(cal.getMinute()).as("minute").isEqualTo(minute);
+        assertThat(cal.getSecond()).as("second").isEqualTo(second);
+        assertThat(cal.getZone()).as("timezone").isEqualTo(tz);
     }
 
     private static class TestBuilder extends BaseBuilder<TestBuilder> {
         @Override
-        protected Calendar createCalendar() {
-            return (Calendar) NOW.clone();
+        public TestBuilder now() {
+            return on(NOW);
         }
     }
 

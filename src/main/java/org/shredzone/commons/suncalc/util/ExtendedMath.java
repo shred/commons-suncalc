@@ -154,4 +154,20 @@ public final class ExtendedMath {
         return 0.000296706 / tan(h + 0.00312537 / (h + 0.0890118));
     }
 
+    /**
+     * Converts dms to double.
+     *
+     * @param d
+     *            Degrees. Sign is used for result.
+     * @param m
+     *            Minutes. Sign is ignored.
+     * @param s
+     *            Seconds and fractions. Sign is ignored.
+     * @return angle, in degrees
+     */
+    public static double dms(int d, int m, double s) {
+        double sig = d < 0 ? -1.0 : 1.0;
+        return sig * ((abs(s) / 60.0 + abs(m)) / 60.0 + abs(d));
+    }
+
 }

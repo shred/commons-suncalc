@@ -16,6 +16,8 @@ package org.shredzone.commons.suncalc.util;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
+import java.util.function.Function;
+
 import org.assertj.core.data.Offset;
 import org.junit.Test;
 
@@ -30,12 +32,7 @@ public class PegasusTest {
     public void testParabola() {
         // f(x) = x^2 + 2x - 3
         // Roots at x = -3 and x = 1
-        Pegasus.Function parabola = new Pegasus.Function() {
-            @Override
-            public double apply(double x) {
-                return x * x + 2 * x - 3;
-            }
-        };
+        Function<Double, Double> parabola = x -> x * x + 2 * x - 3;
 
         double r1 = Pegasus.calculate(0.0, 3.0, 0.1, parabola);
         assertThat(r1).isCloseTo(1.0, ERROR);
@@ -55,14 +52,7 @@ public class PegasusTest {
     public void testParabola2() {
         // f(x) = x^2 + 3
         // No roots
-        Pegasus.Function parabola = new Pegasus.Function() {
-            @Override
-            public double apply(double x) {
-                return x * x + 3;
-            }
-        };
-
-        Pegasus.calculate(-5.0, 5.0, 0.1, parabola);
+        Pegasus.calculate(-5.0, 5.0, 0.1, x -> x * x + 3);
     }
 
 }

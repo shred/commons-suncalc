@@ -2,6 +2,10 @@
 
 This document will help you migrate your code to the latest _suncalc_ version.
 
+## Version 3.0
+* _suncalc_ now requires at least Java 8 or Android 8.0 "Oreo" (API level 26). You can still use _suncalc_ v2 for Java 7 or Android API level 19 compatibility. The v2 branch is not discontinued and will still receive bugfixes.
+* The outdated `Date` and `Calendar` classes have been replaced by the Java Date/Time API. All results are now returned as `ZonedDateTime` instances, and now also carry the timezone that was used for calculation. It is now much easier to use the result.
+
 ## Version 2.8
 
 * `MoonIllumination` is now also using more accurate formulas, like all the other classes. Unit tests that are based on the results of this class, may fail and need to be readjusted. This was the last relic of the old version 1. _suncalc_ is now a completely independent project.

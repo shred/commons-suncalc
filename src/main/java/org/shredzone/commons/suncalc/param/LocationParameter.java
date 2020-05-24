@@ -13,6 +13,8 @@
  */
 package org.shredzone.commons.suncalc.param;
 
+import static org.shredzone.commons.suncalc.util.ExtendedMath.dms;
+
 /**
  * Location based parameters.
  * <p>
@@ -22,31 +24,8 @@ package org.shredzone.commons.suncalc.param;
  * @param <T>
  *            Type of the final builder
  */
+@SuppressWarnings("unchecked")
 public interface LocationParameter<T> {
-
-    /**
-     * Sets the geolocation.
-     *
-     * @param lat
-     *            Latitude, in degrees.
-     * @param lng
-     *            Longitude, in degrees.
-     * @return itself
-     */
-    T at(double lat, double lng);
-
-    /**
-     * Sets the geolocation. In the given array, index 0 must contain the latitude, and
-     * index 1 must contain the longitude. An optional index 2 may contain the height, in
-     * meters.
-     * <p>
-     * This call is meant to be used for coordinates stored in constants.
-     *
-     * @param coords
-     *            Array containing the latitude and longitude, in degrees.
-     * @return itself
-     */
-    T at(double[] coords);
 
     /**
      * Sets the latitude.
@@ -67,32 +46,6 @@ public interface LocationParameter<T> {
     T longitude(double lng);
 
     /**
-     * Sets the latitude.
-     *
-     * @param d
-     *            Degrees
-     * @param m
-     *            Minutes
-     * @param s
-     *            Seconds (and fraction of seconds)
-     * @return itself
-     */
-    T latitude(int d, int m, double s);
-
-    /**
-     * Sets the longitude.
-     *
-     * @param d
-     *            Degrees
-     * @param m
-     *            Minutes
-     * @param s
-     *            Seconds (and fraction of seconds)
-     * @return itself
-     */
-    T longitude(int d, int m, double s);
-
-    /**
      * Sets the height.
      * <p>
      * This parameter can be safely ommitted. The height only has a very small effect on
@@ -106,13 +59,78 @@ public interface LocationParameter<T> {
     T height(double h);
 
     /**
+     * Sets the geolocation.
+     *
+     * @param lat
+     *            Latitude, in degrees.
+     * @param lng
+     *            Longitude, in degrees.
+     * @return itself
+     */
+    default T at(double lat, double lng) {
+        latitude(lat);
+        longitude(lng);
+        return (T) this;
+    }
+
+    /**
+     * Sets the geolocation. In the given array, index 0 must contain the latitude, and
+     * index 1 must contain the longitude. An optional index 2 may contain the height, in
+     * meters.
+     * <p>
+     * This call is meant to be used for coordinates stored in constants.
+     *
+     * @param coords
+     *            Array containing the latitude and longitude, in degrees.
+     * @return itself
+     */
+    default T at(double[] coords) {
+        if (coords.length != 2 && coords.length != 3) {
+            throw new IllegalArgumentException("Array must contain 2 or 3 doubles");
+        }
+        if (coords.length == 3) {
+            height(coords[2]);
+        }
+        return at(coords[0], coords[1]);
+    }
+
+    /**
+     * Sets the latitude.
+     *
+     * @param d
+     *            Degrees
+     * @param m
+     *            Minutes
+     * @param s
+     *            Seconds (and fraction of seconds)
+     * @return itself
+     */
+    default T latitude(int d, int m, double s) {
+        return latitude(dms(d, m, s));
+    }
+
+    /**
+     * Sets the longitude.
+     *
+     * @param d
+     *            Degrees
+     * @param m
+     *            Minutes
+     * @param s
+     *            Seconds (and fraction of seconds)
+     * @return itself
+     */
+    default T longitude(int d, int m, double s) {
+        return longitude(dms(d, m, s));
+    }
+
+    /**
      * Uses the same location as given in the {@link LocationParameter} at this moment.
      * <p>
      * Changes to the source parameter will not affect this parameter, though.
      *
      * @param l  {@link LocationParameter} to be used.
      * @return itself
-     * @since 2.8
      */
     T sameLocationAs(LocationParameter<?> l);
 

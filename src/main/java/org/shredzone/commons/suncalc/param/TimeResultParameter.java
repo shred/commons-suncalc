@@ -20,7 +20,6 @@ package org.shredzone.commons.suncalc.param;
  *
  * @param <T>
  *            Type of the final builder
- * @since 2.3
  */
 public interface TimeResultParameter<T> {
 
@@ -35,8 +34,6 @@ public interface TimeResultParameter<T> {
 
     /**
      * Available chrono units.
-     *
-     * @since 2.3
      */
     enum Unit {
 

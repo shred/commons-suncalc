@@ -17,8 +17,8 @@ import static java.lang.Math.PI;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Offset.offset;
 
-import java.util.Calendar;
-import java.util.TimeZone;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import org.assertj.core.api.AbstractDateAssert;
 import org.assertj.core.data.Offset;
@@ -51,15 +51,6 @@ public class JulianDateTest {
 
         JulianDate jd4 = jd3.atHour(8.5);
         assertDate(jd4, "2017-08-19T08:30:00+02:00");
-    }
-
-    @Test
-    public void testDateGetters() {
-        Calendar cal = of(2017, 8, 19, 0, 0, 0, "UTC");
-        JulianDate jd = new JulianDate(cal);
-
-        assertThat(jd.getCalendar()).isNotSameAs(cal);
-        assertThat(jd.getCalendar()).isEqualTo(cal);
     }
 
     @Test
@@ -110,20 +101,20 @@ public class JulianDateTest {
     public void testAtModifiedJulianDate() {
         JulianDate jd1 = new JulianDate(of(2017, 8, 19, 15, 6, 16, "UTC"));
 
-        JulianDate jd2 = new JulianDate(Calendar.getInstance(TimeZone.getTimeZone("UTC")))
+        JulianDate jd2 = new JulianDate(ZonedDateTime.now(ZoneId.of("UTC")))
                         .atModifiedJulianDate(jd1.getModifiedJulianDate());
 
-        assertThat(jd2.getDate()).isEqualTo(jd1.getDate());
+        assertThat(jd2.getDateTime()).isEqualTo(jd1.getDateTime());
     }
 
     @Test
     public void testAtJulianCentury() {
         JulianDate jd1 = new JulianDate(of(2017, 1, 1, 0, 0, 0, "UTC"));
 
-        JulianDate jd2 = new JulianDate(Calendar.getInstance(TimeZone.getTimeZone("UTC")))
+        JulianDate jd2 = new JulianDate(ZonedDateTime.now(ZoneId.of("UTC")))
                         .atJulianCentury(jd1.getJulianCentury());
 
-        assertThat(jd2.getDate()).isEqualTo(jd1.getDate());
+        assertThat(jd2.getDateTime()).isEqualTo(jd1.getDateTime());
     }
 
     @Test
@@ -141,15 +132,12 @@ public class JulianDateTest {
         assertThat(jd2.getDateTruncated(Unit.DAYS)).isEqualTo("2017-01-01T00:00:00Z");
     }
 
-    private Calendar of(int year, int month, int day, int hour, int minute, int second, String zone) {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(zone));
-        cal.clear();
-        cal.set(year, month - 1, day, hour, minute, second);
-        return cal;
+    private ZonedDateTime of(int year, int month, int day, int hour, int minute, int second, String zone) {
+        return ZonedDateTime.of(year, month, day, hour, minute, second, 0, ZoneId.of(zone));
     }
 
     private void assertDate(JulianDate jd, String date) {
-        assertThat(jd.getCalendar().getTime()).isEqualTo(date);
+        assertThat(jd.getDateTime()).isEqualTo(date);
     }
 
 }

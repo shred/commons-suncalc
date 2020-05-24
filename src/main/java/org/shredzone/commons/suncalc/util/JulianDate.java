@@ -13,11 +13,15 @@
  */
 package org.shredzone.commons.suncalc.util;
 
-import static java.lang.Math.*;
-import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
+import static java.lang.Math.floor;
+import static java.lang.Math.round;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.PI2;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.frac;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
 
@@ -28,18 +32,18 @@ import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
  */
 public class JulianDate {
 
-    private final Calendar cal;
+    private final ZonedDateTime dateTime;
     private final double mjd;
 
     /**
      * Creates a new {@link JulianDate}.
      *
-     * @param cal
-     *            {@link Calendar} to use. Do not modify this object after invocation.
+     * @param time
+     *            {@link ZonedDateTime} to use for the date.
      */
-    public JulianDate(Calendar cal) {
-        this.cal = cal;
-        mjd = cal.getTimeInMillis() / 86400000.0 + 40587.0;
+    public JulianDate(ZonedDateTime time) {
+        dateTime = Objects.requireNonNull(time, "time");
+        mjd = dateTime.toInstant().toEpochMilli() / 86400000.0 + 40587.0;
     }
 
     /**
@@ -51,9 +55,7 @@ public class JulianDate {
      * @return {@link JulianDate} instance.
      */
     public JulianDate atHour(double hour) {
-        Calendar clone = getCalendar();
-        clone.add(Calendar.SECOND, (int) round(hour * 60.0 * 60.0));
-        return new JulianDate(clone);
+        return new JulianDate(dateTime.plusSeconds(round(hour * 60.0 * 60.0)));
     }
 
     /**
@@ -62,13 +64,10 @@ public class JulianDate {
      * @param mjd
      *            Modified Julian Date
      * @return {@link JulianDate} instance.
-     * @since 2.3
      */
     public JulianDate atModifiedJulianDate(double mjd) {
-        Calendar clone = getCalendar();
-        clone.setTimeInMillis(Math.round((mjd - 40587.0) * 86400000.0));
-        clone.clear(Calendar.MILLISECOND);
-        return new JulianDate(clone);
+        Instant mjdi = Instant.ofEpochMilli(Math.round((mjd - 40587.0) * 86400000.0));
+        return new JulianDate(ZonedDateTime.ofInstant(mjdi, dateTime.getZone()));
     }
 
     /**
@@ -77,61 +76,42 @@ public class JulianDate {
      * @param jc
      *            Julian Century
      * @return {@link JulianDate} instance.
-     * @since 2.3
      */
     public JulianDate atJulianCentury(double jc) {
         return atModifiedJulianDate(jc * 36525.0 + 51544.5);
     }
 
     /**
-     * Returns this {@link JulianDate} as {@link Date} object.
+     * Returns this {@link JulianDate} as {@link ZonedDateTime} object.
      *
-     * @return {@link Date} of this {@link JulianDate}.
+     * @return {@link ZonedDateTime} of this {@link JulianDate}.
      */
-    public Date getDate() {
-        return cal.getTime();
+    public ZonedDateTime getDateTime() {
+        return dateTime;
     }
 
     /**
-     * Returns this {@link JulianDate} as truncated {@link Date} object.
+     * Returns this {@link JulianDate} as truncated {@link ZonedDateTime} object.
      *
      * @param unit
      *            {@link Unit} to truncate to
-     * @return Rounded {@link Date} of this {@link JulianDate}.
-     * @since 2.3
+     * @return Rounded {@link ZonedDateTime} of this {@link JulianDate}.
      */
-    public Date getDateTruncated(Unit unit) {
-        if (unit == null) { //NOSONAR: safety null check
-            throw new NullPointerException();
-        }
+    public ZonedDateTime getDateTruncated(Unit unit) {
+        Objects.requireNonNull(unit, "unit");
 
-        Calendar clone = getCalendar();
-        clone.set(Calendar.MILLISECOND, 0);
-
+        ZonedDateTime result = dateTime.truncatedTo(ChronoUnit.SECONDS);
         if (unit == Unit.MINUTES || unit == Unit.HOURS || unit == Unit.DAYS) {
-            clone.add(Calendar.SECOND, 30);
-            clone.set(Calendar.SECOND, 0);
+            result = result.plusSeconds(30).truncatedTo(ChronoUnit.MINUTES);
         }
-
         if (unit == Unit.HOURS || unit == Unit.DAYS) {
-            clone.add(Calendar.MINUTE, 30);
-            clone.set(Calendar.MINUTE, 0);
+            result = result.plusMinutes(30).truncatedTo(ChronoUnit.HOURS);
         }
-
         if (unit == Unit.DAYS) {
-            clone.set(Calendar.HOUR_OF_DAY, 0);
+            result = result.truncatedTo(ChronoUnit.DAYS);
         }
 
-        return clone.getTime();
-    }
-
-    /**
-     * Returns this {@link JulianDate} as {@link Calendar} object.
-     *
-     * @return New {@link Calendar} instance of this {@link JulianDate}.
-     */
-    public Calendar getCalendar() {
-        return (Calendar) cal.clone();
+        return result;
     }
 
     /**
@@ -181,8 +161,7 @@ public class JulianDate {
      * @return True anomaly, in radians
      */
     public double getTrueAnomaly() {
-        int dayOfYear = cal.get(Calendar.DAY_OF_YEAR) - 1;
-        return PI2 * frac((dayOfYear - 4.0) / 365.256363);
+        return PI2 * frac((dateTime.getDayOfYear() - 5.0) / 365.256363);
     }
 
     @Override

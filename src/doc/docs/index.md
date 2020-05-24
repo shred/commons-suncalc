@@ -10,6 +10,13 @@ Astronomical calculations are far more complex than throwing a few numbers into 
 
 This library has its focus on getting _acceptable_ results at low cost, so it can also run on mobile devices, or devices with a low computing power. The results have an accuracy of about a minute, which should be good enough for common applications (like sunrise/sunset timers), but is probably not sufficient for astronomical purposes.
 
+## Dependencies and Requirements
+
+_commons-suncalc_ requires at least Java 8, but has no other runtime dependencies. It can also be used on Android, API level 26 (Android 8.0 "Oreo") or higher.
+
+!!! NOTE
+    **For Android versions before API level 26**, please use [commons-suncalc v2](https://github.com/shred/commons-suncalc/tree/v2). It is similar to this version, but does not use the Java Date/Time API.
+
 ## Installation
 
 _commons-suncalc_ is available at Maven Central. Just add this snippet to your `pom.xml`:
@@ -40,10 +47,6 @@ Add this line to your module descriptor:
 requires org.shredzone.commons.suncalc;
 ```
 
-## Dependencies and Requirements
-
-_commons-suncalc_ requires at least Java 7, but has no other dependencies. It can also be used on Android (API level 19 or higher).
-
 ## References
 
 This library bases on:
@@ -54,8 +57,7 @@ This library bases on:
 ## Contribute
 
 * Fork the [Source code at GitHub](https://github.com/shred/commons-suncalc). Feel free to send pull requests.
-* Found a bug? [File a bug report](https://github.com/shred/commons-suncalc/issues).
-* Are you getting different results from another library or web site? If you file a bug, please try to explain why you think the _commons-suncalc_ result is wrong.
+* Found a bug? Please [file a bug report](https://github.com/shred/commons-suncalc/issues).
 
 ## License
 

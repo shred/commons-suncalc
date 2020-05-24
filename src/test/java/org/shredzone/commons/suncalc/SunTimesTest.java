@@ -16,11 +16,11 @@ package org.shredzone.commons.suncalc;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.shredzone.commons.suncalc.Locations.*;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 import org.assertj.core.api.AbstractDateAssert;
 import org.junit.BeforeClass;
@@ -149,44 +149,44 @@ public class SunTimesTest {
     public void testJustBeforeJustAfter() {
         // Thanks to @isomeme for providing the test cases for issue #18.
 
-        long shortDuration = 2 * 60 * 1000L;
-        long longDuration = 30 * 60 * 1000L;
+        long shortDuration = 2;
+        long longDuration = 30;
         SunTimes.Parameters param = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
                 .on(2020, 5, 3).truncatedTo(Unit.SECONDS);
-        Date noon = param.execute().getNoon();
-        Date noonNextDay = param.plusDays(1).execute().getNoon();
+        ZonedDateTime noon = param.execute().getNoon();
+        ZonedDateTime noonNextDay = param.plusDays(1).execute().getNoon();
         long acceptableError = 65 * 1000L;
 
-        Date wellBeforeNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
-                .on(new Date(noon.getTime() - longDuration))
+        ZonedDateTime wellBeforeNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
+                .on(noon.minusMinutes(longDuration))
                 .truncatedTo(Unit.SECONDS).execute().getNoon();
-        assertThat(Math.abs(wellBeforeNoon.getTime() - noon.getTime()))
+        assertThat(Duration.between(wellBeforeNoon, noon).abs().toMillis())
                 .as("wellBeforeNoon").isLessThan(acceptableError);
 
-        Date justBeforeNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
-                .on(new Date(noon.getTime() - shortDuration))
+        ZonedDateTime justBeforeNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
+                .on(noon.minusMinutes(shortDuration))
                 .truncatedTo(Unit.SECONDS).execute().getNoon();
-        assertThat(Math.abs(justBeforeNoon.getTime() - noon.getTime()))
+        assertThat(Duration.between(justBeforeNoon, noon).abs().toMillis())
                 .as("justBeforeNoon").isLessThan(acceptableError);
 
-        Date justAfterNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
-                .on(new Date(noon.getTime() + shortDuration))
+        ZonedDateTime justAfterNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
+                .on(noon.plusMinutes(shortDuration))
                 .truncatedTo(Unit.SECONDS).execute().getNoon();
-        assertThat(Math.abs(justAfterNoon.getTime() - noonNextDay.getTime()))
+        assertThat(Duration.between(justAfterNoon, noonNextDay).abs().toMillis())
                 .as("justAfterNoon").isLessThan(acceptableError);
 
-        Date wellAfterNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
-                .on(new Date(noon.getTime() + longDuration))
+        ZonedDateTime wellAfterNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
+                .on(noon.plusMinutes(longDuration))
                 .truncatedTo(Unit.SECONDS).execute().getNoon();
-        assertThat(Math.abs(wellAfterNoon.getTime() - noonNextDay.getTime()))
+        assertThat(Duration.between(wellAfterNoon, noonNextDay).abs().toMillis())
                 .as("wellAfterNoon").isLessThan(acceptableError);
 
-        Date nadirWellAfterNoon = SunTimes.compute().on(wellAfterNoon).timezone(SANTA_MONICA_TZ)
+        ZonedDateTime nadirWellAfterNoon = SunTimes.compute().on(wellAfterNoon).timezone(SANTA_MONICA_TZ)
                 .at(SANTA_MONICA).execute().getNadir();
-        Date nadirJustBeforeNadir = SunTimes.compute()
-                .on(new Date(nadirWellAfterNoon.getTime() - shortDuration))
+        ZonedDateTime nadirJustBeforeNadir = SunTimes.compute()
+                .on(nadirWellAfterNoon.minusMinutes(shortDuration))
                 .at(SANTA_MONICA).timezone(SANTA_MONICA_TZ).execute().getNadir();
-        assertThat(Math.abs(nadirWellAfterNoon.getTime() - nadirJustBeforeNadir.getTime()))
+        assertThat(Duration.between(nadirWellAfterNoon, nadirJustBeforeNadir).abs().toMillis())
                 .as("nadir").isLessThan(acceptableError);
     }
 
@@ -194,10 +194,10 @@ public class SunTimesTest {
     public void testSequence() {
         long acceptableError = 62 * 1000L;
 
-        Date riseBefore = createDate(2017, 11, 25, 7, 4);
-        Date riseAfter = createDate(2017, 11, 26, 7, 6);
-        Date setBefore = createDate(2017, 11, 25, 15, 33);
-        Date setAfter = createDate(2017, 11, 26, 15, 32);
+        ZonedDateTime riseBefore = createDate(2017, 11, 25, 7, 4);
+        ZonedDateTime riseAfter = createDate(2017, 11, 26, 7, 6);
+        ZonedDateTime setBefore = createDate(2017, 11, 25, 15, 33);
+        ZonedDateTime setAfter = createDate(2017, 11, 26, 15, 32);
 
         for (int hour = 0; hour < 24; hour++) {
             for (int minute = 0; minute < 60; minute++) {
@@ -208,36 +208,33 @@ public class SunTimesTest {
                             .truncatedTo(Unit.SECONDS)
                             .execute();
 
-                Date rise = times.getRise();
-                Date set = times.getSet();
+                ZonedDateTime rise = times.getRise();
+                ZonedDateTime set = times.getSet();
 
                 assertThat(rise).isNotNull();
                 assertThat(set).isNotNull();
 
                 if (hour < 7 || (hour == 7 && minute <= 4)) {
-                    long diff = Math.abs(rise.getTime() - riseBefore.getTime());
+                    long diff = Duration.between(rise, riseBefore).abs().toMillis();
                     assertThat(diff).as("rise @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 } else {
-                    long diff = Math.abs(rise.getTime() - riseAfter.getTime());
+                    long diff = Duration.between(rise, riseAfter).abs().toMillis();
                     assertThat(diff).as("rise @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 }
 
                 if (hour < 15 || (hour == 15 && minute <= 33)) {
-                    long diff = Math.abs(set.getTime() - setBefore.getTime());
+                    long diff = Duration.between(set, setBefore).abs().toMillis();
                     assertThat(diff).as("set @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 } else {
-                    long diff = Math.abs(set.getTime() - setAfter.getTime());
+                    long diff = Duration.between(set, setAfter).abs().toMillis();
                     assertThat(diff).as("set @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 }
             }
         }
     }
 
-    private Date createDate(int year, int month, int day, int hour, int minute) {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        cal.clear();
-        cal.set(year, month - 1, day, hour, minute, 0);
-        return cal.getTime();
+    private ZonedDateTime createDate(int year, int month, int day, int hour, int minute) {
+        return ZonedDateTime.of(year, month, day, hour, minute, 0, 0, ZoneId.of("UTC"));
     }
 
     private void assertTimes(SunTimes t, String rise, String set, String noon) {

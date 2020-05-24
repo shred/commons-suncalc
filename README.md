@@ -4,8 +4,8 @@ A Java library for calculation of sun and moon positions and phases.
 
 ## Features
 
-* Lightweight, only requires Java 1.7 or higher, no other dependencies
-* Android compatible, requires API level 11 (Honeycomb) or higher. Lower API levels _may_ work as well, but this is untested.
+* Lightweight, only requires Java 8 or higher, no other dependencies
+* Android compatible, requires API level 26 (Android 8.0 "Oreo") or higher. For older Android versions, use [commons-suncalc v2](https://github.com/shred/commons-suncalc/tree/v2), which is similar to this version, but does not use the Java Date/Time API.
 * Available at [Maven Central](http://search.maven.org/#search|ga|1|a%3A%22commons-suncalc%22)
 * Extensive unit tests
 
@@ -22,17 +22,17 @@ If you are looking for the highest possible accuracy, you are looking for a diff
 This library consists of a few models, all of them are invoked the same way:
 
 ```java
-Date date = // requested date of calculation
+ZonedDateTime dateTime = // date, time and timezone of calculation
 double lat, lng = // geolocation
-SunPosition position = SunPosition.compute()
-        .on(date)       // set a date
+SunTimes times = SunTimes.compute()
+        .on(dateTime)   // set a date
         .at(lat, lng)   // set a location
         .execute();     // get the results
-System.out.println("Elevation: " + position.getElevation() + "°");
-System.out.println("Azimuth: " + position.getAzimuth() + "°");
+System.out.println("Sunrise: " + times.getRise());
+System.out.println("Sunset: " + times.getSet());
 ```
 
-See the [online documentation](https://shredzone.org/maven/commons-suncalc/) for examples and API details.
+Read the [online documentation](https://shredzone.org/maven/commons-suncalc/) for examples and API details.
 
 See the [migration guide](https://shredzone.org/maven/commons-suncalc/migration.html) for how to migrate from a previous version.
 
@@ -46,8 +46,7 @@ This library bases on:
 ## Contribute
 
 * Fork the [Source code at GitHub](https://github.com/shred/commons-suncalc). Feel free to send pull requests.
-* Found a bug? [File a bug report](https://github.com/shred/commons-suncalc/issues).
-* Are you getting different results from another library or web site? If you file a bug, please try to explain why you think the _commons-suncalc_ result is wrong.
+* Found a bug? Please [file a bug report](https://github.com/shred/commons-suncalc/issues).
 
 ## License
 

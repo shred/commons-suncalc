@@ -23,8 +23,6 @@ public interface GenericParameter<T> {
 
     /**
      * Creates a copy of the current parameters. The copy can be changed independently.
-     *
-     * @since 2.8
      */
     T copy();
 

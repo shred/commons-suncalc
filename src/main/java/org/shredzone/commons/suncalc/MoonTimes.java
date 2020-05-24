@@ -16,7 +16,7 @@ package org.shredzone.commons.suncalc;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.apparentRefraction;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.parallax;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.shredzone.commons.suncalc.param.Builder;
@@ -35,13 +35,13 @@ import org.shredzone.commons.suncalc.util.Vector;
  */
 public final class MoonTimes {
 
-    private final @Nullable Date rise;
-    private final @Nullable Date set;
+    private final @Nullable ZonedDateTime rise;
+    private final @Nullable ZonedDateTime set;
     private final boolean alwaysUp;
     private final boolean alwaysDown;
 
-    private MoonTimes(@Nullable Date rise, @Nullable Date set, boolean alwaysUp,
-                      boolean alwaysDown) {
+    private MoonTimes(@Nullable ZonedDateTime rise, @Nullable ZonedDateTime set,
+              boolean alwaysUp, boolean alwaysDown) {
         this.rise = rise;
         this.set = set;
         this.alwaysUp = alwaysUp;
@@ -202,16 +202,16 @@ public final class MoonTimes {
      * Moonrise time. {@code null} if the moon does not rise that day.
      */
     @Nullable
-    public Date getRise() {
-        return rise != null ? new Date(rise.getTime()) : null;
+    public ZonedDateTime getRise() {
+        return rise;
     }
 
     /**
      * Moonset time. {@code null} if the moon does not set that day.
      */
     @Nullable
-    public Date getSet() {
-        return set != null ? new Date(set.getTime()) : null;
+    public ZonedDateTime getSet() {
+        return set;
     }
 
     /**

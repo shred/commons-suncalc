@@ -17,7 +17,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.toRadians;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.PI2;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.GenericParameter;
@@ -35,14 +35,12 @@ import org.shredzone.commons.suncalc.util.Vector;
  * <p>
  * Note: Due to the simplified formulas used in suncalc, the returned time can have an
  * error of several minutes.
- *
- * @since 2.3
  */
 public class MoonPhase {
 
-    private final Date time;
+    private final ZonedDateTime time;
 
-    private MoonPhase(Date time) {
+    private MoonPhase(ZonedDateTime time) {
         this.time = time;
     }
 
@@ -57,8 +55,6 @@ public class MoonPhase {
 
     /**
      * Collects all parameters for {@link MoonPhase}.
-     *
-     * @since 2.3
      */
     public interface Parameters extends
             GenericParameter<Parameters>,
@@ -90,8 +86,6 @@ public class MoonPhase {
 
     /**
      * Enumeration of moon phases.
-     *
-     * @since 2.3
      */
     public enum Phase {
 
@@ -179,12 +173,7 @@ public class MoonPhase {
                 d1 = moonphase(jd, t1);
             }
 
-            double tphase = Pegasus.calculate(t0, t1, accuracy, new Pegasus.Function() {
-                @Override
-                public double apply(double x) {
-                    return moonphase(jd, x);
-                }
-            });
+            double tphase = Pegasus.calculate(t0, t1, accuracy, x -> moonphase(jd, x));
 
             return new MoonPhase(jd.atJulianCentury(tphase).getDateTruncated(getTruncatedTo()));
         }
@@ -213,8 +202,8 @@ public class MoonPhase {
     /**
      * Date and time of the desired moon phase. The time is rounded to full minutes.
      */
-    public Date getTime() {
-        return new Date(time.getTime());
+    public ZonedDateTime getTime() {
+        return time;
     }
 
     @Override

@@ -15,11 +15,12 @@ package org.shredzone.commons.suncalc.util;
 
 import static java.lang.Math.abs;
 
+import java.util.function.Function;
+
 /**
  * Finds the root of a function by using the Pegasus method.
  *
  * @see <a href="https://en.wikipedia.org/wiki/False_position_method">regula falsi</a>
- * @since 2.3
  */
 public class Pegasus {
 
@@ -41,7 +42,7 @@ public class Pegasus {
      *             if the root could not be found in the given accuracy within
      *             {@value #MAX_ITERATIONS} iterations.
      */
-    public static Double calculate(double lower, double upper, double accuracy, Function f) {
+    public static Double calculate(double lower, double upper, double accuracy, Function<Double, Double> f) {
         double x1 = lower;
         double x2 = upper;
 
@@ -75,24 +76,6 @@ public class Pegasus {
         }
 
         throw new ArithmeticException("Maximum number of iterations exceeded");
-    }
-
-    /**
-     * The function that is to be solved.
-     *
-     * @since 2.3
-     */
-    public interface Function {
-
-        /**
-         * Calculate the function result for x.
-         *
-         * @param x
-         *            x
-         * @return f(x)
-         */
-        double apply(double x);
-
     }
 
 }

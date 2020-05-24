@@ -17,7 +17,7 @@ import static java.lang.Math.toRadians;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.apparentRefraction;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.parallax;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.shredzone.commons.suncalc.param.Builder;
@@ -36,16 +36,16 @@ import org.shredzone.commons.suncalc.util.Vector;
  */
 public class SunTimes {
 
-    private final @Nullable Date rise;
-    private final @Nullable Date set;
-    private final @Nullable Date noon;
-    private final @Nullable Date nadir;
+    private final @Nullable ZonedDateTime rise;
+    private final @Nullable ZonedDateTime set;
+    private final @Nullable ZonedDateTime noon;
+    private final @Nullable ZonedDateTime nadir;
     private final boolean alwaysUp;
     private final boolean alwaysDown;
 
-    private SunTimes(@Nullable Date rise, @Nullable Date set, @Nullable Date noon,
-                     @Nullable Date nadir, boolean alwaysUp,
-            boolean alwaysDown) {
+    private SunTimes(@Nullable ZonedDateTime rise, @Nullable ZonedDateTime set,
+                     @Nullable ZonedDateTime noon, @Nullable ZonedDateTime nadir,
+                     boolean alwaysUp, boolean alwaysDown) {
         this.rise = rise;
         this.set = set;
         this.noon = noon;
@@ -403,8 +403,8 @@ public class SunTimes {
      * Always returns a sunrise time if {@link Parameters#fullCycle()} was set.
      */
     @Nullable
-    public Date getRise() {
-        return rise != null ? new Date(rise.getTime()) : null;
+    public ZonedDateTime getRise() {
+        return rise;
     }
 
     /**
@@ -413,8 +413,8 @@ public class SunTimes {
      * Always returns a sunset time if {@link Parameters#fullCycle()} was set.
      */
     @Nullable
-    public Date getSet() {
-        return set != null ? new Date(set.getTime()) : null;
+    public ZonedDateTime getSet() {
+        return set;
     }
 
     /**
@@ -426,8 +426,8 @@ public class SunTimes {
      * Note that {@link Parameters#fullCycle()} does not affect this result.
      */
     @Nullable
-    public Date getNoon() {
-        return noon != null ? new Date(noon.getTime()) : null;
+    public ZonedDateTime getNoon() {
+        return noon;
     }
 
     /**
@@ -439,8 +439,8 @@ public class SunTimes {
      * Note that {@link Parameters#fullCycle()} does not affect this result.
      */
     @Nullable
-    public Date getNadir() {
-        return nadir != null ? new Date(nadir.getTime()) : null;
+    public ZonedDateTime getNadir() {
+        return nadir;
     }
 
     /**

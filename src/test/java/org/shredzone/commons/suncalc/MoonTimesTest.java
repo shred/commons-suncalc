@@ -16,9 +16,9 @@ package org.shredzone.commons.suncalc;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.shredzone.commons.suncalc.Locations.*;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import org.assertj.core.api.AbstractDateAssert;
 import org.junit.BeforeClass;
@@ -112,10 +112,10 @@ public class MoonTimesTest {
     public void testSequence() {
         long acceptableError = 60 * 1000L;
 
-        Date riseBefore = createDate(2017, 11, 25, 12, 0);
-        Date riseAfter = createDate(2017, 11, 26, 12, 29);
-        Date setBefore = createDate(2017, 11, 25, 21, 49);
-        Date setAfter = createDate(2017, 11, 26, 22, 55);
+        ZonedDateTime riseBefore = createDate(2017, 11, 25, 12, 0);
+        ZonedDateTime riseAfter = createDate(2017, 11, 26, 12, 29);
+        ZonedDateTime setBefore = createDate(2017, 11, 25, 21, 49);
+        ZonedDateTime setAfter = createDate(2017, 11, 26, 22, 55);
 
         for (int hour = 0; hour < 24; hour++) {
             for (int minute = 0; minute < 60; minute++) {
@@ -126,36 +126,33 @@ public class MoonTimesTest {
                             .truncatedTo(Unit.SECONDS)
                             .execute();
 
-                Date rise = times.getRise();
-                Date set = times.getSet();
+                ZonedDateTime rise = times.getRise();
+                ZonedDateTime set = times.getSet();
 
                 assertThat(rise).isNotNull();
                 assertThat(set).isNotNull();
 
                 if (hour < 12 || (hour == 12 && minute == 0)) {
-                    long diff = Math.abs(rise.getTime() - riseBefore.getTime());
+                    long diff = Duration.between(rise, riseBefore).abs().toMillis();
                     assertThat(diff).as("rise @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 } else {
-                    long diff = Math.abs(rise.getTime() - riseAfter.getTime());
+                    long diff = Duration.between(rise, riseAfter).abs().toMillis();
                     assertThat(diff).as("rise @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 }
 
                 if (hour < 21 || (hour == 21 && minute <= 49)) {
-                    long diff = Math.abs(set.getTime() - setBefore.getTime());
+                    long diff = Duration.between(set, setBefore).abs().toMillis();
                     assertThat(diff).as("set @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 } else {
-                    long diff = Math.abs(set.getTime() - setAfter.getTime());
+                    long diff = Duration.between(set, setAfter).abs().toMillis();
                     assertThat(diff).as("set @%02d:%02d", hour, minute).isLessThan(acceptableError);
                 }
             }
         }
     }
 
-    private Date createDate(int year, int month, int day, int hour, int minute) {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        cal.clear();
-        cal.set(year, month - 1, day, hour, minute, 0);
-        return cal.getTime();
+    private ZonedDateTime createDate(int year, int month, int day, int hour, int minute) {
+        return ZonedDateTime.of(year, month, day, hour, minute, 0, 0, ZoneId.of("UTC"));
     }
 
 }

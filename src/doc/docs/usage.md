@@ -14,10 +14,10 @@
 All of the calculations mentioned above are invoked in the same way:
 
 ```java
-Date date = // date of calculation
-double lat, lng = // geolocation
+ZonedDateTime dateTime =    // date, time and timezone of calculation
+double lat, lng =           // geolocation
 SunTimes times = SunTimes.compute()
-            .on(date)       // set a date
+            .on(dateTime)   // set a date
             .at(lat, lng)   // set a location
             .execute();     // get the results
 System.out.println("Sunrise: " + times.getRise());
@@ -56,19 +56,15 @@ SunPosition posAtChristmas = param.execute();
 All calculations need a date and time parameter. Some examples:
 
 ```java
-// August 21st, 2017, local midnight
-SunPosition.compute().on(2017, 8, 21);
-
-// Current time, system time zone
-Date now = new Date();
-SunPosition.compute().on(now);
-
-// Current time, UTC
-Date now = new Date();
-SunPosition.compute().on(now).utc();
-
 // Now (the default)
 SunPosition.compute().now();
+
+// The same: Current time, local time zone
+ZonedDateTime now = ZonedDateTime.now();
+SunPosition.compute().on(now);
+
+// August 21st, 2017, local midnight
+SunPosition.compute().on(2017, 8, 21);
 
 // Today (midnight), Berlin time zone
 SunPosition.compute().today().timezone("Europe/Berlin");
@@ -78,15 +74,20 @@ The available time-based parameters are:
 
 * `on(int year, int month, int date)`: Midnight of the given date. Note that `month` is counted from 1 (1 = January, 2 = February, …).
 * `on(int year, int month, int date, int hour, int minute, int second)`: Given date and time.
-* `on(Calendar cal)`: Date, time and timezone as given in the `Calendar`. The `Calender` is copied and can safely be modified after that.
-* `on(Date date)`: Date and time as given in the `Date`.
+* `on(ZonedDateTime dateTime)`: Given date, time, and timezone.
+* `on(LocalDateTime dateTime)`: Given local date and time, without a timezone.
+* `on(LocalDate date)`: Midnight of the given local date, without a timezone.
+* `on(Instant instant)`: An instant without a timezone.
+* `on(Calendar cal)`: Date, time and timezone as given in the old-fashioned `Calendar`. The `Calender` is copied and can safely be modified after that.
+* `on(Date date)`: Date and time as given in the old-fashioned `Date`. The `Date` is copied and can safely be modified after that.
 * `plusDays(int days)`: Adds the given number of days to the current date. `days` can also be negative, of course.
 * `now()`: The current system date and time. This is the default.
 * `midnight()`: Past midnight of the current date. It just truncates the time.
 * `today()`: Identical to `.now().midnight()`.
 * `tomorrow()`: Identical to `today().plusDays(1)`.
-* `timezone(TimeZone tz)`: Use the given timezone.
+* `timezone(ZoneId tz)`: Use the given `ZoneId` as timezone. The current local time is unchanged (this is, it is not converted to the new timezone), so the order of parameters is not important.
 * `timezone(String id)`: Same as above, but accepts a `String` for your convenience.
+* `timezone(TimeZone tz)`: Same as above, but accepts an old-fashioned `TimeZone` object.
 * `localTime()`: The system's timezone. This is the default.
 * `utc()`: UTC timezone. Identical to `timezone("UTC")`.
 * `sameTimeAs(TimeParameter<?> t)`: Copies the current date, time, and timezone from any other parameter object. Note that subsequent changes to the other object are not adopted.
@@ -131,6 +132,8 @@ The available location-based parameters are:
 By default, [`SunTimes`](./apidocs/org/shredzone/commons/suncalc/SunTimes.Parameters.html) and [`MoonTimes`](./apidocs/org/shredzone/commons/suncalc/MoonTimes.Parameters.html) only consider the next 24 hours of the given start time. If the sun or moon does not rise or set within that time span, the appropriate getters return `null`. You can check if the sun or moon is always above or below the horizon, by checking `isAlwaysUp()` and `isAlwaysDown()`.
 
 If you need both the rise and set time, you can set the `fullCycle()` parameter. The calculation then runs until both times are found, even if several days in the future. However, depending on the date and geolocation, this calculation could take considerably more time and computing power.
+
+To turn back to the default 24 hours window, use `oneDay()`.
 
 !!! NOTE
     `fullCycle()` only affects the result of `getRise()` and `getSet()`. The methods `isAlwaysUp()`, `isAlwaysDown()`, `getNoon()` and `getNadir()` will always only consider the next 24 hours.
@@ -185,10 +188,10 @@ By default, [`MoonPhase`](./apidocs/org/shredzone/commons/suncalc/MoonPhase.Para
 
 | Constant        | Description | Angle |
 | --------------- | ----------- | -----:|
-| `NEW_MOON`      | Moon is not illuminated (new moon) | 0° |
-| `FIRST_QUARTER` | Half of the waxing moon is illuminated | 90° |
-| `FULL_MOON`     | Moon is fully illuminated | 180° |
-| `LAST_QUARTER`  | Half of the waning moon is illuminated | 270° |
+| `NEW_MOON`      | Moon is not illuminated (new moon). This is the default. | 0° |
+| `FIRST_QUARTER` | Half of the waxing moon is illuminated. | 90° |
+| `FULL_MOON`     | Moon is fully illuminated. | 180° |
+| `LAST_QUARTER`  | Half of the waning moon is illuminated. | 270° |
 
 Alternatively you can also pass any other angle (in degrees) to `phase()`.
 

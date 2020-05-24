@@ -105,7 +105,6 @@ public class SunPosition {
      * (straight over your head).
      *
      * @see #getAltitude()
-     * @since 2.3
      */
     public double getTrueAltitude() {
         return trueAltitude;

@@ -51,4 +51,20 @@ public class ExtendedMathTest {
         assertThat(isZero( Double.NEGATIVE_INFINITY)).isFalse();
     }
 
+    @Test
+    public void testDms() {
+        // Valid parameters
+        assertThat(dms(  0,   0,   0.0 )).isEqualTo(0.0);
+        assertThat(dms( 13,  27,   4.32)).isEqualTo(13.4512);
+        assertThat(dms(-88,  39,   8.28)).isEqualTo(-88.6523);
+
+        // Sign at wrong position is ignored
+        assertThat(dms( 14, -14,   2.4)).isEqualTo(14.234);
+        assertThat(dms( 66,  12, -46.8)).isEqualTo(66.213);
+
+        // Out of range values are carried to the next position
+        assertThat(dms(  0,   0,  72.0)).isEqualTo(0.02);   // 0°  1' 12.0"
+        assertThat(dms(  1,  80, 132.0)).isEqualTo(2.37);   // 2° 22' 12.0"
+    }
+
 }

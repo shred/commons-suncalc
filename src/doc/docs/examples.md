@@ -23,8 +23,8 @@ System.out.println("Sunset in Paris:  " + paris.getSet());
 The result is not very surprising:
 
 ```text
-Sunrise in Paris: Fri May 01 06:30:00 CEST 2020
-Sunset in Paris:  Fri May 01 21:07:00 CEST 2020
+Sunrise in Paris: 2020-05-01T06:29:47+02:00[Europe/Paris]
+Sunset in Paris:  2020-05-01T21:06:45+02:00[Europe/Paris]
 ```
 
 Now we want to compute the sunrise and sunset times of New York.
@@ -41,8 +41,8 @@ System.out.println("Sunset in New York:  " + newYork.getSet());
 The result is:
 
 ```text
-Sunrise in New York: Fri May 01 11:54:00 CEST 2020
-Sunset in New York:  Fri May 01 01:52:00 CEST 2020
+Sunrise in New York: 2020-05-01T11:54:05+02:00[Europe/Paris]
+Sunset in New York:  2020-05-01T01:51:51+02:00[Europe/Paris]
 ```
 
 Huh? The sun rises at noon and sets past midnight? The sun also sets before it is rising that day?
@@ -61,41 +61,25 @@ System.out.println("Sunrise in New York: " + newYorkTz.getRise());
 System.out.println("Sunset in New York:  " + newYorkTz.getSet());
 ```
 
-The result looks better. The sun rises at May 1st 11:54, and sets on May 2nd 1:53, but still Center European Summer Time (CEST).
-
-```text
-Sunrise in New York: Fri May 01 11:54:00 CEST 2020
-Sunset in New York:  Sat May 02 01:53:00 CEST 2020
-```
-
-The reason is that `getRise()` and `getSet()` return a Java `Date` object, which represents an instant without timezone. When we use `toString()`, it still uses your system's time zone to print the result. We have to format the `Date` object properly:
-
-```java
-DateFormat formatter = DateFormat.getDateTimeInstance();
-formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
-System.out.println("Sunrise in New York: " + formatter.format(newYorkTz.getRise()));
-System.out.println("Sunset in New York:  " + formatter.format(newYorkTz.getSet()));
-```
-
 Now, we finally see the actual sunrise and sunset time in New York:
 
 ```text
-Sunrise in New York: May 1, 2020 5:54:00 AM
-Sunset in New York:  May 1, 2020 7:53:00 PM
+Sunrise in New York: 2020-05-01T05:54:05-04:00[America/New_York]
+Sunset in New York:  2020-05-01T19:52:53-04:00[America/New_York]
 ```
-
-!!! NOTE
-    In the next examples, I will assume that the system is already set to the relevant timezone. I do so by invoking `TimeZone.setDefault()` at the beginning of each example, so the code won't become overly complex. This is _not_ the recommended way to do in production code, as it globally sets the timezone in the running Java instance. Use `timezone()` and proper output formatting instead.
 
 ## Time Window
 
 [Alert, Nunavut, Canada](https://en.wikipedia.org/wiki/Alert,_Nunavut) is the northernmost place in the world with a permanent population. Let's find out when the sun rises and sets there on March 15th, 2020:
 
 ```java
-double[] ALERT_CANADA = new double[] { 82.5, -62.316667 };
+final double[] ALERT_CANADA = new double[] { 82.5, -62.316667 };
+final ZoneId ALERT_TZ = ZoneId.of("Canada/Eastern");
+
 SunTimes march = SunTimes.compute()
         .on(2020, 3, 15)            // March 15th, 2020, starting midnight
         .at(ALERT_CANADA)           // Coordinates are stored in an array
+        .timezone(ALERT_TZ)
         .execute();
 System.out.println("Sunrise: " + march.getRise());
 System.out.println("Sunset:  " + march.getSet());
@@ -104,8 +88,8 @@ System.out.println("Sunset:  " + march.getSet());
 The result is looking fine so far:
 
 ```text
-Sunrise: Sun Mar 15 06:49:00 EDT 2020
-Sunset:  Sun Mar 15 17:53:00 EDT 2020
+Sunrise: 2020-03-15T06:49:03-04:00[Canada/Eastern]
+Sunset:  2020-03-15T17:52:53-04:00[Canada/Eastern]
 ```
 
 What about June 15th?
@@ -114,6 +98,7 @@ What about June 15th?
 SunTimes june = SunTimes.compute()
         .on(2020, 6, 15)            // June 15th, 2020, starting midnight
         .at(ALERT_CANADA)
+        .timezone(ALERT_TZ)
         .execute();
 System.out.println("Sunrise: " + june.getRise());
 System.out.println("Sunset:  " + june.getSet());
@@ -152,6 +137,7 @@ By using `.fullCycle()`, we can extend the time window to infinite, to get the n
 SunTimes juneFullCycle = SunTimes.compute()
         .on(2020, 6, 15)            // June 15th, 2020, starting midnight
         .at(ALERT_CANADA)
+        .timezone(ALERT_TZ)
         .fullCycle()                // No 24h limit, we want to get the full cycle
         .execute();
 System.out.println("Sunset:  " + juneFullCycle.getSet());
@@ -161,15 +147,19 @@ System.out.println("Sunrise: " + juneFullCycle.getRise());
 Now we're finally getting a result:
 
 ```text
-Sunset:  Fri Sep 04 23:56:00 EDT 2020
-Sunrise: Sat Sep 05 00:24:00 EDT 2020
+Sunset:  2020-09-04T23:55:46-04:00[Canada/Eastern]
+Sunrise: 2020-09-05T00:24:03-04:00[Canada/Eastern]
 ```
 
-## Parameter Recycling
+The sun will set on September 4th, and will rise again about 30 minutes later.
+
+## Parameter Reuse
 
 As soon as `execute()` is invoked, _suncalc_ performs the calculations according to the given parameters, and creates a result object which is immutable. The parameters can be reused after that:
 
 ```java
+final double[] COLOGNE = new double[] { 50.938056, 6.956944 };
+
 MoonTimes.Parameters parameters = MoonTimes.compute()
         .at(COLOGNE)
         .midnight();
@@ -186,9 +176,9 @@ System.out.println("But today, the moon still rises at " + today.getRise());
 The result is (at the time of writing):
 
 ```text
-Today, the moon rises in Cologne at Fri May 22 05:42:00 CEST 2020
-Tomorrow, the moon will rise in Cologne at Sat May 23 06:08:00 CEST 2020
-But today, the moon still rises at Fri May 22 05:42:00 CEST 2020
+Today, the moon rises in Cologne at 2020-05-24T06:40:45+02:00[Europe/Berlin]
+Tomorrow, the moon will rise in Cologne at 2020-05-25T07:23:06+02:00[Europe/Berlin]
+But today, the moon still rises at 2020-05-24T06:40:45+02:00[Europe/Berlin]
 ```
 
 As you can see in the last line, the invocation of `tomorrow()` did not affect the `today` result.
@@ -220,7 +210,7 @@ On January 31 the moon was 30% lit.
 
 ## Twilight
 
-By default `SunTimes` computes the sunrise and sunset times as we would expect it. The sun rises when the upper part of the sun disc just appears on the horizon, and it sets when the upper part just vanishes. Because of our atmosphere, the sun is actually deeper on the horizon as it appears to be. This effect is called [atmospheric refraction](https://en.wikipedia.org/wiki/Atmospheric_refraction), and is factored into the calculation.
+By default `SunTimes` computes the sunrise and sunset times as we would expect it. The sun rises when the upper part of the sun disc just appears on the horizon, and it sets when the upper part just vanishes. Because of our atmosphere, the sun is actually deeper on the horizon as it appears to be. This effect is called [atmospheric refraction](https://en.wikipedia.org/wiki/Atmospheric_refraction), and it is factored into the calculation.
 
 There are other [twilights](https://en.wikipedia.org/wiki/Twilight) that may be interesting. Photographers are especially interested in the [golden hour](https://en.wikipedia.org/wiki/Golden_hour_(photography)), which gives a warm and soft sunlight. In the morning, golden hour starts at sunrise and ends when the sun reaches an angle of 6°. In the evening, the golden hour starts when the sun reaches an angle of 6°, and ends at sunset.
 
@@ -230,13 +220,16 @@ Let's calculate the golden hour in Singapore for the next four Mondays starting 
 SunTimes.Parameters base = SunTimes.compute()
         .at(1.283333, 103.833333)            // Singapore
         .twilight(SunTimes.Twilight.VISUAL)  // Visual sunrise, this is the default
-        .on(2020, 6, 1);
+        .on(2020, 6, 1)
+        .timezone("Asia/Singapore");
 
 for (int i = 0; i < 4; i++) {
-    SunTimes visible = base.copy()
+    SunTimes visible = base
+            .copy()                          // Use a copy of base
             .plusDays(i * 7)
             .execute();
-    SunTimes golden = base.copy()
+    SunTimes golden = base
+            .copy()                          // Use a copy of base
             .twilight(SunTimes.Twilight.GOLDEN_HOUR)    // Golden Hour
             .plusDays(i * 7)
             .execute();
@@ -253,22 +246,22 @@ Note the `copy()` method! It copies the current set of parameters into a new par
 This is the result:
 
 ```text
-Morning golden hour starts at Mon Jun 01 06:57:00 SGT 2020
-Morning golden hour ends at   Mon Jun 01 07:26:00 SGT 2020
-Evening golden hour starts at Mon Jun 01 18:39:00 SGT 2020
-Evening golden hour ends at   Mon Jun 01 19:08:00 SGT 2020
-Morning golden hour starts at Mon Jun 08 06:58:00 SGT 2020
-Morning golden hour ends at   Mon Jun 08 07:28:00 SGT 2020
-Evening golden hour starts at Mon Jun 08 18:40:00 SGT 2020
-Evening golden hour ends at   Mon Jun 08 19:10:00 SGT 2020
-Morning golden hour starts at Mon Jun 15 06:59:00 SGT 2020
-Morning golden hour ends at   Mon Jun 15 07:29:00 SGT 2020
-Evening golden hour starts at Mon Jun 15 18:41:00 SGT 2020
-Evening golden hour ends at   Mon Jun 15 19:11:00 SGT 2020
-Morning golden hour starts at Mon Jun 22 07:01:00 SGT 2020
-Morning golden hour ends at   Mon Jun 22 07:31:00 SGT 2020
-Evening golden hour starts at Mon Jun 22 18:43:00 SGT 2020
-Evening golden hour ends at   Mon Jun 22 19:13:00 SGT 2020
+Morning golden hour starts at 2020-06-01T06:56:52+08:00[Asia/Singapore]
+Morning golden hour ends at   2020-06-01T07:26:24+08:00[Asia/Singapore]
+Evening golden hour starts at 2020-06-01T18:38:50+08:00[Asia/Singapore]
+Evening golden hour ends at   2020-06-01T19:08:20+08:00[Asia/Singapore]
+Morning golden hour starts at 2020-06-08T06:57:59+08:00[Asia/Singapore]
+Morning golden hour ends at   2020-06-08T07:27:41+08:00[Asia/Singapore]
+Evening golden hour starts at 2020-06-08T18:40:01+08:00[Asia/Singapore]
+Evening golden hour ends at   2020-06-08T19:09:40+08:00[Asia/Singapore]
+Morning golden hour starts at 2020-06-15T06:59:21+08:00[Asia/Singapore]
+Morning golden hour ends at   2020-06-15T07:29:10+08:00[Asia/Singapore]
+Evening golden hour starts at 2020-06-15T18:41:25+08:00[Asia/Singapore]
+Evening golden hour ends at   2020-06-15T19:11:10+08:00[Asia/Singapore]
+Morning golden hour starts at 2020-06-22T07:00:51+08:00[Asia/Singapore]
+Morning golden hour ends at   2020-06-22T07:30:41+08:00[Asia/Singapore]
+Evening golden hour starts at 2020-06-22T18:42:56+08:00[Asia/Singapore]
+Evening golden hour ends at   2020-06-22T19:12:42+08:00[Asia/Singapore]
 ```
 
 ## Moon Phase
@@ -277,46 +270,46 @@ I'd like to print a calendar of 2023, and mark all the days having a full moon. 
 
 As the visible moon phase is identical on every place on earth, we won't have to set a location here.
 
-But we have to be careful! Since there are about 29.5 days between two full moons, a month may actually have two full moons. For this reason, we cannot simply iterate over the months. Instead we take the previous full moon, add one day so we won't find the same full moon again, and use this date as a base for the next iteration.
-
-As parameters, we set the desired moon phase (`FULL_MOON`), and use `truncatedTo(DAYS)` so the result is truncated to the day of the event (i.e. the time is just cut off).
+But we have to be careful! Since there are about 29.5 days between two full moons, a month might actually have two full moons. For this reason, we cannot simply iterate over the months. Instead we take the previous full moon, add one day so we won't find the same full moon again, and use this date as a base for the next iteration.
 
 ```java
-Calendar cal = Calendar.getInstance();
-cal.clear();
-cal.set(2023, Calendar.JANUARY, 1);
+LocalDate date = LocalDate.of(2023, 1, 1);
 
 MoonPhase.Parameters parameters = MoonPhase.compute()
-        .phase(MoonPhase.Phase.FULL_MOON)
-        .truncatedTo(TimeResultParameter.Unit.DAYS);
+        .phase(MoonPhase.Phase.FULL_MOON);
 
-while (cal.get(Calendar.MONTH) < Calendar.DECEMBER) {
-    MoonPhase phase = parameters.on(cal).execute();
-    Date fullMoonAt = phase.getTime();
+while (true) {
+    LocalDate nextFullMoon = parameters
+            .on(date)
+            .execute()
+            .getTime()
+            .toLocalDate();
+    if (nextFullMoon.getYear() == 2024) {
+        break;      // we've reached the next year
+    }
 
-    System.out.println(fullMoonAt);
+    System.out.println(nextFullMoon);
 
-    cal.setTime(fullMoonAt);
-    cal.add(Calendar.DAY_OF_MONTH, 1);
+    date = nextFullMoon.plusDays(1);
 }
 ```
 
 The result is:
 
 ```text
-Sat Jan 07 00:00:00 CET 2023
-Sun Feb 05 00:00:00 CET 2023
-Tue Mar 07 00:00:00 CET 2023
-Thu Apr 06 00:00:00 CEST 2023
-Fri May 05 00:00:00 CEST 2023
-Sun Jun 04 00:00:00 CEST 2023
-Mon Jul 03 00:00:00 CEST 2023
-Tue Aug 01 00:00:00 CEST 2023
-Thu Aug 31 00:00:00 CEST 2023
-Fri Sep 29 00:00:00 CEST 2023
-Sat Oct 28 00:00:00 CEST 2023
-Mon Nov 27 00:00:00 CET 2023
-Wed Dec 27 00:00:00 CET 2023
+2023-01-07
+2023-02-05
+2023-03-07
+2023-04-06
+2023-05-05
+2023-06-04
+2023-07-03
+2023-08-01
+2023-08-31
+2023-09-29
+2023-10-28
+2023-11-27
+2023-12-27
 ```
 
 As you can see, there are two full moons in August 2023.
