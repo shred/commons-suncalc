@@ -20,10 +20,7 @@ import static org.shredzone.commons.suncalc.util.ExtendedMath.frac;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Objects;
-
-import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
 
 /**
  * This class contains a Julian Date representation of a date.
@@ -88,30 +85,6 @@ public class JulianDate {
      */
     public ZonedDateTime getDateTime() {
         return dateTime;
-    }
-
-    /**
-     * Returns this {@link JulianDate} as truncated {@link ZonedDateTime} object.
-     *
-     * @param unit
-     *            {@link Unit} to truncate to
-     * @return Rounded {@link ZonedDateTime} of this {@link JulianDate}.
-     */
-    public ZonedDateTime getDateTruncated(Unit unit) {
-        Objects.requireNonNull(unit, "unit");
-
-        ZonedDateTime result = dateTime.truncatedTo(ChronoUnit.SECONDS);
-        if (unit == Unit.MINUTES || unit == Unit.HOURS || unit == Unit.DAYS) {
-            result = result.plusSeconds(30).truncatedTo(ChronoUnit.MINUTES);
-        }
-        if (unit == Unit.HOURS || unit == Unit.DAYS) {
-            result = result.plusMinutes(30).truncatedTo(ChronoUnit.HOURS);
-        }
-        if (unit == Unit.DAYS) {
-            result = result.truncatedTo(ChronoUnit.DAYS);
-        }
-
-        return result;
     }
 
     /**

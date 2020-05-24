@@ -24,7 +24,6 @@ import org.assertj.core.api.AbstractDateAssert;
 import org.assertj.core.data.Offset;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
 
 /**
  * Unit tests for {@link JulianDate}.
@@ -115,21 +114,6 @@ public class JulianDateTest {
                         .atJulianCentury(jd1.getJulianCentury());
 
         assertThat(jd2.getDateTime()).isEqualTo(jd1.getDateTime());
-    }
-
-    @Test
-    public void testDateTruncated() {
-        JulianDate jd1 = new JulianDate(of(2017, 1, 1, 17, 35, 52, "UTC"));
-        assertThat(jd1.getDateTruncated(Unit.SECONDS)).isEqualTo("2017-01-01T17:35:52Z");
-        assertThat(jd1.getDateTruncated(Unit.MINUTES)).isEqualTo("2017-01-01T17:36:00Z");
-        assertThat(jd1.getDateTruncated(Unit.HOURS)).isEqualTo("2017-01-01T18:00:00Z");
-        assertThat(jd1.getDateTruncated(Unit.DAYS)).isEqualTo("2017-01-01T00:00:00Z");
-
-        JulianDate jd2 = new JulianDate(of(2017, 1, 1, 7, 11, 22, "UTC"));
-        assertThat(jd2.getDateTruncated(Unit.SECONDS)).isEqualTo("2017-01-01T07:11:22Z");
-        assertThat(jd2.getDateTruncated(Unit.MINUTES)).isEqualTo("2017-01-01T07:11:00Z");
-        assertThat(jd2.getDateTruncated(Unit.HOURS)).isEqualTo("2017-01-01T07:00:00Z");
-        assertThat(jd2.getDateTruncated(Unit.DAYS)).isEqualTo("2017-01-01T00:00:00Z");
     }
 
     private ZonedDateTime of(int year, int month, int day, int hour, int minute, int second, String zone) {

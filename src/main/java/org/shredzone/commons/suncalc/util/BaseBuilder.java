@@ -27,7 +27,6 @@ import java.util.Objects;
 import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
-import org.shredzone.commons.suncalc.param.TimeResultParameter;
 
 /**
  * A base implementation of {@link LocationParameter} and {@link TimeParameter}.
@@ -39,13 +38,12 @@ import org.shredzone.commons.suncalc.param.TimeResultParameter;
  */
 @SuppressWarnings("unchecked")
 public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>,
-        TimeParameter<T>, TimeResultParameter<T>, Cloneable {
+        TimeParameter<T>, Cloneable {
 
     private double lat = 0.0;
     private double lng = 0.0;
     private double height = 0.0;
     private ZonedDateTime dateTime = ZonedDateTime.now();
-    private Unit unit = Unit.MINUTES;
 
     @Override
     public T on(ZonedDateTime dateTime) {
@@ -119,12 +117,6 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
     @Override
     public T height(double h) {
         this.height = h;
-        return (T) this;
-    }
-
-    @Override
-    public T truncatedTo(Unit unit) {
-        this.unit = Objects.requireNonNull(unit, "unit");
         return (T) this;
     }
 
@@ -210,15 +202,6 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
      */
     public JulianDate getJulianDate() {
         return new JulianDate(dateTime);
-    }
-
-    /**
-     * Returns the {@link Unit} to truncate to.
-     *
-     * @return {@link Unit}
-     */
-    public Unit getTruncatedTo() {
-        return unit;
     }
 
 }

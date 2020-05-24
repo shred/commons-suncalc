@@ -22,7 +22,6 @@ import java.time.ZonedDateTime;
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
-import org.shredzone.commons.suncalc.param.TimeResultParameter;
 import org.shredzone.commons.suncalc.util.BaseBuilder;
 import org.shredzone.commons.suncalc.util.JulianDate;
 import org.shredzone.commons.suncalc.util.Moon;
@@ -59,7 +58,6 @@ public class MoonPhase {
     public interface Parameters extends
             GenericParameter<Parameters>,
             TimeParameter<Parameters>,
-            TimeResultParameter<Parameters>,
             Builder<MoonPhase> {
 
         /**
@@ -175,7 +173,7 @@ public class MoonPhase {
 
             double tphase = Pegasus.calculate(t0, t1, accuracy, x -> moonphase(jd, x));
 
-            return new MoonPhase(jd.atJulianCentury(tphase).getDateTruncated(getTruncatedTo()));
+            return new MoonPhase(jd.atJulianCentury(tphase).getDateTime());
         }
 
         /**

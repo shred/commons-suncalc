@@ -23,7 +23,6 @@ import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
-import org.shredzone.commons.suncalc.param.TimeResultParameter;
 import org.shredzone.commons.suncalc.util.BaseBuilder;
 import org.shredzone.commons.suncalc.util.JulianDate;
 import org.shredzone.commons.suncalc.util.Moon;
@@ -64,7 +63,6 @@ public final class MoonTimes {
             GenericParameter<Parameters>,
             LocationParameter<Parameters>,
             TimeParameter<Parameters>,
-            TimeResultParameter<Parameters>,
             Builder<MoonTimes> {
 
         /**
@@ -177,8 +175,8 @@ public final class MoonTimes {
             }
 
             return new MoonTimes(
-                    rise != null ? jd.atHour(rise).getDateTruncated(getTruncatedTo()) : null,
-                    set != null ? jd.atHour(set).getDateTruncated(getTruncatedTo()) : null,
+                    rise != null ? jd.atHour(rise).getDateTime() : null,
+                    set != null ? jd.atHour(set).getDateTime() : null,
                     alwaysUp,
                     alwaysDown);
         }

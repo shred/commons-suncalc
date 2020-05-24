@@ -26,7 +26,6 @@ import org.assertj.core.api.AbstractDateAssert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.shredzone.commons.suncalc.SunTimes.Twilight;
-import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
 
 /**
  * Unit tests for {@link SunTimes}.
@@ -63,7 +62,7 @@ public class SunTimesTest {
         for (Twilight angle : Twilight.values()) {
             SunTimes times = SunTimes.compute().at(COLOGNE).on(2017, 8, 10).utc()
                             .twilight(angle)
-                            .truncatedTo(Unit.SECONDS).execute();
+                            .execute();
             assertThat(times.getRise()).as("%s-rise", angle.name()).isEqualTo(riseTimes.get(angle));
             assertThat(times.getSet()).as("%s-set", angle.name()).isEqualTo(setTimes.get(angle));
             assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:38Z");
@@ -74,7 +73,7 @@ public class SunTimesTest {
 
         SunTimes times = SunTimes.compute().at(COLOGNE).on(2017, 8, 10).utc()
                         .twilight(-4.0)
-                        .truncatedTo(Unit.SECONDS).execute();
+                        .execute();
         assertThat(times.getRise()).as("rise").isEqualTo("2017-08-10T03:48:59Z");
         assertThat(times.getSet()).as("set").isEqualTo("2017-08-10T19:25:16Z");
         assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:38Z");
@@ -86,62 +85,64 @@ public class SunTimesTest {
     @Test
     public void testAlert() {
         SunTimes t1 = SunTimes.compute().at(ALERT).on(2017, 8, 10).utc()
-                        .truncatedTo(Unit.SECONDS).execute();
+                        .execute();
         assertTimes(t1, null, null, "2017-08-10T16:13:09Z", true);
 
         SunTimes t2 = SunTimes.compute().at(ALERT).on(2017, 9, 24).utc()
-                        .truncatedTo(Unit.SECONDS).execute();
+                        .execute();
         assertTimes(t2, "2017-09-24T09:54:29Z", "2017-09-24T22:02:01Z", "2017-09-24T15:59:16Z");
 
         SunTimes t3 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc()
-                        .truncatedTo(Unit.SECONDS).execute();
+                        .execute();
         assertTimes(t3, null, null, "2017-02-10T16:25:07Z", false);
 
         SunTimes t4 = SunTimes.compute().at(ALERT).on(2017, 8, 10).utc()
-                        .fullCycle().truncatedTo(Unit.SECONDS).execute();
+                        .fullCycle()
+                        .execute();
         assertTimes(t4, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-08-10T16:13:09Z", true);
 
         SunTimes t5 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc()
-                        .fullCycle().truncatedTo(Unit.SECONDS).execute();
+                        .fullCycle()
+                        .execute();
         assertTimes(t5, "2017-02-27T15:24:18Z", "2017-02-27T17:23:46Z", "2017-02-10T16:25:07Z", false);
 
         SunTimes t6 = SunTimes.compute().at(ALERT).on(2017, 9, 6).utc().oneDay()
-                        .truncatedTo(Unit.SECONDS).execute();
+                        .execute();
         assertTimes(t6, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-09-06T16:05:41Z");
     }
 
     @Test
     public void testWellington() {
         SunTimes t1 = SunTimes.compute().at(WELLINGTON).on(2017, 8, 10).timezone(WELLINGTON_TZ)
-                        .truncatedTo(Unit.SECONDS).execute();
+                        .execute();
         assertTimes(t1, "2017-08-09T19:18:33Z", "2017-08-10T05:34:50Z", "2017-08-10T00:26:28Z");
     }
 
     @Test
     public void testPuertoWilliams() {
         SunTimes t1 = SunTimes.compute().at(PUERTO_WILLIAMS).on(2017, 8, 10).timezone(PUERTO_WILLIAMS_TZ)
-                        .truncatedTo(Unit.SECONDS).execute();
+                        .execute();
         assertTimes(t1, "2017-08-10T12:01:51Z", "2017-08-10T21:10:36Z", "2017-08-10T16:36:12Z");
     }
 
     @Test
     public void testSingapore() {
         SunTimes t1 = SunTimes.compute().at(SINGAPORE).on(2017, 8, 10).timezone(SINGAPORE_TZ)
-                        .truncatedTo(Unit.SECONDS).execute();
+                        .execute();
         assertTimes(t1, "2017-08-09T23:05:13Z", "2017-08-10T11:14:56Z", "2017-08-10T05:08:44Z");
     }
 
     @Test
     public void testMartinique() {
         SunTimes t1 = SunTimes.compute().at(MARTINIQUE).on(2019, 7, 1).timezone(MARTINIQUE_TZ)
-                .truncatedTo(Unit.SECONDS).execute();
+                        .execute();
         assertTimes(t1, "2019-07-01T09:38:35Z", "2019-07-01T22:37:23Z", "2019-07-01T16:06:08Z");
     }
 
     @Test
     public void testSydney() {
         SunTimes t1 = SunTimes.compute().at(SYDNEY).on(2019, 7, 3).timezone(SYDNEY_TZ)
-                .truncatedTo(Unit.SECONDS).execute();
+                        .execute();
         assertTimes(t1, "2019-07-02T21:00:35Z", "2019-07-03T06:58:02Z", "2019-07-03T01:59:18Z");
     }
 
@@ -152,32 +153,32 @@ public class SunTimesTest {
         long shortDuration = 2;
         long longDuration = 30;
         SunTimes.Parameters param = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
-                .on(2020, 5, 3).truncatedTo(Unit.SECONDS);
+                .on(2020, 5, 3);
         ZonedDateTime noon = param.execute().getNoon();
         ZonedDateTime noonNextDay = param.plusDays(1).execute().getNoon();
         long acceptableError = 65 * 1000L;
 
         ZonedDateTime wellBeforeNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
                 .on(noon.minusMinutes(longDuration))
-                .truncatedTo(Unit.SECONDS).execute().getNoon();
+                .execute().getNoon();
         assertThat(Duration.between(wellBeforeNoon, noon).abs().toMillis())
                 .as("wellBeforeNoon").isLessThan(acceptableError);
 
         ZonedDateTime justBeforeNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
                 .on(noon.minusMinutes(shortDuration))
-                .truncatedTo(Unit.SECONDS).execute().getNoon();
+                .execute().getNoon();
         assertThat(Duration.between(justBeforeNoon, noon).abs().toMillis())
                 .as("justBeforeNoon").isLessThan(acceptableError);
 
         ZonedDateTime justAfterNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
                 .on(noon.plusMinutes(shortDuration))
-                .truncatedTo(Unit.SECONDS).execute().getNoon();
+                .execute().getNoon();
         assertThat(Duration.between(justAfterNoon, noonNextDay).abs().toMillis())
                 .as("justAfterNoon").isLessThan(acceptableError);
 
         ZonedDateTime wellAfterNoon = SunTimes.compute().at(SANTA_MONICA).timezone(SANTA_MONICA_TZ)
                 .on(noon.plusMinutes(longDuration))
-                .truncatedTo(Unit.SECONDS).execute().getNoon();
+                .execute().getNoon();
         assertThat(Duration.between(wellAfterNoon, noonNextDay).abs().toMillis())
                 .as("wellAfterNoon").isLessThan(acceptableError);
 
@@ -205,7 +206,6 @@ public class SunTimesTest {
                             .at(COLOGNE)
                             .on(2017, 11, 25, hour, minute, 0).utc()
                             .fullCycle()
-                            .truncatedTo(Unit.SECONDS)
                             .execute();
 
                 ZonedDateTime rise = times.getRise();
