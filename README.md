@@ -32,9 +32,9 @@ System.out.println("Elevation: " + position.getElevation() + "°");
 System.out.println("Azimuth: " + position.getAzimuth() + "°");
 ```
 
-See the [online documentation](https://shredzone.org/maven/commons-suncalc/) for examples and API details.
+See the [online documentation](https://shredzone.org/maven/commons-suncalc-v2/) for examples and API details.
 
-See the [migration guide](https://shredzone.org/maven/commons-suncalc/migration.html) for how to migrate from a previous version.
+See the [migration guide](https://shredzone.org/maven/commons-suncalc-v2/migration.html) for how to migrate from a previous version.
 
 ## References
 
