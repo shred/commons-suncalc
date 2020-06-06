@@ -155,4 +155,64 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <!-- Workaround: Java 9's javadoc search is broken if no module is defined -->
+    <profiles>
+        <profile>
+            <id>java-9</id>
+            <activation>
+                <jdk>[9,10]</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <additionalJOption combine.self="override">--no-module-directories</additionalJOption>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <additionalJOption combine.self="override">--no-module-directories</additionalJOption>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+        <profile>
+            <id>java-11</id>
+            <activation>
+                <jdk>[11,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <source>8</source>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <source>8</source>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+    </profiles>
 </project>
