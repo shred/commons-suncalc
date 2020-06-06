@@ -1,6 +1,10 @@
-# commons-suncalc ![build status](https://shredzone.org/badge/commons-suncalc.svg) ![maven central](https://shredzone.org/maven-central/org.shredzone.commons/commons-suncalc/badge.svg)
+# commons-suncalc v2
 
 A Java library for calculation of sun and moon positions and phases.
+
+**This is a compatibility branch for Java 1.7 and for Android from API level 11 (Honeycomb) thru API level 25 (Nougat 7.1).**
+
+If you are using Java 8, Android API level 26 (Oreo), or higher versions, you should use [commons-suncalc v3](https://github.com/shred/commons-suncalc) instead!
 
 ## Features
 
