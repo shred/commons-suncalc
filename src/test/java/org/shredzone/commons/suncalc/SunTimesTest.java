@@ -217,7 +217,6 @@ public class SunTimesTest {
                 .on(sunTimes.getNadir())
                 .execute();
 
-        System.out.println(abs(sunPositionAtNoon.getAzimuth() - 180.0));
         assertThat(abs(sunPositionAtNoon.getAzimuth() - 180.0)).isLessThan(0.1);
         assertThat(abs(sunPositionAtNadir.getAzimuth() - 360.0)).isLessThan(0.1);
     }
