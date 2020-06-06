@@ -273,6 +273,8 @@ public class SunTimes {
             boolean alwaysUp = false;
             boolean alwaysDown = false;
             double ye;
+            double noonYe = 0.0;
+            double nadirYe = 0.0;
 
             int hour = 0;
             int maxHours = fullCycle ? 365 * 24 : 24;
@@ -323,9 +325,15 @@ public class SunTimes {
                         double xeHour = qi.getXe() + hour;
                         if (xeHour >= 0.0 && xeHour < 24.0) {
                             if (qi.isMaximum()) {
-                                noon = xeHour;
+                                if (noon == null || ye > noonYe) {
+                                    noon = xeHour;
+                                    noonYe = ye;
+                                }
                             } else {
-                                nadir = xeHour;
+                                if (nadir == null || ye < nadirYe) {
+                                    nadir = xeHour;
+                                    nadirYe = ye;
+                                }
                             }
                         }
                     }
