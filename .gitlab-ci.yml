@@ -1,6 +1,11 @@
-
-image: maven:3-jdk-11-slim
-
 build:
+  tags:
+    - maven
   script:
-    - mvn -B clean install javadoc:javadoc javadoc:test-javadoc
+    - mvn clean compile
+
+deploy:
+  tags:
+    - maven
+  script:
+    - mvn -B install javadoc:javadoc
