@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.shredzone.commons</groupId>
     <artifactId>commons-suncalc</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.0</version>
     <name>Commons: Suncalc</name>
     <description>Compute sun and moon phases</description>
     <url>http://commons.shredzone.org</url>
@@ -18,7 +18,7 @@
         <url>https://github.com/shred/commons-suncalc/</url>
         <connection>scm:git:git@github.com:shred/commons-suncalc.git</connection>
         <developerConnection>scm:git:git@github.com:shred/commons-suncalc.git</developerConnection>
-      <tag>HEAD</tag>
+      <tag>v3.0</tag>
   </scm>
     <issueManagement>
         <system>GitHub Issues</system>
