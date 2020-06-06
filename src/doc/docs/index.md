@@ -30,7 +30,7 @@ dependencies {
 }
 ```
 
-Replace `$version` with your desired version. The latest version is: ![maven central](https://shredzone.org/maven-central/org.shredzone.commons/commons-suncalc/badge.svg)
+Replace `$version` with your desired version.
 
 ## Java Module
 
