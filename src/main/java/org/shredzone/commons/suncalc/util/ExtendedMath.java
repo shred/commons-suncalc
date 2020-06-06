@@ -15,6 +15,9 @@ package org.shredzone.commons.suncalc.util;
 
 import static java.lang.Math.*;
 
+import java.util.Comparator;
+import java.util.function.Function;
+
 /**
  * Contains constants and mathematical operations that are not available in {@link Math}.
  */
@@ -168,6 +171,87 @@ public final class ExtendedMath {
     public static double dms(int d, int m, double s) {
         double sig = d < 0 ? -1.0 : 1.0;
         return sig * ((abs(s) / 60.0 + abs(m)) / 60.0 + abs(d));
+    }
+
+    /**
+     * Locates the true maximum within the given time frame.
+     *
+     * @param time
+     *         Base time
+     * @param frame
+     *         Time frame, which is added to and subtracted from the base time for the
+     *         interval
+     * @param depth
+     *         Maximum recursion depth. For each recursion, the function is invoked once.
+     * @param f
+     *         Function to be used for calculation
+     * @return time of the true maximum
+     */
+    public static double readjustMax(double time, double frame, int depth, Function<Double, Double> f) {
+        double left = time - frame;
+        double right = time + frame;
+        double leftY = f.apply(left);
+        double rightY = f.apply(right);
+
+        return readjustInterval(left, right, leftY, rightY, depth, f, Double::compare);
+    }
+
+    /**
+     * Locates the true minimum within the given time frame.
+     *
+     * @param time
+     *         Base time
+     * @param frame
+     *         Time frame, which is added to and subtracted from the base time for the
+     *         interval
+     * @param depth
+     *         Maximum recursion depth. For each recursion, the function is invoked once.
+     * @param f
+     *         Function to be used for calculation
+     * @return time of the true minimum
+     */
+    public static double readjustMin(double time, double frame, int depth, Function<Double, Double> f) {
+        double left = time - frame;
+        double right = time + frame;
+        double leftY = f.apply(left);
+        double rightY = f.apply(right);
+
+        return readjustInterval(left, right, leftY, rightY, depth, f, (yl, yr) -> Double.compare(yr, yl));
+    }
+
+    /**
+     * Recursively find the true maximum/minimum within the given time frame.
+     *
+     * @param left
+     *         Left interval border
+     * @param right
+     *         Right interval border
+     * @param yl
+     *         Function result at the left interval
+     * @param yr
+     *         Function result at the right interval
+     * @param depth
+     *         Maximum recursion depth. For each recursion, the function is invoked once.
+     * @param f
+     *         Function to invoke
+     * @param cmp
+     *         Comparator to decide whether the left or right side of the interval half is
+     *         to be used
+     * @return Position of the approximated minimum/maximum
+     */
+    private static double readjustInterval(double left, double right, double yl, double yr, int depth,
+                                           Function<Double, Double> f, Comparator<Double> cmp) {
+        if (depth <= 0) {
+            return (cmp.compare(yl, yr) < 0) ? right : left;
+        }
+
+        double middle = (left + right) / 2.0;
+        double ym = f.apply(middle);
+        if (cmp.compare(yl, yr) < 0) {
+            return readjustInterval(middle, right, ym, yr, depth - 1, f, cmp);
+        } else {
+            return readjustInterval(left, middle, yl, ym, depth - 1, f, cmp);
+        }
     }
 
 }

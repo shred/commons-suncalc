@@ -14,8 +14,7 @@
 package org.shredzone.commons.suncalc;
 
 import static java.lang.Math.toRadians;
-import static org.shredzone.commons.suncalc.util.ExtendedMath.apparentRefraction;
-import static org.shredzone.commons.suncalc.util.ExtendedMath.parallax;
+import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
 import java.time.ZonedDateTime;
 
@@ -363,6 +362,14 @@ public class SunTimes {
                 if (set != null && set >= 24.0) {
                     set = null;
                 }
+            }
+
+            if (noon != null) {
+                noon = readjustMax(noon, 1/24.0, 6, t -> correctedSunHeight(jd.atHour(t)));
+            }
+
+            if (nadir != null) {
+                nadir = readjustMin(nadir, 1/24.0, 6, t -> correctedSunHeight(jd.atHour(t)));
             }
 
             return new SunTimes(
