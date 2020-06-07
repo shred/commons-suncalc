@@ -45,17 +45,17 @@ public class MoonTimesTest {
 
     @Test
     public void testAlert() {
-        MoonTimes mt1 = MoonTimes.compute().on(2017, 7, 12).utc().at(ALERT).execute();
+        MoonTimes mt1 = MoonTimes.compute().on(2017, 7, 12).utc().at(ALERT).oneDay().execute();
         assertThat(mt1.isAlwaysUp()).as("alwaysup").isFalse();
         assertThat(mt1.isAlwaysDown()).as("alwaysdown").isTrue();
 
-        MoonTimes mt2 = MoonTimes.compute().on(2017, 7, 12).utc().at(ALERT).fullCycle().execute();
+        MoonTimes mt2 = MoonTimes.compute().on(2017, 7, 12).utc().at(ALERT).execute();
         assertThat(mt2.getRise()).as("rise").isEqualTo("2017-07-14T05:45:33Z");
         assertThat(mt2.getSet()).as("set").isEqualTo("2017-07-14T11:26:12Z");
         assertThat(mt2.isAlwaysUp()).as("alwaysup").isFalse();
-        assertThat(mt2.isAlwaysDown()).as("alwaysdown").isTrue();
+        assertThat(mt2.isAlwaysDown()).as("alwaysdown").isFalse();
 
-        MoonTimes mt3 = MoonTimes.compute().on(2017, 7, 14).utc().at(ALERT).execute();
+        MoonTimes mt3 = MoonTimes.compute().on(2017, 7, 14).utc().at(ALERT).limit(Duration.ofDays(1)).execute();
         assertThat(mt3.getRise()).as("rise").isEqualTo("2017-07-14T05:45:33Z");
         assertThat(mt3.getSet()).as("set").isEqualTo("2017-07-14T11:26:12Z");
         assertThat(mt3.isAlwaysUp()).as("alwaysup").isFalse();
@@ -68,7 +68,7 @@ public class MoonTimesTest {
         MoonTimes mt5 = MoonTimes.compute().on(2017, 7, 18).utc().at(ALERT).fullCycle().execute();
         assertThat(mt5.getRise()).as("rise").isEqualTo("2017-07-27T11:59:07Z");
         assertThat(mt5.getSet()).as("set").isEqualTo("2017-07-27T04:07:24Z");
-        assertThat(mt5.isAlwaysUp()).as("alwaysup").isTrue();
+        assertThat(mt5.isAlwaysUp()).as("alwaysup").isFalse();
         assertThat(mt5.isAlwaysDown()).as("alwaysdown").isFalse();
     }
 

@@ -129,14 +129,9 @@ The available location-based parameters are:
 
 ## Time Range
 
-By default, [`SunTimes`](./apidocs/org/shredzone/commons/suncalc/SunTimes.Parameters.html) and [`MoonTimes`](./apidocs/org/shredzone/commons/suncalc/MoonTimes.Parameters.html) only consider the next 24 hours of the given start time. If the sun or moon does not rise or set within that time span, the appropriate getters return `null`. You can check if the sun or moon is always above or below the horizon, by checking `isAlwaysUp()` and `isAlwaysDown()`.
+By default, [`SunTimes`](./apidocs/org/shredzone/commons/suncalc/SunTimes.Parameters.html) and [`MoonTimes`](./apidocs/org/shredzone/commons/suncalc/MoonTimes.Parameters.html) will calculate a full cycle of the sun or moon. This means that rise, set, noon and nadir times may be more than 24 hours ahead.
 
-If you need both the rise and set time, you can set the `fullCycle()` parameter. The calculation then runs until both times are found, even if several days in the future. However, depending on the date and geolocation, this calculation could take considerably more time and computing power.
-
-To turn back to the default 24 hours window, use `oneDay()`.
-
-!!! NOTE
-    `fullCycle()` only affects the result of `getRise()` and `getSet()`. The methods `isAlwaysUp()`, `isAlwaysDown()`, `getNoon()` and `getNadir()` will always only consider the next 24 hours.
+You can limit the time window to the next 24 hours by using the `oneDay()` parameter. You can also give any other window by using `limit(Duration duration)`. If the sun or moon does not rise or set within that window, the appropriate getters return `null`. You can check if the sun or moon is always above or below the horizon, by checking `isAlwaysUp()` and `isAlwaysDown()`.
 
 ## Twilight
 

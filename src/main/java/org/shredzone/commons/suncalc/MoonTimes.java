@@ -13,9 +13,11 @@
  */
 package org.shredzone.commons.suncalc;
 
+import static java.lang.Math.ceil;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.apparentRefraction;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.parallax;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -66,22 +68,34 @@ public final class MoonTimes {
             Builder<MoonTimes> {
 
         /**
-         * Checks only the next 24 hours. Rise or set times can be {@code null} if the
-         * moon never reaches the point during one day.
+         * Limits the calculation window to the given {@link Duration}.
+         *
+         * @param duration
+         *         Duration of the calculation window. Must be positive.
+         * @return itself
+         * @since 3.1
+         */
+        Parameters limit(Duration duration);
+
+        /**
+         * Limits the time window to the next 24 hours.
+         *
+         * @return itself
+         */
+        default Parameters oneDay() {
+            return limit(Duration.ofDays(1L));
+        }
+
+        /**
+         * Computes until all rise and set times are found.
          * <p>
          * This is the default.
          *
          * @return itself
          */
-        Parameters oneDay();
-
-        /**
-         * Computes until rise and set times are found, even if the moon needs more than a
-         * day for it. This can increase computation time.
-         *
-         * @return itself
-         */
-        Parameters fullCycle();
+        default Parameters fullCycle() {
+            return limit(Duration.ofDays(365L));
+        }
     }
 
     /**
@@ -89,18 +103,15 @@ public final class MoonTimes {
      * and creates a {@link MoonTimes} object that holds the result.
      */
     private static class MoonTimesBuilder extends BaseBuilder<Parameters> implements Parameters {
-        private boolean fullCycle = false;
+        private Duration limit = Duration.ofDays(365L);
         private double refraction = apparentRefraction(0.0);
 
         @Override
-        public Parameters oneDay() {
-            this.fullCycle = false;
-            return this;
-        }
-
-        @Override
-        public Parameters fullCycle() {
-            this.fullCycle = true;
+        public Parameters limit(Duration duration) {
+            if (duration == null || duration.isNegative()) {
+                throw new IllegalArgumentException("duration must be positive");
+            }
+            limit = duration;
             return this;
         }
 
@@ -112,47 +123,54 @@ public final class MoonTimes {
             Double set = null;
             boolean alwaysUp = false;
             boolean alwaysDown = false;
+            double ye;
 
             int hour = 0;
-            int maxHours = fullCycle ? 365 * 24 : 24;
+            double limitHours = limit.toMillis() / (60 * 60 * 1000.0);
+            int maxHours = (int) ceil(limitHours);
 
             double y_minus = correctedMoonHeight(jd.atHour(hour - 1.0));
             double y_0 = correctedMoonHeight(jd.atHour(hour));
             double y_plus = correctedMoonHeight(jd.atHour(hour + 1.0));
 
+            if (y_0 > 0.0) {
+                alwaysUp = true;
+            } else {
+                alwaysDown = true;
+            }
+
             while (hour <= maxHours) {
                 QuadraticInterpolation qi = new QuadraticInterpolation(y_minus, y_0, y_plus);
-                double ye = qi.getYe();
+                ye = qi.getYe();
 
                 if (qi.getNumberOfRoots() == 1) {
                     double rt = qi.getRoot1() + hour;
                     if (y_minus < 0.0) {
-                        if (rise == null && rt >= 0.0) {
+                        if (rise == null && rt >= 0.0 && rt < limitHours) {
                             rise = rt;
+                            alwaysDown = false;
                         }
                     } else {
-                        if (set == null && rt >= 0.0) {
+                        if (set == null && rt >= 0.0 && rt < limitHours) {
                             set = rt;
+                            alwaysUp = false;
                         }
                     }
                 } else if (qi.getNumberOfRoots() == 2) {
                     if (rise == null) {
                         double rt = hour + (ye < 0.0 ? qi.getRoot2() : qi.getRoot1());
-                        if (rt >= 0.0) {
+                        if (rt >= 0.0 && rt < limitHours) {
                             rise = rt;
+                            alwaysDown = false;
                         }
                     }
                     if (set == null) {
                         double rt = hour + (ye < 0.0 ? qi.getRoot1() : qi.getRoot2());
-                        if (rt >= 0.0) {
+                        if (rt >= 0.0 && rt < limitHours) {
                             set = rt;
+                            alwaysUp = false;
                         }
                     }
-                }
-
-                if (hour == 23 && rise == null && set == null) {
-                    alwaysUp = ye >= 0.0;
-                    alwaysDown = ye < 0.0;
                 }
 
                 if (rise != null && set != null) {
@@ -163,15 +181,6 @@ public final class MoonTimes {
                 y_minus = y_0;
                 y_0 = y_plus;
                 y_plus = correctedMoonHeight(jd.atHour(hour + 1.0));
-            }
-
-            if (!fullCycle) {
-                if (rise != null && rise >= 24.0) {
-                    rise = null;
-                }
-                if (set != null && set >= 24.0) {
-                    set = null;
-                }
             }
 
             return new MoonTimes(
@@ -213,20 +222,14 @@ public final class MoonTimes {
     }
 
     /**
-     * {@code true} if the moon never rises/sets, but is always above the horizon within
-     * the next 24 hours.
-     * <p>
-     * Note that {@link Parameters#fullCycle()} does not affect this result.
+     * {@code true} if the moon never rises/sets, but is always above the horizon.
      */
     public boolean isAlwaysUp() {
         return alwaysUp;
     }
 
     /**
-     * {@code true} if the moon never rises/sets, but is always below the horizon within
-     * the next 24 hours.
-     * <p>
-     * Note that {@link Parameters#fullCycle()} does not affect this result.
+     * {@code true} if the moon never rises/sets, but is always below the horizon.
      */
     public boolean isAlwaysDown() {
         return alwaysDown;

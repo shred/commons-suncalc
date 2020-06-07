@@ -13,9 +13,10 @@
  */
 package org.shredzone.commons.suncalc;
 
-import static java.lang.Math.toRadians;
+import static java.lang.Math.*;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.*;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -92,22 +93,34 @@ public class SunTimes {
         Parameters twilight(double angle);
 
         /**
-         * Checks only the next 24 hours. Rise or set time can be {@code null} if the sun
-         * never reaches the point during one day (e.g. at solstice).
+         * Limits the calculation window to the given {@link Duration}.
+         *
+         * @param duration
+         *         Duration of the calculation window. Must be positive.
+         * @return itself
+         * @since 3.1
+         */
+        Parameters limit(Duration duration);
+
+        /**
+         * Limits the time window to the next 24 hours.
+         *
+         * @return itself
+         */
+        default Parameters oneDay() {
+            return limit(Duration.ofDays(1L));
+        }
+
+        /**
+         * Computes until all rise, set, noon, and nadir times are found.
          * <p>
          * This is the default.
          *
          * @return itself
          */
-        Parameters oneDay();
-
-        /**
-         * Computes until rise and set times are found, even if the sun needs more than a
-         * day for it. This can considerably increase computation time.
-         *
-         * @return itself
-         */
-        Parameters fullCycle();
+        default Parameters fullCycle() {
+            return limit(Duration.ofDays(365L));
+        }
     }
 
     /**
@@ -230,7 +243,7 @@ public class SunTimes {
     private static class SunTimesBuilder extends BaseBuilder<Parameters> implements Parameters {
         private double angle = Twilight.VISUAL.getAngleRad();
         private @Nullable Double position = Twilight.VISUAL.getAngularPosition();
-        private boolean fullCycle = false;
+        private Duration limit = Duration.ofDays(365L);
         private double refraction = apparentRefraction(0.0);
 
         @Override
@@ -248,14 +261,11 @@ public class SunTimes {
         }
 
         @Override
-        public Parameters oneDay() {
-            this.fullCycle = false;
-            return this;
-        }
-
-        @Override
-        public Parameters fullCycle() {
-            this.fullCycle = true;
+        public Parameters limit(Duration duration) {
+            if (duration == null || duration.isNegative()) {
+                throw new IllegalArgumentException("duration must be positive");
+            }
+            limit = duration;
             return this;
         }
 
@@ -270,11 +280,10 @@ public class SunTimes {
             boolean alwaysUp = false;
             boolean alwaysDown = false;
             double ye;
-            double noonYe = 0.0;
-            double nadirYe = 0.0;
 
             int hour = 0;
-            int maxHours = fullCycle ? 365 * 24 : 24;
+            double limitHours = limit.toMillis() / (60 * 60 * 1000.0);
+            int maxHours = (int) ceil(limitHours);
 
             double y_minus = correctedSunHeight(jd.atHour(hour - 1.0));
             double y_0 = correctedSunHeight(jd.atHour(hour));
@@ -293,59 +302,50 @@ public class SunTimes {
                 if (qi.getNumberOfRoots() == 1) {
                     double rt = qi.getRoot1() + hour;
                     if (y_minus < 0.0) {
-                        if (rise == null && rt >= 0.0) {
+                        if (rise == null && rt >= 0.0 && rt < limitHours) {
                             rise = rt;
+                            alwaysDown = false;
                         }
                     } else {
-                        if (set == null && rt >= 0.0) {
+                        if (set == null && rt >= 0.0 && rt < limitHours) {
                             set = rt;
+                            alwaysUp = false;
                         }
                     }
                 } else if (qi.getNumberOfRoots() == 2) {
                     if (rise == null) {
                         double rt = hour + (ye < 0.0 ? qi.getRoot2() : qi.getRoot1());
-                        if (rt >= 0.0) {
+                        if (rt >= 0.0 && rt < limitHours) {
                             rise = rt;
+                            alwaysDown = false;
                         }
                     }
                     if (set == null) {
                         double rt = hour + (ye < 0.0 ? qi.getRoot1() : qi.getRoot2());
-                        if (rt >= 0.0) {
+                        if (rt >= 0.0 && rt < limitHours) {
                             set = rt;
+                            alwaysUp = false;
                         }
                     }
                 }
 
-                if (hour <= 24) {
-                    double xeAbs = Math.abs(qi.getXe());
-                    if (xeAbs <= 1.0) {
-                        double xeHour = qi.getXe() + hour;
-                        if (xeHour >= 0.0 && xeHour < 24.0) {
-                            if (qi.isMaximum()) {
-                                if (noon == null || ye > noonYe) {
-                                    noon = xeHour;
-                                    noonYe = ye;
-                                }
-                            } else {
-                                if (nadir == null || ye < nadirYe) {
-                                    nadir = xeHour;
-                                    nadirYe = ye;
-                                }
+                double xeAbs = abs(qi.getXe());
+                if (xeAbs <= 1.0) {
+                    double xeHour = qi.getXe() + hour;
+                    if (xeHour >= 0.0 && xeHour < limitHours) {
+                        if (qi.isMaximum()) {
+                            if (noon == null) {
+                                noon = xeHour;
+                            }
+                        } else {
+                            if (nadir == null) {
+                                nadir = xeHour;
                             }
                         }
                     }
                 }
 
-                if (hour == 23) {
-                    if (rise != null) {
-                        alwaysDown = false;
-                    }
-                    if (set != null) {
-                        alwaysUp = false;
-                    }
-                }
-
-                if (hour >= 24 && rise != null && set != null) {
+                if (rise != null && set != null && noon != null && nadir != null) {
                     break;
                 }
 
@@ -355,21 +355,18 @@ public class SunTimes {
                 y_plus = correctedSunHeight(jd.atHour(hour + 1.0));
             }
 
-            if (!fullCycle) {
-                if (rise != null && rise >= 24.0) {
-                    rise = null;
-                }
-                if (set != null && set >= 24.0) {
-                    set = null;
-                }
-            }
-
             if (noon != null) {
                 noon = readjustMax(noon, 1/24.0, 6, t -> correctedSunHeight(jd.atHour(t)));
+                if (noon >= limitHours) {
+                    noon = null;
+                }
             }
 
             if (nadir != null) {
                 nadir = readjustMin(nadir, 1/24.0, 6, t -> correctedSunHeight(jd.atHour(t)));
+                if (nadir >= limitHours) {
+                    nadir = null;
+                }
             }
 
             return new SunTimes(
@@ -423,12 +420,10 @@ public class SunTimes {
     }
 
     /**
-     * The time when the sun reaches its highest point within the next 24 hours.
+     * The time when the sun reaches its highest point.
      * <p>
      * Use {@link #isAlwaysDown()} to find out if the highest point is still below the
      * twilight angle.
-     * <p>
-     * Note that {@link Parameters#fullCycle()} does not affect this result.
      */
     @Nullable
     public ZonedDateTime getNoon() {
@@ -436,12 +431,10 @@ public class SunTimes {
     }
 
     /**
-     * The time when the sun reaches its lowest point within the next 24 hours.
+     * The time when the sun reaches its lowest point.
      * <p>
      * Use {@link #isAlwaysUp()} to find out if the lowest point is still above the
      * twilight angle.
-     * <p>
-     * Note that {@link Parameters#fullCycle()} does not affect this result.
      */
     @Nullable
     public ZonedDateTime getNadir() {
@@ -449,20 +442,14 @@ public class SunTimes {
     }
 
     /**
-     * {@code true} if the sun never rises/sets, but is always above the twilight angle
-     * within the next 24 hours.
-     * <p>
-     * Note that {@link Parameters#fullCycle()} does not affect this result.
+     * {@code true} if the sun never rises/sets, but is always above the twilight angle.
      */
     public boolean isAlwaysUp() {
         return alwaysUp;
     }
 
     /**
-     * {@code true} if the sun never rises/sets, but is always below the twilight angle
-     * within the next 24 hours.
-     * <p>
-     * Note that {@link Parameters#fullCycle()} does not affect this result.
+     * {@code true} if the sun never rises/sets, but is always below the twilight angle.
      */
     public boolean isAlwaysDown() {
         return alwaysDown;

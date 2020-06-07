@@ -107,51 +107,47 @@ System.out.println("Sunset:  " + june.getSet());
 The result:
 
 ```text
+Sunrise: 2020-09-05T00:24:03-04:00[Canada/Eastern]
+Sunset:  2020-09-04T23:55:46-04:00[Canada/Eastern]
+```
+
+The sun will set on September 4th, and will rise again about 30 minutes later. This is technically correct, because Alert is above the Arctic Circle, where the sun never sets all summer.
+
+However, we wanted to get a result for June 15th, so we limit the window to 24 hours:
+
+```java
+SunTimes june15OnlyCycle = SunTimes.compute()
+        .on(2020, 6, 15)            // June 15th, 2020, starting midnight
+        .at(ALERT_CANADA)
+        .timezone(ALERT_TZ)
+        .limit(Duration.ofHours(24))
+        .execute();
+System.out.println("Sunset:  " + june15OnlyCycle.getSet());
+System.out.println("Sunrise: " + june15OnlyCycle.getRise());
+```
+
+Instead of `limit(Duration.ofHours(24))`, we could also use `oneDay()`.
+
+Now we get a different result. There is no sunrise or sunset on June 15th:
+
+```text
 Sunrise: null
 Sunset:  null
 ```
 
-Oh dear, is it a bug? No, it's because Alert is above the Arctic Circle. The sun never sets there all summer.
-
-By default, _suncalc_ only examines a time window of 24 hours. In the example above, the time window starts on June 15th midnight, and ends on June 16th midnight. The sun is up the entire time window, it neither rises nor sets, so _suncalc_ returns `null`.
-
-Or is the sun down all the time? We can find out:
+But is the sun up or down all that day?
 
 ```java
-System.out.println("Sun is up all day:   " + june.isAlwaysUp());
-System.out.println("Sun is down all day: " + june.isAlwaysDown());
+System.out.println("Sun is up all day:   " + june15OnlyCycle.isAlwaysUp());
+System.out.println("Sun is down all day: " + june15OnlyCycle.isAlwaysDown());
 ```
 
-The result:
+The result confirms that the sun is up all day:
 
 ```text
 Sun is up all day:   true
 Sun is down all day: false
 ```
-
-Now it's confirmed that the sun is actually up all day.
-
-By using `.fullCycle()`, we can extend the time window to infinite, to get the next sunrise and sunset time even if they are more than 24 hours ahead. The price is that the calculation may take a bit longer.
-
-```java
-SunTimes juneFullCycle = SunTimes.compute()
-        .on(2020, 6, 15)            // June 15th, 2020, starting midnight
-        .at(ALERT_CANADA)
-        .timezone(ALERT_TZ)
-        .fullCycle()                // No 24h limit, we want to get the full cycle
-        .execute();
-System.out.println("Sunset:  " + juneFullCycle.getSet());
-System.out.println("Sunrise: " + juneFullCycle.getRise());
-```
-
-Now we're finally getting a result:
-
-```text
-Sunset:  2020-09-04T23:55:46-04:00[Canada/Eastern]
-Sunrise: 2020-09-05T00:24:03-04:00[Canada/Eastern]
-```
-
-The sun will set on September 4th, and will rise again about 30 minutes later.
 
 ## Parameter Reuse
 

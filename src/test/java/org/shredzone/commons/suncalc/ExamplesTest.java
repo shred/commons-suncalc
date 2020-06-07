@@ -13,6 +13,7 @@
  */
 package org.shredzone.commons.suncalc;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.TimeZone;
@@ -79,17 +80,17 @@ public class ExamplesTest {
         System.out.println("Sunrise: " + june.getRise());
         System.out.println("Sunset:  " + june.getSet());
 
-        System.out.println("Sun is up all day:   " + june.isAlwaysUp());
-        System.out.println("Sun is down all day: " + june.isAlwaysDown());
-
-        SunTimes juneFullCycle = SunTimes.compute()
+        SunTimes june15OnlyCycle = SunTimes.compute()
                 .on(2020, 6, 15)            // June 15th, 2020, starting midnight
                 .at(ALERT_CANADA)
                 .timezone(ALERT_TZ)
-                .fullCycle()                // No 24h limit, we want to get the full cycle
+                .limit(Duration.ofHours(24))
                 .execute();
-        System.out.println("Sunset:  " + juneFullCycle.getSet());
-        System.out.println("Sunrise: " + juneFullCycle.getRise());
+        System.out.println("Sunset:  " + june15OnlyCycle.getSet());
+        System.out.println("Sunrise: " + june15OnlyCycle.getRise());
+
+        System.out.println("Sun is up all day:   " + june15OnlyCycle.isAlwaysUp());
+        System.out.println("Sun is down all day: " + june15OnlyCycle.isAlwaysDown());
     }
 
     @Test

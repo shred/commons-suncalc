@@ -67,10 +67,10 @@ public class SunTimesTest {
                             .execute();
             assertThat(times.getRise()).as("%s-rise", angle.name()).isEqualTo(riseTimes.get(angle));
             assertThat(times.getSet()).as("%s-set", angle.name()).isEqualTo(setTimes.get(angle));
-            assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:20Z");
-            assertThat(times.getNadir()).as("nadir").isEqualTo("2017-08-10T23:37:46Z");
-            assertThat(times.isAlwaysDown()).as("always-down").isFalse();
-            assertThat(times.isAlwaysUp()).as("always-up").isFalse();
+            assertThat(times.getNoon()).as("%s-noon", angle.name()).isEqualTo("2017-08-10T11:37:20Z");
+            assertThat(times.getNadir()).as("%s-nadir", angle.name()).isIn("2017-08-10T23:37:44Z", "2017-08-10T23:37:45Z");
+            assertThat(times.isAlwaysDown()).as("%s-always-down", angle.name()).isFalse();
+            assertThat(times.isAlwaysUp()).as("%s-always-up", angle.name()).isFalse();
         }
 
         SunTimes times = SunTimes.compute().at(COLOGNE).on(2017, 8, 10).utc()
@@ -79,7 +79,7 @@ public class SunTimesTest {
         assertThat(times.getRise()).as("rise").isEqualTo("2017-08-10T03:48:59Z");
         assertThat(times.getSet()).as("set").isEqualTo("2017-08-10T19:25:16Z");
         assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:20Z");
-        assertThat(times.getNadir()).as("nadir").isEqualTo("2017-08-10T23:37:46Z");
+        assertThat(times.getNadir()).as("nadir").isEqualTo("2017-08-10T23:37:45Z");
         assertThat(times.isAlwaysDown()).as("always-down").isFalse();
         assertThat(times.isAlwaysUp()).as("always-up").isFalse();
     }
@@ -87,6 +87,7 @@ public class SunTimesTest {
     @Test
     public void testAlert() {
         SunTimes t1 = SunTimes.compute().at(ALERT).on(2017, 8, 10).utc()
+                        .oneDay()
                         .execute();
         assertTimes(t1, null, null, "2017-08-10T16:13:13Z", true);
 
@@ -95,25 +96,25 @@ public class SunTimesTest {
         assertTimes(t2, "2017-09-24T09:54:29Z", "2017-09-24T22:02:01Z", "2017-09-24T15:59:16Z");
 
         SunTimes t3 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc()
+                        .oneDay()
                         .execute();
         assertTimes(t3, null, null, "2017-02-10T16:25:07Z", false);
 
         SunTimes t4 = SunTimes.compute().at(ALERT).on(2017, 8, 10).utc()
-                        .fullCycle()
                         .execute();
-        assertTimes(t4, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-08-10T16:13:13Z", true);
+        assertTimes(t4, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-08-10T16:13:13Z");
 
         SunTimes t5 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc()
-                        .fullCycle()
                         .execute();
-        assertTimes(t5, "2017-02-27T15:24:18Z", "2017-02-27T17:23:46Z", "2017-02-10T16:25:07Z", false);
+        assertTimes(t5, "2017-02-27T15:24:18Z", "2017-02-27T17:23:46Z", "2017-02-10T16:25:07Z");
 
-        SunTimes t6 = SunTimes.compute().at(ALERT).on(2017, 9, 6).utc().oneDay()
+        SunTimes t6 = SunTimes.compute().at(ALERT).on(2017, 9, 6).utc()
                         .execute();
         assertTimes(t6, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-09-06T16:05:46Z");
 
         // Summer solstice is the worst case for noon calculation
         SunTimes t7 = SunTimes.compute().at(ALERT).on(2020, 6, 20).utc()
+                        .limit(Duration.ofDays(2L))
                         .execute();
         assertTimes(t7, null, null, "2020-06-20T16:11:03Z", true);
     }
@@ -129,7 +130,7 @@ public class SunTimesTest {
     public void testPuertoWilliams() {
         SunTimes t1 = SunTimes.compute().at(PUERTO_WILLIAMS).on(2017, 8, 10).timezone(PUERTO_WILLIAMS_TZ)
                         .execute();
-        assertTimes(t1, "2017-08-10T12:01:51Z", "2017-08-10T21:10:36Z", "2017-08-10T16:36:08Z");
+        assertTimes(t1, "2017-08-10T12:01:51Z", "2017-08-10T21:10:36Z", "2017-08-10T16:36:07Z");
     }
 
     @Test
