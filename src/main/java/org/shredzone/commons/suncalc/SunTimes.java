@@ -356,14 +356,14 @@ public class SunTimes {
             }
 
             if (noon != null) {
-                noon = readjustMax(noon, 1/24.0, 6, t -> correctedSunHeight(jd.atHour(t)));
+                noon = readjustMax(noon, 2/24.0, 7, t -> correctedSunHeight(jd.atHour(t)));
                 if (noon >= limitHours) {
                     noon = null;
                 }
             }
 
             if (nadir != null) {
-                nadir = readjustMin(nadir, 1/24.0, 6, t -> correctedSunHeight(jd.atHour(t)));
+                nadir = readjustMin(nadir, 2/24.0, 7, t -> correctedSunHeight(jd.atHour(t)));
                 if (nadir >= limitHours) {
                     nadir = null;
                 }
