@@ -332,7 +332,7 @@ public class SunTimes {
                 double xeAbs = abs(qi.getXe());
                 if (xeAbs <= 1.0) {
                     double xeHour = qi.getXe() + hour;
-                    if (xeHour >= 0.0 && xeHour < limitHours) {
+                    if (xeHour >= 0.0) {
                         if (qi.isMaximum()) {
                             if (noon == null) {
                                 noon = xeHour;
@@ -356,15 +356,15 @@ public class SunTimes {
             }
 
             if (noon != null) {
-                noon = readjustMax(noon, 2/24.0, 7, t -> correctedSunHeight(jd.atHour(t)));
-                if (noon >= limitHours) {
+                noon = readjustMax(noon, 2, 16, t -> correctedSunHeight(jd.atHour(t)));
+                if (noon < 0.0 || noon >= limitHours) {
                     noon = null;
                 }
             }
 
             if (nadir != null) {
-                nadir = readjustMin(nadir, 2/24.0, 7, t -> correctedSunHeight(jd.atHour(t)));
-                if (nadir >= limitHours) {
+                nadir = readjustMin(nadir, 2, 16, t -> correctedSunHeight(jd.atHour(t)));
+                if (nadir < 0.0 || nadir >= limitHours) {
                     nadir = null;
                 }
             }

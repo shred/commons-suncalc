@@ -18,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.shredzone.commons.suncalc.Locations.*;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.EnumMap;
@@ -67,8 +66,8 @@ public class SunTimesTest {
                             .execute();
             assertThat(times.getRise()).as("%s-rise", angle.name()).isEqualTo(riseTimes.get(angle));
             assertThat(times.getSet()).as("%s-set", angle.name()).isEqualTo(setTimes.get(angle));
-            assertThat(times.getNoon()).as("%s-noon", angle.name()).isEqualTo("2017-08-10T11:37:20Z");
-            assertThat(times.getNadir()).as("%s-nadir", angle.name()).isIn("2017-08-10T23:37:44Z", "2017-08-10T23:37:45Z");
+            assertThat(times.getNoon()).as("%s-noon", angle.name()).isEqualTo("2017-08-10T11:37:22Z");
+            assertThat(times.getNadir()).as("%s-nadir", angle.name()).isEqualTo("2017-08-10T23:37:45Z");
             assertThat(times.isAlwaysDown()).as("%s-always-down", angle.name()).isFalse();
             assertThat(times.isAlwaysUp()).as("%s-always-up", angle.name()).isFalse();
         }
@@ -78,7 +77,7 @@ public class SunTimesTest {
                         .execute();
         assertThat(times.getRise()).as("rise").isEqualTo("2017-08-10T03:48:59Z");
         assertThat(times.getSet()).as("set").isEqualTo("2017-08-10T19:25:16Z");
-        assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:20Z");
+        assertThat(times.getNoon()).as("noon").isEqualTo("2017-08-10T11:37:22Z");
         assertThat(times.getNadir()).as("nadir").isEqualTo("2017-08-10T23:37:45Z");
         assertThat(times.isAlwaysDown()).as("always-down").isFalse();
         assertThat(times.isAlwaysUp()).as("always-up").isFalse();
@@ -89,7 +88,7 @@ public class SunTimesTest {
         SunTimes t1 = SunTimes.compute().at(ALERT).on(2017, 8, 10).utc()
                         .oneDay()
                         .execute();
-        assertTimes(t1, null, null, "2017-08-10T16:13:13Z", true);
+        assertTimes(t1, null, null, "2017-08-10T16:13:14Z", true);
 
         SunTimes t2 = SunTimes.compute().at(ALERT).on(2017, 9, 24).utc()
                         .execute();
@@ -98,25 +97,25 @@ public class SunTimesTest {
         SunTimes t3 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc()
                         .oneDay()
                         .execute();
-        assertTimes(t3, null, null, "2017-02-10T16:25:07Z", false);
+        assertTimes(t3, null, null, "2017-02-10T16:25:09Z", false);
 
         SunTimes t4 = SunTimes.compute().at(ALERT).on(2017, 8, 10).utc()
                         .execute();
-        assertTimes(t4, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-08-10T16:13:13Z");
+        assertTimes(t4, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-08-10T16:13:14Z");
 
         SunTimes t5 = SunTimes.compute().at(ALERT).on(2017, 2, 10).utc()
                         .execute();
-        assertTimes(t5, "2017-02-27T15:24:18Z", "2017-02-27T17:23:46Z", "2017-02-10T16:25:07Z");
+        assertTimes(t5, "2017-02-27T15:24:18Z", "2017-02-27T17:23:46Z", "2017-02-10T16:25:09Z");
 
         SunTimes t6 = SunTimes.compute().at(ALERT).on(2017, 9, 6).utc()
                         .execute();
-        assertTimes(t6, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-09-06T16:05:46Z");
+        assertTimes(t6, "2017-09-06T05:13:15Z", "2017-09-06T03:06:02Z", "2017-09-06T16:05:41Z");
 
         // Summer solstice is the worst case for noon calculation
         SunTimes t7 = SunTimes.compute().at(ALERT).on(2020, 6, 20).utc()
                         .limit(Duration.ofDays(2L))
                         .execute();
-        assertTimes(t7, null, null, "2020-06-20T16:11:03Z", true);
+        assertTimes(t7, null, null, "2020-06-20T16:11:02Z", true);
     }
 
     @Test
@@ -137,14 +136,14 @@ public class SunTimesTest {
     public void testSingapore() {
         SunTimes t1 = SunTimes.compute().at(SINGAPORE).on(2017, 8, 10).timezone(SINGAPORE_TZ)
                         .execute();
-        assertTimes(t1, "2017-08-09T23:05:13Z", "2017-08-10T11:14:56Z", "2017-08-10T05:10:09Z");
+        assertTimes(t1, "2017-08-09T23:05:13Z", "2017-08-10T11:14:56Z", "2017-08-10T05:10:07Z");
     }
 
     @Test
     public void testMartinique() {
         SunTimes t1 = SunTimes.compute().at(MARTINIQUE).on(2019, 7, 1).timezone(MARTINIQUE_TZ)
                         .execute();
-        assertTimes(t1, "2019-07-01T09:38:35Z", "2019-07-01T22:37:23Z", "2019-07-01T16:07:56Z");
+        assertTimes(t1, "2019-07-01T09:38:35Z", "2019-07-01T22:37:23Z", "2019-07-01T16:07:57Z");
     }
 
     @Test
@@ -203,23 +202,8 @@ public class SunTimesTest {
     public void testNoonNadirAzimuth() {
         // Thanks to @isomeme for providing the test cases for issue #20.
 
-        SunTimes sunTimes = SunTimes.compute()
-                .at(SANTA_MONICA)
-                .on(Instant.parse("2020-06-02T03:30:00Z"))
-                .execute();
-
-        SunPosition sunPositionAtNoon = SunPosition.compute()
-                .at(SANTA_MONICA)
-                .on(sunTimes.getNoon())
-                .execute();
-
-        SunPosition sunPositionAtNadir = SunPosition.compute()
-                .at(SANTA_MONICA)
-                .on(sunTimes.getNadir())
-                .execute();
-
-        assertThat(abs(sunPositionAtNoon.getAzimuth() - 180.0)).isLessThan(0.1);
-        assertThat(abs(sunPositionAtNadir.getAzimuth() - 360.0)).isLessThan(0.1);
+        assertNoonNadirPrecision(ZonedDateTime.of(2020, 6, 2, 3, 30, 0, 0, SANTA_MONICA_TZ), SANTA_MONICA);
+        assertNoonNadirPrecision(ZonedDateTime.of(2020, 6, 16, 4, 11, 0, 0, SANTA_MONICA_TZ), SANTA_MONICA);
     }
 
     @Test
@@ -266,6 +250,26 @@ public class SunTimesTest {
 
     private ZonedDateTime createDate(int year, int month, int day, int hour, int minute) {
         return ZonedDateTime.of(year, month, day, hour, minute, 0, 0, ZoneId.of("UTC"));
+    }
+
+    private void assertNoonNadirPrecision(ZonedDateTime time, double[] location) {
+        SunTimes sunTimes = SunTimes.compute()
+                .at(location)
+                .on(time)
+                .execute();
+
+        SunPosition sunPositionAtNoon = SunPosition.compute()
+                .at(location)
+                .on(sunTimes.getNoon())
+                .execute();
+
+        SunPosition sunPositionAtNadir = SunPosition.compute()
+                .at(location)
+                .on(sunTimes.getNadir())
+                .execute();
+
+        assertThat(abs(sunPositionAtNoon.getAzimuth() - 180.0)).isLessThan(0.1);
+        assertThat(abs(sunPositionAtNadir.getAzimuth() - 360.0)).isLessThan(0.1);
     }
 
     private void assertTimes(SunTimes t, String rise, String set, String noon) {
