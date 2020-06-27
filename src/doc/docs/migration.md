@@ -2,6 +2,9 @@
 
 This document will help you migrate your code to the latest _suncalc_ version.
 
+## Version 3.3
+* Due to a very old bug, setting the `height()` had almost no impact on the result, which is obviously wrong (on sunset, a plane in the sky is still illuminated while the sun has just gone at the viewer's position). This bug has been fixed. If you are using `height()`, you will get correct results now. They may deviate by several minutes from the results of earlier versions.
+
 ## Version 3.1
 * As it was an eternal source of confusion, `SunTime` and `MoonTime` now default to `fullCycle()`, so they always compute until all times have been found. To revert to the previous behavior, use the `oneDay()` parameter. There is also a new `limit()` parameter which limits the window to any end date.
 * `isAlwaysUp()`, `isAlwaysDown()`, `getNoon()` and `getNadir()` now also use the given time window instead of the next 24 hours. Use `oneDay()` to revert to the previous behavior.

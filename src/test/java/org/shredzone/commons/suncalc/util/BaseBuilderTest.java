@@ -80,6 +80,11 @@ public class BaseBuilderTest {
         assertLatLng(p, 5.127, -12.723, 18267.3);
         assertThat(r).isSameAs(p);
 
+        // Negative heights are always changed to 0.0
+        r = p.height(-10.2);
+        assertLatLng(p, 5.127, -12.723, 0.0);
+        assertThat(r).isSameAs(p);
+
         r = p.at(new double[] { 1.22, -3.44, 323.0 });
         assertLatLng(p, 1.22, -3.44, 323.0);
         assertThat(r).isSameAs(p);
