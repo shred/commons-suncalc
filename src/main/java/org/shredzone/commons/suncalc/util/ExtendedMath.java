@@ -38,6 +38,11 @@ public final class ExtendedMath {
      */
     public static final double EARTH_MEAN_RADIUS = 6371.0;
 
+    /**
+     * Refraction at the horizon, in radians.
+     */
+    public static final double REFRACTION_AT_HORIZON = PI / (tan(toRadians(7.31 / 4.4)) * 10800.0);
+
     private ExtendedMath() {
         // utility class without constructor
     }
@@ -130,6 +135,10 @@ public final class ExtendedMath {
     public static double apparentRefraction(double ha) {
         if (ha < 0.0) {
             return 0.0;
+        }
+
+        if (isZero(ha)) {
+            return REFRACTION_AT_HORIZON;
         }
 
         return PI / (tan(toRadians(ha + (7.31 / (ha + 4.4)))) * 10800.0);

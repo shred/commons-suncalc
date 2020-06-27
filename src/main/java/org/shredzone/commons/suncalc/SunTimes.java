@@ -244,7 +244,6 @@ public class SunTimes {
         private double angle = Twilight.VISUAL.getAngleRad();
         private @Nullable Double position = Twilight.VISUAL.getAngularPosition();
         private Duration limit = Duration.ofDays(365L);
-        private double refraction = apparentRefraction(0.0);
 
         @Override
         public Parameters twilight(Twilight twilight) {
@@ -390,8 +389,8 @@ public class SunTimes {
 
             double hc = angle;
             if (position != null) {
+                hc -= apparentRefraction(hc);
                 hc += parallax(getHeight(), pos.getR());
-                hc -= refraction;
                 hc -= position * Sun.angularRadius(pos.getR());
             }
 
