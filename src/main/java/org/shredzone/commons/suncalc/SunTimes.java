@@ -117,8 +117,8 @@ public class SunTimes {
      * Enumeration of predefined twilights.
      * <p>
      * The twilight angles use a geocentric reference, by definition. However,
-     * {@link #VISUAL} and {@link #VISUAL_LOWER} are topocentric, and take atmospheric
-     * refraction into account.
+     * {@link #VISUAL} and {@link #VISUAL_LOWER} are topocentric, and take the spectator's
+     * height and the atmospheric refraction into account.
      *
      * @see <a href="https://en.wikipedia.org/wiki/Twilight">Wikipedia: Twilight</a>
      */
@@ -172,12 +172,20 @@ public class SunTimes {
         GOLDEN_HOUR(6.0),
 
         /**
-         * Blue hour (-4°). The Blue hour is between {@link #CIVIL} and
+         * Blue hour (-4°). The Blue hour is between {@link #NIGHT_HOUR} and
          * {@link #BLUE_HOUR}.
          *
          * @see <a href="https://en.wikipedia.org/wiki/Blue_hour">Wikipedia: Blue hour</a>
          */
-        BLUE_HOUR(-4.0);
+        BLUE_HOUR(-4.0),
+
+        /**
+         * End of Blue hour (-8°).
+         * <p>
+         * "Night Hour" is not an official term, but just a name that is marking the
+         * beginning/end of the Blue hour.
+         */
+        NIGHT_HOUR(-8.0);
 
         private final double angle;
         private final double angleRad;

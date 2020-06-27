@@ -43,6 +43,7 @@ public class SunTimesTest {
         Map<Twilight, String> riseTimes = new EnumMap<>(Twilight.class);
         riseTimes.put(Twilight.ASTRONOMICAL, "2017-08-10T01:44:18Z");
         riseTimes.put(Twilight.NAUTICAL,     "2017-08-10T02:44:57Z");
+        riseTimes.put(Twilight.NIGHT_HOUR,   "2017-08-10T03:18:22Z");
         riseTimes.put(Twilight.CIVIL,        "2017-08-10T03:34:01Z");
         riseTimes.put(Twilight.BLUE_HOUR,    "2017-08-10T03:48:59Z");
         riseTimes.put(Twilight.VISUAL,       "2017-08-10T04:11:49Z");
@@ -57,6 +58,7 @@ public class SunTimesTest {
         setTimes.put(Twilight.VISUAL,        "2017-08-10T19:02:20Z");
         setTimes.put(Twilight.BLUE_HOUR,     "2017-08-10T19:25:16Z");
         setTimes.put(Twilight.CIVIL,         "2017-08-10T19:40:13Z");
+        setTimes.put(Twilight.NIGHT_HOUR,    "2017-08-10T19:55:35Z");
         setTimes.put(Twilight.NAUTICAL,      "2017-08-10T20:28:56Z");
         setTimes.put(Twilight.ASTRONOMICAL,  "2017-08-10T21:28:43Z");
 
