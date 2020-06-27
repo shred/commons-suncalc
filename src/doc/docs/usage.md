@@ -120,11 +120,14 @@ The available location-based parameters are:
 * `longitude(double lng)`: Verbose way to set the longitude only.
 * `latitude(int d, int m, double s)`: Set the latitude in degrees, minutes, seconds and fraction of seconds.
 * `longitude(int d, int m, double s)`: Set the longitude in degrees, minutes, seconds and fraction of seconds.
-* `height(double h)`: Height above sea level, in meters. It has just a minor influence on the result, and can thus just be left out. Sea level is used by default.
+* `height(double h)`: Height above sea level, in meters. Sea level is used by default.
 * `sameLocationAs(LocationParameter<?> l)`: Copies the current location and height from any other parameter object. Note that subsequent changes to the other object are not adoped.
 
 !!! WARNING
     The location parameters are not mandatory. However, if they are not given, 0° is assumed as latitude and longitude, which is not very useful in most cases. Do not forget to set the parameters!
+
+!!! NOTE
+    `height` cannot be negative. If you pass in a negative height, it is silently changed to the accepted minimum of 0 meters. For this reason, it is safe to pass coordinates from satellite-based navigation systems without range checking.
 
 ## Time Range
 

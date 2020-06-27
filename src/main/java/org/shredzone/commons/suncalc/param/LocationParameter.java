@@ -94,13 +94,10 @@ public interface LocationParameter<T> {
 
     /**
      * Sets the height.
-     * <p>
-     * This parameter can be safely ommitted. The height only has a very small effect on
-     * moon calculations, and almost no effect on sun calculations. For reasonable
-     * heights, the effect is lower than the general accuracy of this library.
      *
      * @param h
-     *            Height, in meters above sea level. Default: 0.0 m
+     *            Height, in meters above sea level. Default: 0.0 m. Negative values are
+     *            silently changed to the acceptable minimum of 0.0 m.
      * @return itself
      */
     T height(double h);

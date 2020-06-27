@@ -2,6 +2,9 @@
 
 This document will help you migrate your code to the latest _suncalc_ version.
 
+## Version 2.10
+* Due to a very old bug, setting the `height()` had almost no impact on the result, which is obviously wrong (on sunset, a plane in the sky is still illuminated while the sun has just gone at the viewer's position). This bug has been fixed. If you are using `height()`, you will get correct results now. They may deviate by several minutes from the results of earlier versions.
+
 ## Version 2.8
 
 * `MoonIllumination` is now also using more accurate formulas, like all the other classes. Unit tests that are based on the results of this class, may fail and need to be readjusted. This was the last relic of the old version 1. _suncalc_ is now a completely independent project.

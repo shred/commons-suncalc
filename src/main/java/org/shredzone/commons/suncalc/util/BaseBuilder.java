@@ -13,8 +13,7 @@
  */
 package org.shredzone.commons.suncalc.util;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.toRadians;
+import static java.lang.Math.*;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -182,7 +181,7 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
 
     @Override
     public T height(double h) {
-        this.height = h;
+        this.height = max(h, 0.0);
         return (T) this;
     }
 

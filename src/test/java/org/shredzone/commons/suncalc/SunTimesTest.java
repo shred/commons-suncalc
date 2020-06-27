@@ -146,6 +146,19 @@ public class SunTimesTest {
     }
 
     @Test
+    public void testHeight() {
+        // At the top of the Tokyo Skytree
+        SunTimes skytree = SunTimes.compute().at(35.710046, 139.810718).on(2020, 6, 25).timezone("Asia/Tokyo")
+                .height(634.0).truncatedTo(Unit.SECONDS).execute();
+        assertTimes(skytree, "2020-06-24T19:21:46Z", "2020-06-25T10:05:17Z", "2020-06-25T02:45:18Z");
+
+        // In an airplane at 38,000 feet
+        SunTimes airplane = SunTimes.compute().at(46.58, -6.3).on(2020, 6, 25).utc()
+                .height(11582.4).truncatedTo(Unit.SECONDS).execute();
+        assertTimes(airplane, "2020-06-25T04:07:33Z", "2020-06-25T20:48:32Z", "2020-06-25T12:27:47Z");
+    }
+
+    @Test
     public void testJustBeforeJustAfter() {
         // Thanks to @isomeme for providing the test cases for issue #18.
 
