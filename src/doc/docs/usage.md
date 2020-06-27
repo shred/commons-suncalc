@@ -150,6 +150,7 @@ There are other interesting [twilight](https://en.wikipedia.org/wiki/Twilight) a
 | `HORIZON`      | The moment when the center of the sun crosses the horizon. | 0° |
 | `GOLDEN_HOUR`  | [Golden Hour](https://en.wikipedia.org/wiki/Golden_hour_%28photography%29) | 6° |
 | `BLUE_HOUR`    | [Blue Hour](https://en.wikipedia.org/wiki/Blue_hour) | -4° |
+| `NIGHT_HOUR`   | The beginning/ending of [Blue Hour](https://en.wikipedia.org/wiki/Blue_hour) | -8° |
 | `VISUAL`       | The moment when the visual upper edge of the sun crosses the horizon. This is the default. | |
 | `VISUAL_LOWER` | The moment when the visual lower edge of the sun crosses the horizon. | |
 
