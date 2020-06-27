@@ -138,26 +138,32 @@ You can limit the time window to the next 24 hours by using the `oneDay()` param
 
 ## Twilight
 
+<img src="twilights.svg" alt="Twilight Zones" align="right" width="550px"/>
+
 By default, [`SunTimes`](./apidocs/org/shredzone/commons/suncalc/SunTimes.Parameters.html) calculates the time of the visual sunrise and sunset. This means that `getRise()` returns the instant when the sun just starts to rise above the horizon, and `getSet()` returns the instant when the sun just disappeared from the horizon. [Atmospheric refraction](https://en.wikipedia.org/wiki/Atmospheric_refraction) is taken into account.
 
 There are other interesting [twilight](https://en.wikipedia.org/wiki/Twilight) angles available. You can set them via the `twilight()` parameter, by using one of the [`SunTimes.Twilight`](./apidocs/org/shredzone/commons/suncalc/SunTimes.Twilight.html) constants:
 
-| Constant       | Description | Angle of the Sun |
-| -------------- | ----------- | ----------------:|
-| `ASTRONOMICAL` | [Astronomical twilight](https://en.wikipedia.org/wiki/Twilight#Astronomical_twilight) | -18° |
-| `NAUTICAL`     | [Nautical twilight](https://en.wikipedia.org/wiki/Twilight#Nautical_twilight) | -12° |
-| `CIVIL`        | [Civil twilight](https://en.wikipedia.org/wiki/Twilight#Civil_twilight) | -6° |
-| `HORIZON`      | The moment when the center of the sun crosses the horizon. | 0° |
-| `GOLDEN_HOUR`  | [Golden Hour](https://en.wikipedia.org/wiki/Golden_hour_%28photography%29) | 6° |
-| `BLUE_HOUR`    | [Blue Hour](https://en.wikipedia.org/wiki/Blue_hour) | -4° |
-| `NIGHT_HOUR`   | The beginning/ending of [Blue Hour](https://en.wikipedia.org/wiki/Blue_hour) | -8° |
-| `VISUAL`       | The moment when the visual upper edge of the sun crosses the horizon. This is the default. | |
-| `VISUAL_LOWER` | The moment when the visual lower edge of the sun crosses the horizon. | |
+| Constant       | Description | Angle of the Sun | Topocentric |
+| -------------- | ----------- | ----------------:|:-----------:|
+| `VISUAL`       | The moment when the visual upper edge of the sun crosses the horizon. This is the default. | | yes |
+| `VISUAL_LOWER` | The moment when the visual lower edge of the sun crosses the horizon. | | yes |
+| `ASTRONOMICAL` | [Astronomical twilight](https://en.wikipedia.org/wiki/Twilight#Astronomical_twilight) | -18° | no |
+| `NAUTICAL`     | [Nautical twilight](https://en.wikipedia.org/wiki/Twilight#Nautical_twilight) | -12° | no |
+| `CIVIL`        | [Civil twilight](https://en.wikipedia.org/wiki/Twilight#Civil_twilight) | -6° | no |
+| `HORIZON`      | The moment when the center of the sun crosses the horizon. | 0° | no |
+| `GOLDEN_HOUR`  | Transition from daylight to [Golden Hour](https://en.wikipedia.org/wiki/Golden_hour_%28photography%29) | 6° | no |
+| `BLUE_HOUR`    | Transition from [Golden Hour](https://en.wikipedia.org/wiki/Golden_hour_%28photography%29) to [Blue Hour](https://en.wikipedia.org/wiki/Blue_hour) | -4° | no |
+| `NIGHT_HOUR`   | Transition from [Blue Hour](https://en.wikipedia.org/wiki/Blue_hour) to night | -8° | no |
+
+The illustration shows the transitions of each twilight constant. If you want to get the duration of a twilight, you need to calculate the times of both transitions of the twilight. For example, to get the beginning and ending of the civil twilight, you need to calculate both the `VISUAL` and the `CIVIL` twilight transition times.
 
 Alternatively you can also pass any other angle (in degrees) to `twilight()`.
 
 !!! NOTE
-    Only `VISUAL` and `VISUAL_LOWER` refer to the visual edge of the sun, and compensate atmospheric refraction. All other twilight angles refer to the center of the sun, and ignore atmospheric refraction.
+    Only `VISUAL` and `VISUAL_LOWER` are topocentric. They refer to the visual edge of the sun, take account of the `height` parameter, and compensate atmospheric refraction.
+    
+    All other twilights are geocentric and heliocentric. The `height` parameter is then ignored, and atmospheric refraction is not compensated.
 
 Example:
 

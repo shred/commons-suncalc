@@ -126,25 +126,25 @@ public class ExamplesTest {
     public void testGoldenHour() {
         SunTimes.Parameters base = SunTimes.compute()
                 .at(1.283333, 103.833333)            // Singapore
-                .twilight(SunTimes.Twilight.VISUAL)  // Visual sunrise, this is the default
                 .on(2020, 6, 1)
                 .timezone("Asia/Singapore");
 
         for (int i = 0; i < 4; i++) {
-            SunTimes visible = base
+            SunTimes blue = base
                     .copy()                          // Use a copy of base
                     .plusDays(i * 7)
+                    .twilight(SunTimes.Twilight.BLUE_HOUR)      // Blue Hour
                     .execute();
             SunTimes golden = base
                     .copy()                          // Use a copy of base
-                    .twilight(SunTimes.Twilight.GOLDEN_HOUR)    // Golden Hour
                     .plusDays(i * 7)
+                    .twilight(SunTimes.Twilight.GOLDEN_HOUR)    // Golden Hour
                     .execute();
 
-            System.out.println("Morning golden hour starts at " + visible.getRise());
+            System.out.println("Morning golden hour starts at " + blue.getRise());
             System.out.println("Morning golden hour ends at   " + golden.getRise());
             System.out.println("Evening golden hour starts at " + golden.getSet());
-            System.out.println("Evening golden hour ends at   " + visible.getSet());
+            System.out.println("Evening golden hour ends at   " + blue.getSet());
         }
     }
 

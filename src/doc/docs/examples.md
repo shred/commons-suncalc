@@ -208,32 +208,34 @@ On January 31 the moon was 30% lit.
 
 By default `SunTimes` computes the sunrise and sunset times as we would expect it. The sun rises when the upper part of the sun disc just appears on the horizon, and it sets when the upper part just vanishes. Because of our atmosphere, the sun is actually deeper on the horizon as it appears to be. This effect is called [atmospheric refraction](https://en.wikipedia.org/wiki/Atmospheric_refraction), and it is factored into the calculation.
 
-There are other [twilights](https://en.wikipedia.org/wiki/Twilight) that may be interesting. Photographers are especially interested in the [golden hour](https://en.wikipedia.org/wiki/Golden_hour_(photography)), which gives a warm and soft sunlight. In the morning, golden hour starts at sunrise and ends when the sun reaches an angle of 6°. In the evening, the golden hour starts when the sun reaches an angle of 6°, and ends at sunset.
+There are other [twilights](https://en.wikipedia.org/wiki/Twilight) that may be interesting. Photographers are especially interested in the [Golden hour](https://en.wikipedia.org/wiki/Golden_hour_(photography)), which gives a warm and soft sunlight. In the morning, Golden hour starts at an angle of -4° (which is the end of the Blue hour), and ends when the sun reaches an angle of 6°. In the evening, the golden hour starts when the sun reaches an angle of 6°, and ends at an angle of -4°.
+
+To learn more about the individual twilight transitions, see the [illustration of twilights](usage.md#twilight).
 
 Let's calculate the golden hour in Singapore for the next four Mondays starting June 1st, 2020:
 
 ```java
 SunTimes.Parameters base = SunTimes.compute()
         .at(1.283333, 103.833333)            // Singapore
-        .twilight(SunTimes.Twilight.VISUAL)  // Visual sunrise, this is the default
         .on(2020, 6, 1)
         .timezone("Asia/Singapore");
 
 for (int i = 0; i < 4; i++) {
-    SunTimes visible = base
+    SunTimes blue = base
             .copy()                          // Use a copy of base
             .plusDays(i * 7)
+            .twilight(SunTimes.Twilight.BLUE_HOUR)      // Blue Hour, -4°
             .execute();
     SunTimes golden = base
             .copy()                          // Use a copy of base
-            .twilight(SunTimes.Twilight.GOLDEN_HOUR)    // Golden Hour
             .plusDays(i * 7)
+            .twilight(SunTimes.Twilight.GOLDEN_HOUR)    // Golden Hour, 6°
             .execute();
 
-    System.out.println("Morning golden hour starts at " + visible.getRise());
+    System.out.println("Morning golden hour starts at " + blue.getRise());
     System.out.println("Morning golden hour ends at   " + golden.getRise());
     System.out.println("Evening golden hour starts at " + golden.getSet());
-    System.out.println("Evening golden hour ends at   " + visible.getSet());
+    System.out.println("Evening golden hour ends at   " + blue.getSet());
 }
 ```
 
@@ -242,22 +244,22 @@ Note the `copy()` method! It copies the current set of parameters into a new par
 This is the result:
 
 ```text
-Morning golden hour starts at 2020-06-01T06:56:52+08:00[Asia/Singapore]
+Morning golden hour starts at 2020-06-01T06:43:13+08:00[Asia/Singapore]
 Morning golden hour ends at   2020-06-01T07:26:24+08:00[Asia/Singapore]
 Evening golden hour starts at 2020-06-01T18:38:50+08:00[Asia/Singapore]
-Evening golden hour ends at   2020-06-01T19:08:20+08:00[Asia/Singapore]
-Morning golden hour starts at 2020-06-08T06:57:59+08:00[Asia/Singapore]
+Evening golden hour ends at   2020-06-01T19:22:02+08:00[Asia/Singapore]
+Morning golden hour starts at 2020-06-08T06:44:16+08:00[Asia/Singapore]
 Morning golden hour ends at   2020-06-08T07:27:41+08:00[Asia/Singapore]
 Evening golden hour starts at 2020-06-08T18:40:01+08:00[Asia/Singapore]
-Evening golden hour ends at   2020-06-08T19:09:40+08:00[Asia/Singapore]
-Morning golden hour starts at 2020-06-15T06:59:21+08:00[Asia/Singapore]
+Evening golden hour ends at   2020-06-08T19:23:27+08:00[Asia/Singapore]
+Morning golden hour starts at 2020-06-15T06:45:35+08:00[Asia/Singapore]
 Morning golden hour ends at   2020-06-15T07:29:10+08:00[Asia/Singapore]
 Evening golden hour starts at 2020-06-15T18:41:25+08:00[Asia/Singapore]
-Evening golden hour ends at   2020-06-15T19:11:10+08:00[Asia/Singapore]
-Morning golden hour starts at 2020-06-22T07:00:51+08:00[Asia/Singapore]
+Evening golden hour ends at   2020-06-15T19:25:00+08:00[Asia/Singapore]
+Morning golden hour starts at 2020-06-22T06:47:04+08:00[Asia/Singapore]
 Morning golden hour ends at   2020-06-22T07:30:41+08:00[Asia/Singapore]
 Evening golden hour starts at 2020-06-22T18:42:56+08:00[Asia/Singapore]
-Evening golden hour ends at   2020-06-22T19:12:42+08:00[Asia/Singapore]
+Evening golden hour ends at   2020-06-22T19:26:32+08:00[Asia/Singapore]
 ```
 
 ## Moon Phase
