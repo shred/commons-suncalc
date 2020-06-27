@@ -229,22 +229,22 @@ Let's calculate the golden hour in Singapore for the next four Mondays starting 
 ```java
 SunTimes.Parameters base = SunTimes.compute()
         .at(1.283333, 103.833333)            // Singapore
-        .twilight(SunTimes.Twilight.VISUAL)  // Visual sunrise, this is the default
         .on(2020, 6, 1);
 
 for (int i = 0; i < 4; i++) {
-    SunTimes visible = base.copy()
+    SunTimes blue = base.copy()
             .plusDays(i * 7)
+            .twilight(SunTimes.Twilight.BLUE_HOUR)      // Blue Hour, -4°
             .execute();
     SunTimes golden = base.copy()
-            .twilight(SunTimes.Twilight.GOLDEN_HOUR)    // Golden Hour
             .plusDays(i * 7)
+            .twilight(SunTimes.Twilight.GOLDEN_HOUR)    // Golden Hour, 6°
             .execute();
 
-    System.out.println("Morning golden hour starts at " + visible.getRise());
+    System.out.println("Morning golden hour starts at " + blue.getRise());
     System.out.println("Morning golden hour ends at   " + golden.getRise());
     System.out.println("Evening golden hour starts at " + golden.getSet());
-    System.out.println("Evening golden hour ends at   " + visible.getSet());
+    System.out.println("Evening golden hour ends at   " + blue.getSet());
 }
 ```
 
@@ -253,22 +253,22 @@ Note the `copy()` method! It copies the current set of parameters into a new par
 This is the result:
 
 ```text
-Morning golden hour starts at Mon Jun 01 06:57:00 SGT 2020
+Morning golden hour starts at Mon Jun 01 06:43:00 SGT 2020
 Morning golden hour ends at   Mon Jun 01 07:26:00 SGT 2020
 Evening golden hour starts at Mon Jun 01 18:39:00 SGT 2020
-Evening golden hour ends at   Mon Jun 01 19:08:00 SGT 2020
-Morning golden hour starts at Mon Jun 08 06:58:00 SGT 2020
+Evening golden hour ends at   Mon Jun 01 19:22:00 SGT 2020
+Morning golden hour starts at Mon Jun 08 06:44:00 SGT 2020
 Morning golden hour ends at   Mon Jun 08 07:28:00 SGT 2020
 Evening golden hour starts at Mon Jun 08 18:40:00 SGT 2020
-Evening golden hour ends at   Mon Jun 08 19:10:00 SGT 2020
-Morning golden hour starts at Mon Jun 15 06:59:00 SGT 2020
+Evening golden hour ends at   Mon Jun 08 19:23:00 SGT 2020
+Morning golden hour starts at Mon Jun 15 06:46:00 SGT 2020
 Morning golden hour ends at   Mon Jun 15 07:29:00 SGT 2020
 Evening golden hour starts at Mon Jun 15 18:41:00 SGT 2020
-Evening golden hour ends at   Mon Jun 15 19:11:00 SGT 2020
-Morning golden hour starts at Mon Jun 22 07:01:00 SGT 2020
+Evening golden hour ends at   Mon Jun 15 19:25:00 SGT 2020
+Morning golden hour starts at Mon Jun 22 06:47:00 SGT 2020
 Morning golden hour ends at   Mon Jun 22 07:31:00 SGT 2020
 Evening golden hour starts at Mon Jun 22 18:43:00 SGT 2020
-Evening golden hour ends at   Mon Jun 22 19:13:00 SGT 2020
+Evening golden hour ends at   Mon Jun 22 19:27:00 SGT 2020
 ```
 
 ## Moon Phase
