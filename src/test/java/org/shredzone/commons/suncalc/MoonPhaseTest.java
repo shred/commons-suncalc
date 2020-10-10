@@ -16,6 +16,7 @@ package org.shredzone.commons.suncalc;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.assertj.core.api.AbstractDateAssert;
+import org.assertj.core.data.Offset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.shredzone.commons.suncalc.MoonPhase.Phase;
@@ -25,6 +26,8 @@ import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
  * Unit tests for {@link MoonPhase}.
  */
 public class MoonPhaseTest {
+
+    private static final Offset<Double> ERROR = Offset.offset(6000.0);
 
     @BeforeClass
     public static void init() {
@@ -41,6 +44,7 @@ public class MoonPhaseTest {
                         .execute();
 
         assertThat(mp.getTime()).isEqualTo("2017-09-20T05:29:30Z");
+        assertThat(mp.getDistance()).isCloseTo(382740.0, ERROR);
     }
 
     @Test
@@ -53,6 +57,7 @@ public class MoonPhaseTest {
                         .execute();
 
         assertThat(mp.getTime()).isEqualTo("2017-09-28T02:52:40Z");
+        assertThat(mp.getDistance()).isCloseTo(403894.0, ERROR);
     }
 
     @Test
@@ -65,6 +70,7 @@ public class MoonPhaseTest {
                         .execute();
 
         assertThat(mp.getTime()).isEqualTo("2017-09-06T07:07:44Z");
+        assertThat(mp.getDistance()).isCloseTo(384364.0, ERROR);
     }
 
     @Test
@@ -77,6 +83,7 @@ public class MoonPhaseTest {
                         .execute();
 
         assertThat(mp.getTime()).isEqualTo("2017-09-13T06:28:35Z");
+        assertThat(mp.getDistance()).isCloseTo(369899.0, ERROR);
     }
 
 }
