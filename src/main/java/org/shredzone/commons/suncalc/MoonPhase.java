@@ -38,9 +38,11 @@ import org.shredzone.commons.suncalc.util.Vector;
 public class MoonPhase {
 
     private final ZonedDateTime time;
+    private final double distance;
 
-    private MoonPhase(ZonedDateTime time) {
+    private MoonPhase(ZonedDateTime time, double distance) {
         this.time = time;
+        this.distance = distance;
     }
 
     /**
@@ -172,8 +174,8 @@ public class MoonPhase {
             }
 
             double tphase = Pegasus.calculate(t0, t1, accuracy, x -> moonphase(jd, x));
-
-            return new MoonPhase(jd.atJulianCentury(tphase).getDateTime());
+            JulianDate tjd = jd.atJulianCentury(tphase);
+            return new MoonPhase(tjd.getDateTime(), Moon.positionEquatorial(tjd).getR());
         }
 
         /**
@@ -203,6 +205,13 @@ public class MoonPhase {
     public ZonedDateTime getTime() {
         return time;
     }
+
+    /**
+     * Geocentric distance of the moon at the given phase, in kilometers.
+     *
+     * @since 3.4
+     */
+    public double getDistance() { return distance; }
 
     @Override
     public String toString() {
