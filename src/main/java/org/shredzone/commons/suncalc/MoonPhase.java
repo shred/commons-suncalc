@@ -227,11 +227,38 @@ public class MoonPhase {
      */
     public double getDistance() { return distance; }
 
+    /**
+     * Checks if the moon is in a SuperMoon position.
+     * <p>
+     * Note that there is no official definition of supermoon. Suncalc will assume a
+     * supermoon if the center of the moon is closer than 360,000 km to the center of
+     * Earth. Usually only full moons or new moons are candidates for supermoons.
+     *
+     * @since 2.11
+     */
+    public boolean isSuperMoon() {
+        return distance < 360000.0;
+    }
+
+    /**
+     * Checks if the moon is in a MicroMoon position.
+     * <p>
+     * Note that there is no official definition of micromoon. Suncalc will assume a
+     * micromoon if the center of the moon is farther than 405,000 km from the center of
+     * Earth. Usually only full moons or new moons are candidates for micromoons.
+     *
+     * @since 2.11
+     */
+    public boolean isMicroMoon() {
+        return distance > 405000.0;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("MoonPhase[time=").append(time);
-        sb.append(']');
+        sb.append(", distance=").append(distance);
+        sb.append(" km]");
         return sb.toString();
     }
 

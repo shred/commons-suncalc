@@ -294,7 +294,14 @@ while (cal.get(Calendar.MONTH) < Calendar.DECEMBER) {
     MoonPhase phase = parameters.on(cal).execute();
     Date fullMoonAt = phase.getTime();
 
-    System.out.println(fullMoonAt);
+    System.out.print(fullMoonAt);
+    if (phase.isMicroMoon()) {
+        System.out.print(" (micromoon)");
+    }
+    if (phase.isSuperMoon()) {
+        System.out.print(" (supermoon)");
+    }
+    System.out.println();
 
     cal.setTime(fullMoonAt);
     cal.add(Calendar.DAY_OF_MONTH, 1);
@@ -304,15 +311,15 @@ while (cal.get(Calendar.MONTH) < Calendar.DECEMBER) {
 The result is:
 
 ```text
-Sat Jan 07 00:00:00 CET 2023
-Sun Feb 05 00:00:00 CET 2023
+Sat Jan 07 00:00:00 CET 2023 (micromoon)
+Sun Feb 05 00:00:00 CET 2023 (micromoon)
 Tue Mar 07 00:00:00 CET 2023
 Thu Apr 06 00:00:00 CEST 2023
 Fri May 05 00:00:00 CEST 2023
 Sun Jun 04 00:00:00 CEST 2023
 Mon Jul 03 00:00:00 CEST 2023
-Tue Aug 01 00:00:00 CEST 2023
-Thu Aug 31 00:00:00 CEST 2023
+Tue Aug 01 00:00:00 CEST 2023 (supermoon)
+Thu Aug 31 00:00:00 CEST 2023 (supermoon)
 Fri Sep 29 00:00:00 CEST 2023
 Sat Oct 28 00:00:00 CEST 2023
 Mon Nov 27 00:00:00 CET 2023

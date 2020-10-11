@@ -166,7 +166,14 @@ public class ExamplesTest {
             MoonPhase phase = parameters.on(cal).execute();
             Date fullMoonAt = phase.getTime();
 
-            System.out.println(fullMoonAt);
+            System.out.print(fullMoonAt);
+            if (phase.isMicroMoon()) {
+                System.out.print(" (micromoon)");
+            }
+            if (phase.isSuperMoon()) {
+                System.out.print(" (supermoon)");
+            }
+            System.out.println();
 
             cal.setTime(fullMoonAt);
             cal.add(Calendar.DAY_OF_MONTH, 1);
