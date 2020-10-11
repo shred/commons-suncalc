@@ -4,6 +4,8 @@
 
 Probably both. Calculating sun and moon positions is rather complex, there is no universal formula that can be used. Other tools might also include the topology or other factors. If the difference is less than two minutes, it is within the acceptable tolerance.
 
+There is no official definition of supermoon and micromoon, so the results may differ from other sources. _suncalc_ assumes a supermoon if the moon is closer than 360,000 km from Earth, and a micromoon if the moon is farther than 405,000 km from Earth.
+
 ## Can you enhance the precision?
 
 The positions of the sun and moon are approximated by a rather simple set of formulae. The results have an accuracy of about a minute, which should be good enough for common applications (like sunrise/sunset timers). This library is targeted for mobile devices, or devices with low computing power, and the precision is acceptable for that target. A higher precision would involve perturbation tables of all planets, and would multiply the necessary computing load.

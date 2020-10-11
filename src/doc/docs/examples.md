@@ -264,7 +264,7 @@ Evening golden hour ends at   2020-06-22T19:26:32+08:00[Asia/Singapore]
 
 ## Moon Phase
 
-I'd like to print a calendar of 2023, and mark all the days having a full moon. As I print a calendar, I'm only interested in the day of full moon, but I won't care for the concrete time. _suncalc_ can get me a list of all the days having a full moon.
+I'd like to print a calendar of 2023, and mark all the days having a full moon. As I print a calendar, I'm only interested in the day of full moon, but I won't care for the concrete time. Besides that, I also want to know if a full moon qualifies as [supermoon](https://en.wikipedia.org/wiki/Supermoon) or micromoon.
 
 As the visible moon phase is identical on every place on earth, we won't have to set a location here.
 
@@ -277,16 +277,24 @@ MoonPhase.Parameters parameters = MoonPhase.compute()
         .phase(MoonPhase.Phase.FULL_MOON);
 
 while (true) {
-    LocalDate nextFullMoon = parameters
+    MoonPhase moonPhase = parameters
             .on(date)
-            .execute()
+            .execute();
+    LocalDate nextFullMoon = moonPhase
             .getTime()
             .toLocalDate();
     if (nextFullMoon.getYear() == 2024) {
         break;      // we've reached the next year
     }
 
-    System.out.println(nextFullMoon);
+    System.out.print(nextFullMoon);
+    if (moonPhase.isMicroMoon()) {
+        System.out.print(" (micromoon)");
+    }
+    if (moonPhase.isSuperMoon()) {
+        System.out.print(" (supermoon)");
+    }
+    System.out.println();
 
     date = nextFullMoon.plusDays(1);
 }
@@ -295,15 +303,15 @@ while (true) {
 The result is:
 
 ```text
-2023-01-07
-2023-02-05
+2023-01-07 (micromoon)
+2023-02-05 (micromoon)
 2023-03-07
 2023-04-06
 2023-05-05
 2023-06-04
 2023-07-03
-2023-08-01
-2023-08-31
+2023-08-01 (supermoon)
+2023-08-31 (supermoon)
 2023-09-29
 2023-10-28
 2023-11-27

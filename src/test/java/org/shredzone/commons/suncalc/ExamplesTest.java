@@ -156,16 +156,24 @@ public class ExamplesTest {
                 .phase(MoonPhase.Phase.FULL_MOON);
 
         while (true) {
-            LocalDate nextFullMoon = parameters
+            MoonPhase moonPhase = parameters
                     .on(date)
-                    .execute()
+                    .execute();
+            LocalDate nextFullMoon = moonPhase
                     .getTime()
                     .toLocalDate();
             if (nextFullMoon.getYear() == 2024) {
                 break;      // we've reached the next year
             }
 
-            System.out.println(nextFullMoon);
+            System.out.print(nextFullMoon);
+            if (moonPhase.isMicroMoon()) {
+                System.out.print(" (micromoon)");
+            }
+            if (moonPhase.isSuperMoon()) {
+                System.out.print(" (supermoon)");
+            }
+            System.out.println();
 
             date = nextFullMoon.plusDays(1);
         }
