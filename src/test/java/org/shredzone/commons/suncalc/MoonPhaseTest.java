@@ -27,7 +27,7 @@ import org.shredzone.commons.suncalc.param.TimeResultParameter.Unit;
  */
 public class MoonPhaseTest {
 
-    private static final Offset<Double> ERROR = Offset.offset(6000.0);
+    private static final Offset<Double> ERROR = Offset.offset(500.0);
 
     @BeforeClass
     public static void init() {

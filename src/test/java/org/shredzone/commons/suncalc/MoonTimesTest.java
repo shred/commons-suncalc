@@ -39,8 +39,8 @@ public class MoonTimesTest {
     public void testCologne() {
         MoonTimes mt = MoonTimes.compute().on(2017, 7, 12).utc().at(COLOGNE)
                         .truncatedTo(Unit.SECONDS).execute();
-        assertThat(mt.getRise()).as("rise").isEqualTo("2017-07-12T21:25:58Z");
-        assertThat(mt.getSet()).as("set").isEqualTo("2017-07-12T06:53:27Z");
+        assertThat(mt.getRise()).as("rise").isEqualTo("2017-07-12T21:25:55Z");
+        assertThat(mt.getSet()).as("set").isEqualTo("2017-07-12T06:53:30Z");
         assertThat(mt.isAlwaysUp()).as("alwaysup").isFalse();
         assertThat(mt.isAlwaysDown()).as("alwaysdown").isFalse();
     }
@@ -54,15 +54,15 @@ public class MoonTimesTest {
 
         MoonTimes mt2 = MoonTimes.compute().on(2017, 7, 12).utc().at(ALERT).fullCycle()
                         .truncatedTo(Unit.SECONDS).execute();
-        assertThat(mt2.getRise()).as("rise").isEqualTo("2017-07-14T05:45:33Z");
-        assertThat(mt2.getSet()).as("set").isEqualTo("2017-07-14T11:26:12Z");
+        assertThat(mt2.getRise()).as("rise").isEqualTo("2017-07-14T05:45:05Z");
+        assertThat(mt2.getSet()).as("set").isEqualTo("2017-07-14T11:26:43Z");
         assertThat(mt2.isAlwaysUp()).as("alwaysup").isFalse();
         assertThat(mt2.isAlwaysDown()).as("alwaysdown").isTrue();
 
         MoonTimes mt3 = MoonTimes.compute().on(2017, 7, 14).utc().at(ALERT)
                         .truncatedTo(Unit.SECONDS).execute();
-        assertThat(mt3.getRise()).as("rise").isEqualTo("2017-07-14T05:45:33Z");
-        assertThat(mt3.getSet()).as("set").isEqualTo("2017-07-14T11:26:12Z");
+        assertThat(mt3.getRise()).as("rise").isEqualTo("2017-07-14T05:45:05Z");
+        assertThat(mt3.getSet()).as("set").isEqualTo("2017-07-14T11:26:43Z");
         assertThat(mt3.isAlwaysUp()).as("alwaysup").isFalse();
         assertThat(mt3.isAlwaysDown()).as("alwaysdown").isFalse();
 
@@ -73,8 +73,8 @@ public class MoonTimesTest {
 
         MoonTimes mt5 = MoonTimes.compute().on(2017, 7, 18).utc().at(ALERT).fullCycle()
                         .truncatedTo(Unit.SECONDS).execute();
-        assertThat(mt5.getRise()).as("rise").isEqualTo("2017-07-27T11:59:07Z");
-        assertThat(mt5.getSet()).as("set").isEqualTo("2017-07-27T04:07:24Z");
+        assertThat(mt5.getRise()).as("rise").isEqualTo("2017-07-27T11:59:20Z");
+        assertThat(mt5.getSet()).as("set").isEqualTo("2017-07-27T04:07:10Z");
         assertThat(mt5.isAlwaysUp()).as("alwaysup").isTrue();
         assertThat(mt5.isAlwaysDown()).as("alwaysdown").isFalse();
     }
@@ -83,29 +83,29 @@ public class MoonTimesTest {
     public void testWellington() {
         MoonTimes mt1 = MoonTimes.compute().on(2017, 7, 12).utc().at(WELLINGTON)
                         .truncatedTo(Unit.SECONDS).execute();
-        assertThat(mt1.getRise()).as("rise").isEqualTo("2017-07-12T08:05:55Z");
-        assertThat(mt1.getSet()).as("set").isEqualTo("2017-07-12T21:57:35Z");
+        assertThat(mt1.getRise()).as("rise").isEqualTo("2017-07-12T08:05:53Z");
+        assertThat(mt1.getSet()).as("set").isEqualTo("2017-07-12T21:57:38Z");
 
         MoonTimes mt2 = MoonTimes.compute().on(2017, 7, 12).timezone("NZ").at(WELLINGTON)
                         .truncatedTo(Unit.SECONDS).execute();
-        assertThat(mt2.getRise()).as("rise").isEqualTo("2017-07-12T20:05:55+12:00");
-        assertThat(mt2.getSet()).as("set").isEqualTo("2017-07-12T09:22:59+12:00");
+        assertThat(mt2.getRise()).as("rise").isEqualTo("2017-07-12T20:05:53+12:00");
+        assertThat(mt2.getSet()).as("set").isEqualTo("2017-07-12T09:23:00+12:00");
     }
 
     @Test
     public void testPuertoWilliams() {
         MoonTimes mt = MoonTimes.compute().on(2017, 7, 13).utc().at(PUERTO_WILLIAMS)
                         .truncatedTo(Unit.SECONDS).execute();
-        assertThat(mt.getRise()).as("rise").isEqualTo("2017-07-13T00:31:33Z");
-        assertThat(mt.getSet()).as("set").isEqualTo("2017-07-13T14:48:33Z");
+        assertThat(mt.getRise()).as("rise").isEqualTo("2017-07-13T00:31:29Z");
+        assertThat(mt.getSet()).as("set").isEqualTo("2017-07-13T14:48:37Z");
     }
 
     @Test
     public void testSingapore() {
         MoonTimes mt = MoonTimes.compute().on(2017, 7, 13).utc().at(SINGAPORE)
                         .truncatedTo(Unit.SECONDS).execute();
-        assertThat(mt.getRise()).as("rise").isEqualTo("2017-07-13T14:35:11Z");
-        assertThat(mt.getSet()).as("set").isEqualTo("2017-07-13T02:08:55Z");
+        assertThat(mt.getRise()).as("rise").isEqualTo("2017-07-13T14:35:09Z");
+        assertThat(mt.getSet()).as("set").isEqualTo("2017-07-13T02:08:57Z");
     }
 
     @Test

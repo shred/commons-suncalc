@@ -25,6 +25,7 @@ import org.junit.Test;
 public class MoonPositionTest {
 
     private static final Offset<Double> ERROR = Offset.offset(0.1);
+    private static final Offset<Double> DISTANCE_ERROR = Offset.offset(800.0);
 
     @Test
     public void testCologne() {
@@ -43,7 +44,7 @@ public class MoonPositionTest {
                         .execute();
         assertThat(mp2.getAzimuth()).as("azimuth").isCloseTo(179.9, ERROR);
         assertThat(mp2.getAltitude()).as("altitude").isCloseTo(25.3, ERROR);
-        assertThat(mp2.getDistance()).as("distance").isCloseTo(391626.1, ERROR);
+        assertThat(mp2.getDistance()).as("distance").isCloseTo(394709.0, DISTANCE_ERROR);
     }
 
     @Test
@@ -63,7 +64,7 @@ public class MoonPositionTest {
                         .execute();
         assertThat(mp2.getAzimuth()).as("azimuth").isCloseTo(179.8, ERROR);
         assertThat(mp2.getAltitude()).as("altitude").isCloseTo(-5.7, ERROR);
-        assertThat(mp2.getDistance()).as("distance").isCloseTo(390721.7, ERROR);
+        assertThat(mp2.getDistance()).as("distance").isCloseTo(393609.0, DISTANCE_ERROR);
     }
 
     @Test
@@ -83,7 +84,7 @@ public class MoonPositionTest {
                         .execute();
         assertThat(mp2.getAzimuth()).as("azimuth").isCloseTo(0.5, ERROR);
         assertThat(mp2.getAltitude()).as("altitude").isCloseTo(63.9, ERROR);
-        assertThat(mp2.getDistance()).as("distance").isCloseTo(393760.7, ERROR);
+        assertThat(mp2.getDistance()).as("distance").isCloseTo(396272.0, DISTANCE_ERROR);
     }
 
     @Test
@@ -103,7 +104,7 @@ public class MoonPositionTest {
                         .execute();
         assertThat(mp2.getAzimuth()).as("azimuth").isCloseTo(0.1, ERROR);
         assertThat(mp2.getAltitude()).as("altitude").isCloseTo(16.3, ERROR);
-        assertThat(mp2.getDistance()).as("distance").isCloseTo(368900.3, ERROR);
+        assertThat(mp2.getDistance()).as("distance").isCloseTo(369731.0, DISTANCE_ERROR);
     }
 
     @Test
@@ -123,7 +124,7 @@ public class MoonPositionTest {
                         .execute();
         assertThat(mp2.getAzimuth()).as("azimuth").isCloseTo(180.0, ERROR);
         assertThat(mp2.getAltitude()).as("altitude").isCloseTo(74.1, ERROR);
-        assertThat(mp2.getDistance()).as("distance").isCloseTo(392867.9, ERROR);
+        assertThat(mp2.getDistance()).as("distance").isCloseTo(395621.0, DISTANCE_ERROR);
     }
 
 }

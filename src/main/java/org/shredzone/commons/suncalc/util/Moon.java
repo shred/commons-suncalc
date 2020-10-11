@@ -45,36 +45,43 @@ public final class Moon {
         double ls = PI2 * frac(0.993133 +   99.997361 * T);
         double D  = PI2 * frac(0.827361 + 1236.853086 * T);
         double F  = PI2 * frac(0.259086 + 1342.227825 * T);
+        double D2 = 2.0 * D;
+        double l2 = 2.0 * l;
+        double F2 = 2.0 * F;
 
-        double dL = 22640 * sin(l)
-                  -  4586 * sin(l - 2 * D)
-                  +  2370 * sin(2 * D)
-                  +   769 * sin(2 * l)
-                  -   668 * sin(ls)
-                  -   412 * sin(2 * F)
-                  -   212 * sin(2 * l - 2 * D)
-                  -   206 * sin(l + ls - 2 * D)
-                  +   192 * sin(l + 2 * D)
-                  -   165 * sin(ls - 2 * D)
-                  -   125 * sin(D)
-                  -   110 * sin(l + ls)
-                  +   148 * sin(l - ls)
-                  -    55 * sin(2 * F - 2 * D);
+        double dL = 22640.0 * sin(l)
+                  -  4586.0 * sin(l - D2)
+                  +  2370.0 * sin(D2)
+                  +   769.0 * sin(l2)
+                  -   668.0 * sin(ls)
+                  -   412.0 * sin(F2)
+                  -   212.0 * sin(l2 - D2)
+                  -   206.0 * sin(l + ls - D2)
+                  +   192.0 * sin(l + D2)
+                  -   165.0 * sin(ls - D2)
+                  -   125.0 * sin(D)
+                  -   110.0 * sin(l + ls)
+                  +   148.0 * sin(l - ls)
+                  -    55.0 * sin(F2 - D2);
 
-        double S  = F + (dL + 412 * sin(2 * F) + 541 * sin(ls)) / ARCS;
-        double h  = F - 2 * D;
-        double N  =  -526 * sin(h)
-                  +    44 * sin(l + h)
-                  -    31 * sin(-l + h)
-                  -    23 * sin(ls + h)
-                  +    11 * sin(-ls + h)
-                  -    25 * sin(-2 * l + F)
-                  +    21 * sin(-l + F);
+        double S  = F + (dL + 412.0 * sin(F2) + 541.0 * sin(ls)) / ARCS;
+        double h  = F - D2;
+        double N  =  -526.0 * sin(h)
+                  +    44.0 * sin(l + h)
+                  -    31.0 * sin(-l + h)
+                  -    23.0 * sin(ls + h)
+                  +    11.0 * sin(-ls + h)
+                  -    25.0 * sin(-l2 + F)
+                  +    21.0 * sin(-l + F);
 
         double l_Moon = PI2 * frac(L0 + dL / 1296.0e3);
         double b_Moon = (18520.0 * sin(S) + N) / ARCS;
 
-        double dt = 385000.6 - 20905.0 * cos(l);
+        double dt = 385000.5584
+                  -  20905.3550 * cos(l)
+                  -   3699.1109 * cos(D2 - l)
+                  -   2955.9676 * cos(D2)
+                  -    569.9251 * cos(l2);
 
         return Vector.ofPolar(l_Moon, b_Moon, dt);
     }
