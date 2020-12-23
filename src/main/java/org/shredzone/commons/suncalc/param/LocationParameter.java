@@ -18,8 +18,9 @@ import static org.shredzone.commons.suncalc.util.ExtendedMath.dms;
 /**
  * Location based parameters.
  * <p>
- * Use them to give information about the geolocation of the observer. If ommitted, a
- * latitude and longitude of 0° is used.
+ * Use them to give information about the geolocation of the observer. If ommitted, the
+ * coordinates of <a href="https://en.wikipedia.org/wiki/Null_Island">Null Island</a> are
+ * used.
  *
  * @param <T>
  *            Type of the final builder
