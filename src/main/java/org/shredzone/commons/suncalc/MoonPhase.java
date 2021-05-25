@@ -103,9 +103,23 @@ public class MoonPhase {
         NEW_MOON(0.0),
 
         /**
+         * Waxing crescent moon.
+         *
+         * @since 2.12
+         */
+        WAXING_CRESCENT(45.0),
+
+        /**
          * Waxing half moon.
          */
         FIRST_QUARTER(90.0),
+
+        /**
+         * Waxing gibbous moon.
+         *
+         * @since 2.12
+         */
+        WAXING_GIBBOUS(135.0),
 
         /**
          * Full moon.
@@ -113,9 +127,23 @@ public class MoonPhase {
         FULL_MOON(180.0),
 
         /**
+         * Waning gibbous moon.
+         *
+         * @since 2.12
+         */
+        WANING_GIBBOUS(225.0),
+
+        /**
          * Waning half moon.
          */
-        LAST_QUARTER(270.0);
+        LAST_QUARTER(270.0),
+
+        /**
+         * Waning crescent moon.
+         *
+         * @since 2.12
+         */
+        WANING_CRESCENT(315.0);
 
         private final double angle;
         private final double angleRad;
