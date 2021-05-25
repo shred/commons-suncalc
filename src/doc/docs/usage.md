@@ -175,12 +175,16 @@ SunTimes.compute().twilight(SunTimes.Twilight.GOLDEN_HOUR);
 
 By default, [`MoonPhase`](./apidocs/org/shredzone/commons/suncalc/MoonPhase.Parameters.html) calculates the date of the next new moon. If you want to compute the date of another phase, you can set it via the `phase()` parameter, by using one of the [`MoonPhase.Phase`](./apidocs/org/shredzone/commons/suncalc/MoonPhase.Phase.html) constants:
 
-| Constant        | Description | Angle |
-| --------------- | ----------- | -----:|
-| `NEW_MOON`      | Moon is not illuminated (new moon). This is the default. | 0° |
-| `FIRST_QUARTER` | Half of the waxing moon is illuminated. | 90° |
-| `FULL_MOON`     | Moon is fully illuminated. | 180° |
-| `LAST_QUARTER`  | Half of the waning moon is illuminated. | 270° |
+| Constant          | Description | Angle |
+| ----------------- | ----------- | -----:|
+| `NEW_MOON`        | Moon is not illuminated (new moon). This is the default. | 0° |
+| `WAXING_CRESCENT` | Waxing crescent moon. | 45° |
+| `FIRST_QUARTER`   | Half of the waxing moon is illuminated. | 90° |
+| `WAXING_GIBBOUS`  | Waxing gibbous moon. | 135° |
+| `FULL_MOON`       | Moon is fully illuminated. | 180° |
+| `WANING_GIBBOUS`  | Waning gibbous moon. | 225° |
+| `LAST_QUARTER`    | Half of the waning moon is illuminated. | 270° |
+| `WANING_CRESCENT` | Waning crescent moon. | 315° |
 
 Alternatively you can also pass any other angle (in degrees) to `phase()`.
 
