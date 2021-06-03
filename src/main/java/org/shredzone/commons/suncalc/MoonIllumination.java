@@ -88,6 +88,9 @@ public class MoonIllumination {
     /**
      * Moon phase. Starts at {@code -180.0} (new moon, waxing), passes {@code 0.0} (full
      * moon) and moves toward {@code 180.0} (waning, new moon).
+     * <p>
+     * Note that for historical reasons, the range of this phase is different to the
+     * moon phase angle used in {@link MoonPhase}.
      */
     public double getPhase() {
         return phase;
@@ -104,6 +107,16 @@ public class MoonIllumination {
      */
     public double getAngle() {
         return angle;
+    }
+
+    /**
+     * The closest {@link MoonPhase.Phase} that is matching the moon's angle.
+     *
+     * @return Closest {@link MoonPhase.Phase}
+     * @since 2.12
+     */
+    public MoonPhase.Phase getClosestPhase() {
+        return MoonPhase.Phase.toPhase(phase + 180.0);
     }
 
     @Override
