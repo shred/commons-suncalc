@@ -18,6 +18,7 @@ import static org.shredzone.commons.suncalc.Locations.COLOGNE_TZ;
 
 import org.assertj.core.data.Offset;
 import org.junit.Test;
+import org.shredzone.commons.suncalc.MoonPhase.Phase;
 
 /**
  * Unit tests for {@link MoonIllumination}.
@@ -35,6 +36,7 @@ public class MoonIlluminationTest {
         assertThat(mi.getFraction()).as("fraction").isCloseTo(0.0, ERROR);
         assertThat(mi.getPhase()).as("phase").isCloseTo(176.0, ERROR); // -180.0
         assertThat(mi.getAngle()).as("angle").isCloseTo(1.8, ERROR);
+        assertThat(mi.getClosestPhase()).as("MoonPhase.Phase").isEqualTo(Phase.NEW_MOON);
     }
 
     @Test
@@ -46,6 +48,7 @@ public class MoonIlluminationTest {
         assertThat(mi.getFraction()).as("fraction").isCloseTo(0.5, ERROR);
         assertThat(mi.getPhase()).as("phase").isCloseTo(-90.0, ERROR);
         assertThat(mi.getAngle()).as("angle").isCloseTo(-66.9, ERROR);
+        assertThat(mi.getClosestPhase()).as("MoonPhase.Phase").isEqualTo(Phase.FIRST_QUARTER);
     }
 
     @Test
@@ -57,6 +60,7 @@ public class MoonIlluminationTest {
         assertThat(mi.getFraction()).as("fraction").isCloseTo(1.0, ERROR);
         assertThat(mi.getPhase()).as("phase").isCloseTo(-3.2, ERROR); // 0.0
         assertThat(mi.getAngle()).as("angle").isCloseTo(-7.0, ERROR);
+        assertThat(mi.getClosestPhase()).as("MoonPhase.Phase").isEqualTo(Phase.FULL_MOON);
     }
 
     @Test
@@ -68,6 +72,7 @@ public class MoonIlluminationTest {
         assertThat(mi.getFraction()).as("fraction").isCloseTo(0.5, ERROR);
         assertThat(mi.getPhase()).as("phase").isCloseTo(90.0, ERROR);
         assertThat(mi.getAngle()).as("angle").isCloseTo(68.1, ERROR);
+        assertThat(mi.getClosestPhase()).as("MoonPhase.Phase").isEqualTo(Phase.LAST_QUARTER);
     }
 
 }
