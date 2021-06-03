@@ -137,6 +137,49 @@ public class MoonPhase {
          */
         WANING_CRESCENT(315.0);
 
+        /**
+         * Converts an angle to the closest matching moon phase.
+         *
+         * @param angle
+         *         Moon phase angle, in degrees. 0 = New Moon, 180 = Full Moon. Angles
+         *         outside the [0,360) range are normalized into that range.
+         * @return Closest Phase that is matching that angle.
+         * @since 3.5
+         */
+        public static Phase toPhase(double angle) {
+            // bring into range 0.0 .. 360.0
+            double normalized = angle % 360.0;
+            if (normalized < 0.0) {
+                normalized += 360.0;
+            }
+
+            if (normalized < 22.5) {
+                return NEW_MOON;
+            }
+            if (normalized < 67.5) {
+                return WAXING_CRESCENT;
+            }
+            if (normalized < 112.5) {
+                return FIRST_QUARTER;
+            }
+            if (normalized < 157.5) {
+                return WAXING_GIBBOUS;
+            }
+            if (normalized < 202.5) {
+                return FULL_MOON;
+            }
+            if (normalized < 247.5) {
+                return WANING_GIBBOUS;
+            }
+            if (normalized < 292.5) {
+                return LAST_QUARTER;
+            }
+            if (normalized < 337.5) {
+                return WANING_CRESCENT;
+            }
+            return NEW_MOON;
+        }
+
         private final double angle;
         private final double angleRad;
 
