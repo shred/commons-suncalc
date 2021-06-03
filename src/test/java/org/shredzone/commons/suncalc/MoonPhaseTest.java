@@ -86,4 +86,37 @@ public class MoonPhaseTest {
         assertThat(mp.getDistance()).isCloseTo(369899.0, ERROR);
     }
 
+    @Test
+    public void testToPhase() {
+        // exact angles
+        assertThat(Phase.toPhase(  0.0)).isEqualTo(Phase.NEW_MOON);
+        assertThat(Phase.toPhase( 45.0)).isEqualTo(Phase.WAXING_CRESCENT);
+        assertThat(Phase.toPhase( 90.0)).isEqualTo(Phase.FIRST_QUARTER);
+        assertThat(Phase.toPhase(135.0)).isEqualTo(Phase.WAXING_GIBBOUS);
+        assertThat(Phase.toPhase(180.0)).isEqualTo(Phase.FULL_MOON);
+        assertThat(Phase.toPhase(225.0)).isEqualTo(Phase.WANING_GIBBOUS);
+        assertThat(Phase.toPhase(270.0)).isEqualTo(Phase.LAST_QUARTER);
+        assertThat(Phase.toPhase(315.0)).isEqualTo(Phase.WANING_CRESCENT);
+
+        // out of range angles (normalization test)
+        assertThat(Phase.toPhase( 360.0)).isEqualTo(Phase.NEW_MOON);
+        assertThat(Phase.toPhase( 720.0)).isEqualTo(Phase.NEW_MOON);
+        assertThat(Phase.toPhase(-360.0)).isEqualTo(Phase.NEW_MOON);
+        assertThat(Phase.toPhase(-720.0)).isEqualTo(Phase.NEW_MOON);
+        assertThat(Phase.toPhase( 855.0)).isEqualTo(Phase.WAXING_GIBBOUS);
+        assertThat(Phase.toPhase(-585.0)).isEqualTo(Phase.WAXING_GIBBOUS);
+        assertThat(Phase.toPhase(-945.0)).isEqualTo(Phase.WAXING_GIBBOUS);
+
+        // close to boundary
+        assertThat(Phase.toPhase( 22.4)).isEqualTo(Phase.NEW_MOON);
+        assertThat(Phase.toPhase( 67.4)).isEqualTo(Phase.WAXING_CRESCENT);
+        assertThat(Phase.toPhase(112.4)).isEqualTo(Phase.FIRST_QUARTER);
+        assertThat(Phase.toPhase(157.4)).isEqualTo(Phase.WAXING_GIBBOUS);
+        assertThat(Phase.toPhase(202.4)).isEqualTo(Phase.FULL_MOON);
+        assertThat(Phase.toPhase(247.4)).isEqualTo(Phase.WANING_GIBBOUS);
+        assertThat(Phase.toPhase(292.4)).isEqualTo(Phase.LAST_QUARTER);
+        assertThat(Phase.toPhase(337.4)).isEqualTo(Phase.WANING_CRESCENT);
+        assertThat(Phase.toPhase(382.4)).isEqualTo(Phase.NEW_MOON);
+    }
+
 }
