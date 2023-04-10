@@ -81,7 +81,7 @@ public class MoonPosition {
 
             double hRef = refraction(horizontal.getTheta());
 
-            double pa = atan2(sin(h), tan(phi) * cos(mc.getTheta())) - sin(mc.getTheta()) * cos(h);
+            double pa = atan2(sin(h), tan(phi) * cos(mc.getTheta()) - sin(mc.getTheta()) * cos(h));
 
             return new MoonPosition(horizontal.getPhi(), horizontal.getTheta() + hRef, mc.getR(), pa);
         }

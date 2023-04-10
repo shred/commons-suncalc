@@ -102,7 +102,7 @@ public class MoonIllumination {
      * <p>
      * By subtracting {@link MoonPosition#getParallacticAngle()} from {@link #getAngle()},
      * one can get the zenith angle of the moons bright limb (anticlockwise). The zenith
-     * angle can be used do draw the moon shape from the observers perspective (e.g. the
+     * angle can be used do draw the moon shape from the observer's perspective (e.g. the
      * moon lying on its back).
      */
     public double getAngle() {

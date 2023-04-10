@@ -2,6 +2,9 @@
 
 This document will help you migrate your code to the latest _suncalc_ version.
 
+## Version 3.6
+* Due to a very old bug, `MoonPosition.getParallacticAngle()` gave completely wrong results. If you used that method in your code or tests, prepare to get totally different values now.
+
 ## Version 3.3
 * Due to a very old bug, setting the `height()` had almost no impact on the result, which is obviously wrong (on sunset, a plane in the sky is still illuminated while the sun has just gone at the viewer's position). This bug has been fixed. If you are using `height()`, you will get correct results now. They may deviate by several minutes from the results of earlier versions.
 
