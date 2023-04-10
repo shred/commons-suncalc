@@ -36,6 +36,7 @@ public class MoonPositionTest {
                         .execute();
         assertThat(mp1.getAzimuth()).as("azimuth").isCloseTo(304.8, ERROR);
         assertThat(mp1.getAltitude()).as("altitude").isCloseTo(-39.6, ERROR);
+        assertThat(mp1.getParallacticAngle()).as("pa").isCloseTo(32.0, ERROR);
 
         MoonPosition mp2 = MoonPosition.compute()
                         .on(2017, 7, 12, 3, 51, 0)
@@ -45,6 +46,7 @@ public class MoonPositionTest {
         assertThat(mp2.getAzimuth()).as("azimuth").isCloseTo(179.9, ERROR);
         assertThat(mp2.getAltitude()).as("altitude").isCloseTo(25.3, ERROR);
         assertThat(mp2.getDistance()).as("distance").isCloseTo(394709.0, DISTANCE_ERROR);
+        assertThat(mp2.getParallacticAngle()).as("pa").isCloseTo(0.0, ERROR);
     }
 
     @Test
@@ -56,6 +58,7 @@ public class MoonPositionTest {
                         .execute();
         assertThat(mp1.getAzimuth()).as("azimuth").isCloseTo(257.5, ERROR);
         assertThat(mp1.getAltitude()).as("altitude").isCloseTo(-10.9, ERROR);
+        assertThat(mp1.getParallacticAngle()).as("pa").isCloseTo(7.5, ERROR);
 
         MoonPosition mp2 = MoonPosition.compute()
                         .on(2017, 7, 12, 2, 37, 0)
@@ -65,6 +68,7 @@ public class MoonPositionTest {
         assertThat(mp2.getAzimuth()).as("azimuth").isCloseTo(179.8, ERROR);
         assertThat(mp2.getAltitude()).as("altitude").isCloseTo(-5.7, ERROR);
         assertThat(mp2.getDistance()).as("distance").isCloseTo(393609.0, DISTANCE_ERROR);
+        assertThat(mp2.getParallacticAngle()).as("pa").isCloseTo(0.0, ERROR);
     }
 
     @Test
@@ -76,6 +80,7 @@ public class MoonPositionTest {
                         .execute();
         assertThat(mp1.getAzimuth()).as("azimuth").isCloseTo(311.3, ERROR);
         assertThat(mp1.getAltitude()).as("altitude").isCloseTo(55.1, ERROR);
+        assertThat(mp1.getParallacticAngle()).as("pa").isCloseTo(144.2, ERROR);
 
         MoonPosition mp2 = MoonPosition.compute()
                         .on(2017, 7, 12, 2, 17, 0)
@@ -85,6 +90,7 @@ public class MoonPositionTest {
         assertThat(mp2.getAzimuth()).as("azimuth").isCloseTo(0.5, ERROR);
         assertThat(mp2.getAltitude()).as("altitude").isCloseTo(63.9, ERROR);
         assertThat(mp2.getDistance()).as("distance").isCloseTo(396272.0, DISTANCE_ERROR);
+        assertThat(mp2.getParallacticAngle()).as("pa").isCloseTo(-179.6, ERROR);
     }
 
     @Test
@@ -96,6 +102,7 @@ public class MoonPositionTest {
                         .execute();
         assertThat(mp1.getAzimuth()).as("azimuth").isCloseTo(199.4, ERROR);
         assertThat(mp1.getAltitude()).as("altitude").isCloseTo(-52.7, ERROR);
+        assertThat(mp1.getParallacticAngle()).as("pa").isCloseTo(168.3, ERROR);
 
         MoonPosition mp2 = MoonPosition.compute()
                         .on(2017, 2, 7, 23, 4, 0)
@@ -105,6 +112,7 @@ public class MoonPositionTest {
         assertThat(mp2.getAzimuth()).as("azimuth").isCloseTo(0.1, ERROR);
         assertThat(mp2.getAltitude()).as("altitude").isCloseTo(16.3, ERROR);
         assertThat(mp2.getDistance()).as("distance").isCloseTo(369731.0, DISTANCE_ERROR);
+        assertThat(mp2.getParallacticAngle()).as("pa").isCloseTo(-179.9, ERROR);
     }
 
     @Test
@@ -116,6 +124,7 @@ public class MoonPositionTest {
                         .execute();
         assertThat(mp1.getAzimuth()).as("azimuth").isCloseTo(240.6, ERROR);
         assertThat(mp1.getAltitude()).as("altitude").isCloseTo(57.1, ERROR);
+        assertThat(mp1.getParallacticAngle()).as("pa").isCloseTo(64.0, ERROR);
 
         MoonPosition mp2 = MoonPosition.compute()
                         .on(2017, 7, 12, 3, 11, 0)
@@ -125,6 +134,7 @@ public class MoonPositionTest {
         assertThat(mp2.getAzimuth()).as("azimuth").isCloseTo(180.0, ERROR);
         assertThat(mp2.getAltitude()).as("altitude").isCloseTo(74.1, ERROR);
         assertThat(mp2.getDistance()).as("distance").isCloseTo(395621.0, DISTANCE_ERROR);
+        assertThat(mp2.getParallacticAngle()).as("pa").isCloseTo(0.0, ERROR);
     }
 
 }
