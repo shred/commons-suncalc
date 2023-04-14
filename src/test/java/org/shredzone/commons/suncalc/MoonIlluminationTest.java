@@ -35,7 +35,7 @@ public class MoonIlluminationTest {
                         .execute();
         assertThat(mi.getFraction()).as("fraction").isCloseTo(0.0, ERROR);
         assertThat(mi.getPhase()).as("phase").isCloseTo(176.0, ERROR); // -180.0
-        assertThat(mi.getAngle()).as("angle").isCloseTo(1.8, ERROR);
+        assertThat(mi.getAngle()).as("angle").isCloseTo(2.0, ERROR);
         assertThat(mi.getClosestPhase()).as("MoonPhase.Phase").isEqualTo(Phase.NEW_MOON);
     }
 
@@ -59,7 +59,7 @@ public class MoonIlluminationTest {
                         .execute();
         assertThat(mi.getFraction()).as("fraction").isCloseTo(1.0, ERROR);
         assertThat(mi.getPhase()).as("phase").isCloseTo(-3.2, ERROR); // 0.0
-        assertThat(mi.getAngle()).as("angle").isCloseTo(-7.0, ERROR);
+        assertThat(mi.getAngle()).as("angle").isCloseTo(-7.4, ERROR);
         assertThat(mi.getClosestPhase()).as("MoonPhase.Phase").isEqualTo(Phase.FULL_MOON);
     }
 
@@ -71,7 +71,7 @@ public class MoonIlluminationTest {
                         .execute();
         assertThat(mi.getFraction()).as("fraction").isCloseTo(0.5, ERROR);
         assertThat(mi.getPhase()).as("phase").isCloseTo(90.0, ERROR);
-        assertThat(mi.getAngle()).as("angle").isCloseTo(68.1, ERROR);
+        assertThat(mi.getAngle()).as("angle").isCloseTo(68.7, ERROR);
         assertThat(mi.getClosestPhase()).as("MoonPhase.Phase").isEqualTo(Phase.LAST_QUARTER);
     }
 

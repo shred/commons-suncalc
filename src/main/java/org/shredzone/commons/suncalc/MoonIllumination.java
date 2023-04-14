@@ -69,11 +69,15 @@ public class MoonIllumination {
             Vector m = Moon.position(t);
             double phi = PI - acos(m.dot(s) / (m.getR() * s.getR()));
             Vector sunMoon = m.cross(s);
+            double angle = atan2(
+                    cos(s.getTheta()) * sin(s.getPhi() - m.getPhi()),
+                    sin(s.getTheta()) * cos(m.getTheta()) - cos(s.getTheta()) * sin(m.getTheta()) * cos(s.getPhi() - m.getPhi())
+            );
 
             return new MoonIllumination(
                             (1 + cos(phi)) / 2,
                             toDegrees(phi * signum(sunMoon.getTheta())),
-                            toDegrees(sunMoon.getTheta()));
+                            toDegrees(angle));
         }
     }
 
