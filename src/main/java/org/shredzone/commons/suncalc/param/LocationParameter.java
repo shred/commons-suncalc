@@ -57,6 +57,19 @@ public interface LocationParameter<T> {
     T height(double h);
 
     /**
+     * Sets the height, in foot.
+     *
+     * @param ft
+     *            Height, in foot above sea level. Default: 0.0 ft. Negative values are
+     *            silently changed to the acceptable minimum of 0.0 ft.
+     * @return itself
+     * @since 3.8
+     */
+    default T heightFt(double ft) {
+        return height(ft * 0.3048);
+    }
+
+    /**
      * Sets the geolocation.
      *
      * @param lat
