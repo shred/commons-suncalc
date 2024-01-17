@@ -33,12 +33,14 @@ public class MoonPosition {
 
     private final double azimuth;
     private final double altitude;
+    private final double trueAltitude;
     private final double distance;
     private final double parallacticAngle;
 
-    private MoonPosition(double azimuth, double altitude, double distance, double parallacticAngle) {
+    private MoonPosition(double azimuth, double altitude, double trueAltitude, double distance, double parallacticAngle) {
         this.azimuth = (toDegrees(azimuth) + 180.0) % 360.0;
         this.altitude = toDegrees(altitude);
+        this.trueAltitude = toDegrees(trueAltitude);
         this.distance = distance;
         this.parallacticAngle = toDegrees(parallacticAngle);
     }
@@ -83,7 +85,12 @@ public class MoonPosition {
 
             double pa = atan2(sin(h), tan(phi) * cos(mc.getTheta()) - sin(mc.getTheta()) * cos(h));
 
-            return new MoonPosition(horizontal.getPhi(), horizontal.getTheta() + hRef, mc.getR(), pa);
+            return new MoonPosition(
+                    horizontal.getPhi(),
+                    horizontal.getTheta() + hRef,
+                    horizontal.getTheta(),
+                    mc.getR(),
+                    pa);
         }
     }
 
@@ -91,10 +98,25 @@ public class MoonPosition {
      * Moon altitude above the horizon, in degrees.
      * <p>
      * {@code 0.0} means the moon's center is at the horizon, {@code 90.0} at the zenith
-     * (straight over your head).
+     * (straight over your head). Atmospheric refraction is taken into account.
+     *
+     * @see #getTrueAltitude()
      */
     public double getAltitude() {
         return altitude;
+    }
+
+    /**
+     * The true moon altitude above the horizon, in degrees.
+     * <p>
+     * {@code 0.0} means the moon's center is at the horizon, {@code 90.0} at the zenith
+     * (straight over your head).
+     *
+     * @see #getAltitude()
+     * @since 3.8
+     */
+    public double getTrueAltitude() {
+        return trueAltitude;
     }
 
     /**
@@ -126,6 +148,7 @@ public class MoonPosition {
         StringBuilder sb = new StringBuilder();
         sb.append("MoonPosition[azimuth=").append(azimuth);
         sb.append("°, altitude=").append(altitude);
+        sb.append("°, true altitude=").append(trueAltitude);
         sb.append("°, distance=").append(distance);
         sb.append(" km, parallacticAngle=").append(parallacticAngle);
         sb.append("°]");
