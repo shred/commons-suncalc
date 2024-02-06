@@ -65,6 +65,11 @@ public class BaseBuilderTest {
         assertThatNoException().isThrownBy(p::getLongitude);
         assertThat(p.hasLocation()).isTrue();
 
+        p.clearLocation();
+        assertThatIllegalStateException().isThrownBy(p::getLatitude);
+        assertThatIllegalStateException().isThrownBy(p::getLongitude);
+        assertThat(p.hasLocation()).isFalse();
+
         r = p.at(12.34, 34.56);
         assertLatLng(p, 12.34, 34.56, 0.0);
         assertThat(r).isSameAs(p);

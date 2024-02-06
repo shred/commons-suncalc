@@ -68,6 +68,15 @@ public class MoonIllumination {
             TimeParameter<Parameters>,
             LocationParameter<Parameters>,
             Builder<MoonIllumination> {
+
+        /**
+         * Clears the geolocation, so the result will be geocentric.
+         *
+         * @return itself
+         * @since 3.9
+         */
+        Parameters geocentric();
+
     }
 
     /**
@@ -75,6 +84,12 @@ public class MoonIllumination {
      * parameters, and creates a {@link MoonIllumination} object that holds the result.
      */
     private static class MoonIlluminationBuilder extends BaseBuilder<Parameters> implements Parameters {
+        @Override
+        public Parameters geocentric() {
+            clearLocation();
+            return this;
+        }
+
         @Override
         public MoonIllumination execute() {
             JulianDate t = getJulianDate();

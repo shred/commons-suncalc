@@ -221,4 +221,14 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
         return lat != null && lng != null;
     }
 
+    /**
+     * Unset the geolocation.
+     *
+     * @since 3.9
+     */
+    public void clearLocation() {
+        lat = null;
+        lng = null;
+    }
+
 }
