@@ -76,13 +76,17 @@ public class BaseBuilderTest {
         assertLatLng(p, 5.127, -12.723, 0.0);
         assertThat(r).isSameAs(p);
 
-        r = p.height(18267.3);
+        r = p.elevation(18267.3);
         assertLatLng(p, 5.127, -12.723, 18267.3);
         assertThat(r).isSameAs(p);
 
-        // Negative heights are always changed to 0.0
-        r = p.height(-10.2);
+        // Negative elevations are always changed to 0.0
+        r = p.elevation(-10.2);
         assertLatLng(p, 5.127, -12.723, 0.0);
+        assertThat(r).isSameAs(p);
+
+        r = p.elevationFt(12000.0);
+        assertLatLng(p, 5.127, -12.723, 3657.6);
         assertThat(r).isSameAs(p);
 
         r = p.at(new double[] { 1.22, -3.44, 323.0 });
@@ -286,14 +290,14 @@ public class BaseBuilderTest {
         TestBuilder p1 = new TestBuilder();
         p1.at(Locations.COLOGNE);
         p1.on(now);
-        p1.height(123.0);
+        p1.elevation(123.0);
 
         // Make sure copy has identical values
         TestBuilder p2 = p1.copy();
         assertThat(p2.getLatitude()).isEqualTo(Locations.COLOGNE[0]);
         assertThat(p2.getLongitude()).isEqualTo(Locations.COLOGNE[1]);
         assertThat(p2.getJulianDate().getDateTime()).isEqualTo(now);
-        assertThat(p2.getHeight()).isEqualTo(123.0);
+        assertThat(p2.getElevation()).isEqualTo(123.0);
 
         // Make sure changes to p1 won't affect p2
         p1.at(Locations.SINGAPORE);
@@ -316,12 +320,12 @@ public class BaseBuilderTest {
         assertThat(p2.getJulianDate().getDateTime()).isEqualTo(yesterday);
     }
 
-    private void assertLatLng(TestBuilder p, double lat, double lng, double height) {
+    private void assertLatLng(TestBuilder p, double lat, double lng, double elev) {
         assertThat(p.getLatitude()).as("latitude").isCloseTo(lat, ERROR);
         assertThat(p.getLongitude()).as("longitude").isCloseTo(lng, ERROR);
         assertThat(p.getLatitudeRad()).as("latitude-rad").isCloseTo(toRadians(lat), ERROR);
         assertThat(p.getLongitudeRad()).as("longitude-rad").isCloseTo(toRadians(lng), ERROR);
-        assertThat(p.getHeight()).as("height").isCloseTo(height, ERROR);
+        assertThat(p.getElevation()).as("elevation").isCloseTo(elev, ERROR);
     }
 
     private void assertDate(TestBuilder p, int year, int month, int day,

@@ -128,7 +128,7 @@ public class SunTimes {
      * <p>
      * The twilight angles use a geocentric reference, by definition. However,
      * {@link #VISUAL} and {@link #VISUAL_LOWER} are topocentric, and take the spectator's
-     * height and the atmospheric refraction into account.
+     * elevation and the atmospheric refraction into account.
      *
      * @see <a href="https://en.wikipedia.org/wiki/Twilight">Wikipedia: Twilight</a>
      */
@@ -398,7 +398,7 @@ public class SunTimes {
             double hc = angle;
             if (position != null) {
                 hc -= apparentRefraction(hc);
-                hc += parallax(getHeight(), pos.getR());
+                hc += parallax(getElevation(), pos.getR());
                 hc -= position * Sun.angularRadius(pos.getR());
             }
 

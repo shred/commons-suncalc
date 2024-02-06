@@ -107,15 +107,15 @@ public final class ExtendedMath {
     /**
      * Returns the parallax for objects at the horizon.
      *
-     * @param height
-     *            Observer's height, in meters above sea level. Must not be negative.
+     * @param elevation
+     *            Observer's elevation, in meters above sea level. Must not be negative.
      * @param distance
      *            Distance of the sun, in kilometers.
      * @return parallax, in radians
      */
-    public static double parallax(double height, double distance) {
+    public static double parallax(double elevation, double distance) {
         return asin(EARTH_MEAN_RADIUS / distance)
-             - acos(EARTH_MEAN_RADIUS / (EARTH_MEAN_RADIUS + (height / 1000.0)));
+             - acos(EARTH_MEAN_RADIUS / (EARTH_MEAN_RADIUS + (elevation / 1000.0)));
     }
 
     /**

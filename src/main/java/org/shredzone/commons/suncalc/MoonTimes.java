@@ -198,7 +198,7 @@ public final class MoonTimes {
          */
         private double correctedMoonHeight(JulianDate jd) {
             Vector pos = Moon.positionHorizontal(jd, getLatitudeRad(), getLongitudeRad());
-            double hc = parallax(getHeight(), pos.getR())
+            double hc = parallax(getElevation(), pos.getR())
                             - refraction
                             - Moon.angularRadius(pos.getR());
             return pos.getTheta() - hc;

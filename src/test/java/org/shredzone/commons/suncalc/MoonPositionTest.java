@@ -155,7 +155,7 @@ public class MoonPositionTest {
                 .on(2002, 12, 4, 16, 57, 0)
                 .latitude(33, 20, 0.0)
                 .longitude(44, 25, 0.0)
-                .heightFt(100.0)
+                .elevationFt(100.0)
                 .timezone("Asia/Baghdad")
                 .execute();
         assertThat(mp1.getAzimuth()).as("azimuth").isCloseTo(241.1, ERROR);

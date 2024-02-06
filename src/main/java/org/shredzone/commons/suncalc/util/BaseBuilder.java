@@ -43,7 +43,7 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
 
     private double lat = 0.0;
     private double lng = 0.0;
-    private double height = 0.0;
+    private double elevation = 0.0;
     private ZonedDateTime dateTime = ZonedDateTime.now();
 
     @Override
@@ -116,8 +116,8 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
     }
 
     @Override
-    public T height(double h) {
-        this.height = max(h, 0.0);
+    public T elevation(double h) {
+        this.elevation = max(h, 0.0);
         return (T) this;
     }
 
@@ -138,7 +138,7 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
         BaseBuilder<?> origin = (BaseBuilder<?>) l;
         this.lat = origin.lat;
         this.lng = origin.lng;
-        this.height = origin.height;
+        this.elevation = origin.elevation;
         return (T) this;
     }
 
@@ -188,12 +188,12 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
     }
 
     /**
-     * Returns the height, in meters above sea level.
+     * Returns the elevation, in meters above sea level.
      *
-     * @return Height, meters above sea level
+     * @return Elevation, meters above sea level
      */
-    public double getHeight() {
-        return height;
+    public double getElevation() {
+        return elevation;
     }
 
     /**

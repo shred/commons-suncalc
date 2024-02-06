@@ -116,19 +116,20 @@ SunPosition.compute().at(COLOGNE);
 The available location-based parameters are:
 
 * `at(double lat, double lng)`: Latitude and longitude to be used for computation.
-* `at(double[] coords)`: Accepts an array of 2 values (latitude, longitude) or 3 values (latitude, longitude, height).
+* `at(double[] coords)`: Accepts an array of 2 values (latitude, longitude) or 3 values (latitude, longitude, elevation).
 * `latitude(double lat)`: Verbose way to set the latitude only.
 * `longitude(double lng)`: Verbose way to set the longitude only.
 * `latitude(int d, int m, double s)`: Set the latitude in degrees, minutes, seconds and fraction of seconds.
 * `longitude(int d, int m, double s)`: Set the longitude in degrees, minutes, seconds and fraction of seconds.
-* `height(double h)`: Height above sea level, in meters. Sea level is used by default.
-* `sameLocationAs(LocationParameter<?> l)`: Copies the current location and height from any other parameter object. Note that subsequent changes to the other object are not adoped.
+* `elevation(double h)`: Elevation above sea level, in meters. Sea level is used by default.
+* `elevationFt(double h)`: Elevation above sea level, in foot. Sea level is used by default.
+* `sameLocationAs(LocationParameter<?> l)`: Copies the current location and elevation from any other parameter object. Note that subsequent changes to the other object are not adoped.
 
 !!! WARNING
     The location parameters are not mandatory. However [Null Island](https://en.wikipedia.org/wiki/Null_Island) is assumed if they are not given, which is not very useful in most cases. Do not forget to set the parameters!
 
 !!! NOTE
-    `height` cannot be negative. If you pass in a negative height, it is silently changed to the accepted minimum of 0 meters. For this reason, it is safe to pass coordinates from satellite-based navigation systems without range checking.
+    `elevation` cannot be negative. If you pass in a negative elevation, it is silently changed to the accepted minimum of 0 meters. For this reason, it is safe to pass coordinates from satellite-based navigation systems without range checking.
 
 ## Time Range
 
@@ -161,9 +162,9 @@ The illustration shows the transitions of each twilight constant. If you want to
 Alternatively you can also pass any other angle (in degrees) to `twilight()`.
 
 !!! NOTE
-    Only `VISUAL` and `VISUAL_LOWER` are topocentric. They refer to the visual edge of the sun, take account of the `height` parameter, and compensate atmospheric refraction.
+    Only `VISUAL` and `VISUAL_LOWER` are topocentric. They refer to the visual edge of the sun, take account of the `elevation` parameter, and compensate atmospheric refraction.
     
-    All other twilights are geocentric and heliocentric. The `height` parameter is then ignored, and atmospheric refraction is not compensated.
+    All other twilights are geocentric and heliocentric. The `elevation` parameter is then ignored, and atmospheric refraction is not compensated.
 
 Example:
 

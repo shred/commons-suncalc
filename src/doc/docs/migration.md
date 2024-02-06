@@ -2,6 +2,9 @@
 
 This document will help you migrate your code to the latest _suncalc_ version.
 
+## Version 3.9
+* For the spectator's altitude above sea level, `elevation()` (and `elevationFt()`) is now used instead of `height()` and `heightFt()`. The old methods are marked as deprecated, but still functional. Please change to the new methods, they are drop-in replacements.
+
 ## Version 3.6
 * Due to a very old bug, `MoonPosition.getParallacticAngle()` gave completely wrong results. If you used that method in your code or tests, prepare to get totally different values now.
 

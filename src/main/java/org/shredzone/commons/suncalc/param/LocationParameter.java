@@ -47,14 +47,44 @@ public interface LocationParameter<T> {
     T longitude(double lng);
 
     /**
+     * Sets the elevation.
+     *
+     * @param h
+     *            Elevation, in meters above sea level. Default: 0.0 m. Negative values
+     *            are silently changed to the acceptable minimum of 0.0 m.
+     * @return itself
+     * @see #elevationFt(double)
+     * @since 3.9
+     */
+    T elevation(double h);
+
+    /**
+     * Sets the elevation, in foot.
+     *
+     * @param ft
+     *            Elevation, in foot above sea level. Default: 0.0 ft. Negative values are
+     *            silently changed to the acceptable minimum of 0.0 ft.
+     * @return itself
+     * @see #elevation(double)
+     * @since 3.9
+     */
+    default T elevationFt(double ft) {
+        return elevation(ft * 0.3048);
+    }
+
+    /**
      * Sets the height.
      *
      * @param h
      *            Height, in meters above sea level. Default: 0.0 m. Negative values are
      *            silently changed to the acceptable minimum of 0.0 m.
      * @return itself
+     * @deprecated Use {@link #elevation(double)} instead.
      */
-    T height(double h);
+    @Deprecated
+    default T height(double h) {
+        return elevation(h);
+    }
 
     /**
      * Sets the height, in foot.
@@ -64,9 +94,11 @@ public interface LocationParameter<T> {
      *            silently changed to the acceptable minimum of 0.0 ft.
      * @return itself
      * @since 3.8
+     * @deprecated Use {@link #elevationFt(double)} instead.
      */
+    @Deprecated
     default T heightFt(double ft) {
-        return height(ft * 0.3048);
+        return elevationFt(ft);
     }
 
     /**
@@ -86,8 +118,8 @@ public interface LocationParameter<T> {
 
     /**
      * Sets the geolocation. In the given array, index 0 must contain the latitude, and
-     * index 1 must contain the longitude. An optional index 2 may contain the height, in
-     * meters.
+     * index 1 must contain the longitude. An optional index 2 may contain the elevation,
+     * in meters.
      * <p>
      * This call is meant to be used for coordinates stored in constants.
      *
@@ -100,7 +132,7 @@ public interface LocationParameter<T> {
             throw new IllegalArgumentException("Array must contain 2 or 3 doubles");
         }
         if (coords.length == 3) {
-            height(coords[2]);
+            elevation(coords[2]);
         }
         return at(coords[0], coords[1]);
     }
