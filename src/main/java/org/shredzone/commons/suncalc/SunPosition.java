@@ -68,6 +68,10 @@ public class SunPosition {
     private static class SunPositionBuilder extends BaseBuilder<Parameters> implements Parameters {
         @Override
         public SunPosition execute() {
+            if (!hasLocation()) {
+                throw new IllegalArgumentException("Geolocation is missing.");
+            }
+
             JulianDate t = getJulianDate();
 
             Vector horizontal = Sun.positionHorizontal(t, getLatitudeRad(), getLongitudeRad());

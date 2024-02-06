@@ -117,6 +117,10 @@ public final class MoonTimes {
 
         @Override
         public MoonTimes execute() {
+            if (!hasLocation()) {
+                throw new IllegalArgumentException("Geolocation is missing.");
+            }
+
             JulianDate jd = getJulianDate();
 
             Double rise = null;

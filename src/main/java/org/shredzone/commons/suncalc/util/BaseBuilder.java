@@ -25,6 +25,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
@@ -41,8 +42,8 @@ import org.shredzone.commons.suncalc.param.TimeParameter;
 public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>,
         TimeParameter<T>, Cloneable {
 
-    private double lat = 0.0;
-    private double lng = 0.0;
+    private @Nullable Double lat = null;
+    private @Nullable Double lng = null;
     private double elevation = 0.0;
     private ZonedDateTime dateTime = ZonedDateTime.now();
 
@@ -157,6 +158,9 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
      * @return Longitude, in degrees.
      */
     public double getLongitude() {
+        if (lng == null) {
+            throw new IllegalStateException("longitude is not set");
+        }
         return lng;
     }
 
@@ -166,6 +170,9 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
      * @return Latitude, in degrees.
      */
     public double getLatitude() {
+        if (lat == null) {
+            throw new IllegalStateException("latitude is not set");
+        }
         return lat;
     }
 
@@ -175,7 +182,7 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
      * @return Longitude, in radians.
      */
     public double getLongitudeRad() {
-        return toRadians(lng);
+        return toRadians(getLongitude());
     }
 
     /**
@@ -184,7 +191,7 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
      * @return Latitude, in radians.
      */
     public double getLatitudeRad() {
-        return toRadians(lat);
+        return toRadians(getLatitude());
     }
 
     /**
@@ -203,6 +210,15 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
      */
     public JulianDate getJulianDate() {
         return new JulianDate(dateTime);
+    }
+
+    /**
+     * Returns {@code true} if a geolocation has been set.
+     *
+     * @since 3.9
+     */
+    public boolean hasLocation() {
+        return lat != null && lng != null;
     }
 
 }

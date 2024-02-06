@@ -99,7 +99,7 @@ If no time-based parameter is given, the current date and time, and the system's
 
 ## Location-based Parameters
 
-Except of [`MoonPhase`](./apidocs/org/shredzone/commons/suncalc/MoonPhase.Parameters.html) and [`MoonIllumination`](./apidocs/org/shredzone/commons/suncalc/MoonIllumination.Parameters.html), all calculations require a geolocation as parameter. Some examples:
+The geolocation is required, and `execute()` will throw an exception if the latitude or longitude is missing. The elevation is optional, and is 0 meters (sea level) if not set.
 
 ```java
 // At 20.5°N, 18.3°E
@@ -124,9 +124,6 @@ The available location-based parameters are:
 * `elevation(double h)`: Elevation above sea level, in meters. Sea level is used by default.
 * `elevationFt(double h)`: Elevation above sea level, in foot. Sea level is used by default.
 * `sameLocationAs(LocationParameter<?> l)`: Copies the current location and elevation from any other parameter object. Note that subsequent changes to the other object are not adoped.
-
-!!! WARNING
-    The location parameters are not mandatory. However [Null Island](https://en.wikipedia.org/wiki/Null_Island) is assumed if they are not given, which is not very useful in most cases. Do not forget to set the parameters!
 
 !!! NOTE
     `elevation` cannot be negative. If you pass in a negative elevation, it is silently changed to the accepted minimum of 0 meters. For this reason, it is safe to pass coordinates from satellite-based navigation systems without range checking.

@@ -14,8 +14,8 @@
 package org.shredzone.commons.suncalc.util;
 
 import static java.lang.Math.toRadians;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+
+import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,7 +50,20 @@ public class BaseBuilderTest {
         TestBuilder p = new TestBuilder();
         TestBuilder r;
 
-        assertLatLng(p, 0.0, 0.0, 0.0);
+        assertThatIllegalStateException().isThrownBy(p::getLatitude);
+        assertThatIllegalStateException().isThrownBy(p::getLongitude);
+        assertThatNoException().isThrownBy(p::getElevation);
+        assertThat(p.hasLocation()).isFalse();
+
+        p.latitude(0.0);
+        assertThatNoException().isThrownBy(p::getLatitude);
+        assertThatIllegalStateException().isThrownBy(p::getLongitude);
+        assertThat(p.hasLocation()).isFalse();
+
+        p.longitude(0.0);
+        assertThatNoException().isThrownBy(p::getLatitude);
+        assertThatNoException().isThrownBy(p::getLongitude);
+        assertThat(p.hasLocation()).isTrue();
 
         r = p.at(12.34, 34.56);
         assertLatLng(p, 12.34, 34.56, 0.0);
@@ -103,52 +116,28 @@ public class BaseBuilderTest {
         TestBuilder p = new TestBuilder();
 
         // At least two array records are required
-        try {
-            p.at(new double[] { 12.0 });
-            failBecauseExceptionWasNotThrown(IllegalAccessException.class);
-        } catch (IllegalArgumentException ex) {
-            // expected
-        }
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> p.at(new double[] { 12.0 }));
 
         // No more than three array records are permitted
-        try {
-            p.at(new double[] { 12.0, 34.0, 56.0, 78.0 });
-            failBecauseExceptionWasNotThrown(IllegalAccessException.class);
-        } catch (IllegalArgumentException ex) {
-            // expected
-        }
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> p.at(new double[] { 12.0, 34.0, 56.0, 78.0 }));
 
         // Latitude out of range (negative)
-        try {
-            p.latitude(-90.1);
-            failBecauseExceptionWasNotThrown(IllegalAccessException.class);
-        } catch (IllegalArgumentException ex) {
-            // expected
-        }
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> p.latitude(-90.1));
 
         // Latitude out of range (positive)
-        try {
-            p.latitude(90.1);
-            failBecauseExceptionWasNotThrown(IllegalAccessException.class);
-        } catch (IllegalArgumentException ex) {
-            // expected
-        }
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> p.latitude(90.1));
 
         // Longitude out of range (negative)
-        try {
-            p.longitude(-180.1);
-            failBecauseExceptionWasNotThrown(IllegalAccessException.class);
-        } catch (IllegalArgumentException ex) {
-            // expected
-        }
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> p.longitude(-180.1));
 
         // Longitude out of range (positive)
-        try {
-            p.longitude(180.1);
-            failBecauseExceptionWasNotThrown(IllegalAccessException.class);
-        } catch (IllegalArgumentException ex) {
-            // expected
-        }
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> p.longitude(180.1));
     }
 
     @Test

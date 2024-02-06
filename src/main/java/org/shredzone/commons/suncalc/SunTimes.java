@@ -278,6 +278,10 @@ public class SunTimes {
 
         @Override
         public SunTimes execute() {
+            if (!hasLocation()) {
+                throw new IllegalArgumentException("Geolocation is missing.");
+            }
+
             JulianDate jd = getJulianDate();
 
             Double rise = null;

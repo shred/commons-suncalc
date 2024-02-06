@@ -71,6 +71,10 @@ public class MoonPosition {
     private static class MoonPositionBuilder extends BaseBuilder<Parameters> implements Parameters {
         @Override
         public MoonPosition execute() {
+            if (!hasLocation()) {
+                throw new IllegalArgumentException("Geolocation is missing.");
+            }
+
             JulianDate t = getJulianDate();
 
             double phi = getLatitudeRad();
