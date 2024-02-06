@@ -37,11 +37,18 @@ public class MoonIllumination {
     private final double fraction;
     private final double phase;
     private final double angle;
+    private final double elongation;
+    private final double radius;
+    private final double crescentWidth;
 
-    private MoonIllumination(double fraction, double phase, double angle) {
+    private MoonIllumination(double fraction, double phase, double angle,
+                             double elongation, double radius, double crescentWidth) {
         this.fraction = fraction;
         this.phase = phase;
         this.angle = angle;
+        this.elongation = elongation;
+        this.radius = radius;
+        this.crescentWidth = crescentWidth;
     }
 
     /**
@@ -87,10 +94,21 @@ public class MoonIllumination {
                     sin(s.getTheta()) * cos(m.getTheta()) - cos(s.getTheta()) * sin(m.getTheta()) * cos(s.getPhi() - m.getPhi())
             );
 
+            double r = m.subtract(s).norm();
+            double re = s.norm();
+            double d = m.norm();
+            double elongation = acos((d*d + re*re - r*r) / (2.0*d*re));
+
+            double moonRadius = Moon.angularRadius(m.getR());
+            double crescentWidth = moonRadius * (1 - cos(elongation));
+
             return new MoonIllumination(
                             (1 + cos(phi)) / 2,
                             toDegrees(phi * signum(sunMoon.getTheta())),
-                            toDegrees(angle));
+                            toDegrees(angle),
+                            toDegrees(elongation),
+                            toDegrees(moonRadius),
+                            toDegrees(crescentWidth));
         }
     }
 
@@ -136,12 +154,46 @@ public class MoonIllumination {
         return MoonPhase.Phase.toPhase(phase + 180.0);
     }
 
+    /**
+     * The elongation, which is the angular distance between the moon and the sun as
+     * observed from a specific location on earth.
+     *
+     * @return Elongation between moon and sun, in degrees.
+     * @since 3.9
+     */
+    public double getElongation() {
+        return elongation;
+    }
+
+    /**
+     * The radius of the moon disk, as observed from a specific location on earth.
+     *
+     * @return Moon radius, in degrees.
+     * @since 3.9
+     */
+    public double getRadius() {
+        return radius;
+    }
+
+    /**
+     * The width of the moon crescent, as observed from a specific location on earth.
+     *
+     * @return Crescent width, in degrees.
+     * @since 3.9
+     */
+    public double getCrescentWidth() {
+        return crescentWidth;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("MoonIllumination[fraction=").append(fraction);
         sb.append(", phase=").append(phase);
         sb.append("°, angle=").append(angle);
+        sb.append("°, elongation=").append(elongation);
+        sb.append("°, radius=").append(radius);
+        sb.append("°, crescentWidth=").append(crescentWidth);
         sb.append("°]");
         return sb.toString();
     }

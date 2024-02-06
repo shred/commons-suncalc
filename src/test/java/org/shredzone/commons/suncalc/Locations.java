@@ -70,4 +70,16 @@ public final class Locations {
     public static final double[] SANTA_MONICA = new double[] { 34.0, -118.5 };
     public static final ZoneId SANTA_MONICA_TZ = ZoneId.of("America/Los_Angeles");
 
+    /**
+     * Baghdad, Iraq. To test topocentric moon illumination.
+     */
+    public static final double[] BAGHDAD = new double[] { 33.338611, 44.393888 };
+    public static final ZoneId BAGHDAD_TZ = ZoneId.of("Asia/Baghdad");
+
+    /**
+     * Cape Town, South Africa. To test topocentric moon illumination.
+     */
+    public static final double[] CAPETOWN = new double[] { -33.966666, 18.6 };
+    public static final ZoneId CAPETOWN_TZ = ZoneId.of("Africa/Johannesburg");
+
 }
