@@ -3,6 +3,7 @@
 This document will help you migrate your code to the latest _suncalc_ version.
 
 ## Version 3.9
+* `MoonIllumination` now permits to set an optional geolocation. If set, the results are topocentric. If not set, the result is geocentric, which was the default behavior. For this reason, no migration is necessary here.
 * In previous versions, the geolocation was assumed to be 0°N 0°E ([Null Island](https://en.wikipedia.org/wiki/Null_Island)) if not set. This was not very useful in practice. Starting now, `execute()` will throw an exception if latitude or longitude is not set. To emulate the old behavior, use `at(0.0, 0.0)` as parameter. However, if you get an exception now, it rather means that you have used suncalc wrong.
 * For the spectator's altitude above sea level, `elevation()` and `elevationFt()` is now used instead of `height()` and `heightFt()`. The old methods are marked as deprecated, but are still functional. Please change to the new methods, they are drop-in replacements.
 

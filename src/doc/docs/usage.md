@@ -113,6 +113,11 @@ final double[] COLOGNE = new double[] { 50.938056, 6.956944 };
 SunPosition.compute().at(COLOGNE);
 ```
 
+There are two exceptions:
+
+* [`MoonIllumination`](./apidocs/org/shredzone/commons/suncalc/MoonIllumination.Parameters.html):  If the geolocation is set, the result is topocentric. If the geolocation is unset, the result is geocentric.
+* [`MoonPhase`](./apidocs/org/shredzone/commons/suncalc/MoonPhase.Parameters.html): The geolocation is not used here.
+
 The available location-based parameters are:
 
 * `at(double lat, double lng)`: Latitude and longitude to be used for computation.

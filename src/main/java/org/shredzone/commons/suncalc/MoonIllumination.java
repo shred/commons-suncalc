@@ -17,6 +17,7 @@ import static java.lang.Math.*;
 
 import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.GenericParameter;
+import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
 import org.shredzone.commons.suncalc.util.BaseBuilder;
 import org.shredzone.commons.suncalc.util.JulianDate;
@@ -26,6 +27,10 @@ import org.shredzone.commons.suncalc.util.Vector;
 
 /**
  * Calculates the illumination of the moon.
+ * <p>
+ * Starting with v3.9, a geolocation can be set optionally. If set, the results will be
+ * topocentric, relative to the given location. If not set, the result is geocentric,
+ * which was the standard behavior before v3.9.
  */
 public class MoonIllumination {
 
@@ -54,6 +59,7 @@ public class MoonIllumination {
     public interface Parameters extends
             GenericParameter<Parameters>,
             TimeParameter<Parameters>,
+            LocationParameter<Parameters>,
             Builder<MoonIllumination> {
     }
 
@@ -65,8 +71,15 @@ public class MoonIllumination {
         @Override
         public MoonIllumination execute() {
             JulianDate t = getJulianDate();
-            Vector s = Sun.position(t);
-            Vector m = Moon.position(t);
+            Vector s, m;
+            if (hasLocation()) {
+                s = Sun.positionTopocentric(t, getLatitudeRad(), getLongitudeRad(), getElevation());
+                m = Moon.positionTopocentric(t, getLatitudeRad(), getLongitudeRad(), getElevation());
+            } else {
+                s = Sun.position(t);
+                m = Moon.position(t);
+            }
+
             double phi = PI - acos(m.dot(s) / (m.getR() * s.getR()));
             Vector sunMoon = m.cross(s);
             double angle = atan2(
