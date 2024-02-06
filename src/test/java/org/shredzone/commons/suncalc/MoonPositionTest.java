@@ -16,8 +16,6 @@ package org.shredzone.commons.suncalc;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.shredzone.commons.suncalc.Locations.*;
 
-import java.util.TimeZone;
-
 import org.assertj.core.data.Offset;
 import org.junit.Test;
 
