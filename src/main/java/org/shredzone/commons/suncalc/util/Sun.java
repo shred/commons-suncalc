@@ -81,6 +81,31 @@ public final class Sun {
     }
 
     /**
+     * Calculates the topocentric position of the sun.
+     * <p>
+     * Atmospheric refraction is <em>not</em> taken into account.
+     *
+     * @param date
+     *            {@link JulianDate} to be used
+     * @param lat
+     *            Latitude, in radians
+     * @param lng
+     *            Longitute, in radians
+     * @param elev
+     *            Elevation, in meters
+     * @return {@link Vector} of topocentric sun position
+     * @since 3.9
+     */
+    public static Vector positionTopocentric(JulianDate date, double lat, double lng, double elev) {
+        Vector pos = positionHorizontal(date, lat, lng);
+        return Vector.ofPolar(
+                pos.getPhi(),
+                pos.getTheta() - parallax(elev, pos.getR()),
+                pos.getR()
+        );
+    }
+
+    /**
      * Returns the angular radius of the sun.
      *
      * @param distance

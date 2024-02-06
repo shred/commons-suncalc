@@ -110,7 +110,7 @@ public final class ExtendedMath {
      * @param elevation
      *            Observer's elevation, in meters above sea level. Must not be negative.
      * @param distance
-     *            Distance of the sun, in kilometers.
+     *            Distance of the object, in kilometers.
      * @return parallax, in radians
      */
     public static double parallax(double elevation, double distance) {
