@@ -14,8 +14,6 @@
 package org.shredzone.commons.suncalc;
 
 import static java.lang.Math.toDegrees;
-import static java.lang.Math.toRadians;
-import static org.shredzone.commons.suncalc.util.ExtendedMath.equatorialToHorizontal;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.refraction;
 
 import org.shredzone.commons.suncalc.param.Builder;
@@ -72,11 +70,7 @@ public class SunPosition {
         public SunPosition execute() {
             JulianDate t = getJulianDate();
 
-            double lw = toRadians(-getLongitude());
-            double phi = toRadians(getLatitude());
-            Vector c = Sun.position(t);
-            double h = t.getGreenwichMeanSiderealTime() - lw - c.getPhi();
-            Vector horizontal = equatorialToHorizontal(h, c.getTheta(), c.getR(), phi);
+            Vector horizontal = Sun.positionHorizontal(t, getLatitudeRad(), getLongitudeRad());
             double hRef = refraction(horizontal.getTheta());
 
             return new SunPosition(horizontal.getPhi(),
