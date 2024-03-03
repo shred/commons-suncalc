@@ -93,14 +93,8 @@ public class MoonIllumination {
         @Override
         public MoonIllumination execute() {
             JulianDate t = getJulianDate();
-            Vector s, m;
-            if (hasLocation()) {
-                s = Sun.positionTopocentric(t, getLatitudeRad(), getLongitudeRad(), getElevation());
-                m = Moon.positionTopocentric(t, getLatitudeRad(), getLongitudeRad(), getElevation());
-            } else {
-                s = Sun.position(t);
-                m = Moon.position(t);
-            }
+            Vector s = Sun.position(t);
+            Vector m = Moon.position(t);
 
             double phi = PI - acos(m.dot(s) / (m.getR() * s.getR()));
             Vector sunMoon = m.cross(s);
@@ -109,12 +103,20 @@ public class MoonIllumination {
                     sin(s.getTheta()) * cos(m.getTheta()) - cos(s.getTheta()) * sin(m.getTheta()) * cos(s.getPhi() - m.getPhi())
             );
 
-            double r = m.subtract(s).norm();
-            double re = s.norm();
-            double d = m.norm();
-            double elongation = acos((d*d + re*re - r*r) / (2.0*d*re));
+            Vector sTopo, mTopo;
+            if (hasLocation()) {
+                sTopo = Sun.positionTopocentric(t, getLatitudeRad(), getLongitudeRad(), getElevation());
+                mTopo = Moon.positionTopocentric(t, getLatitudeRad(), getLongitudeRad(), getElevation());
+            } else {
+                sTopo = s;
+                mTopo = m;
+            }
 
-            double moonRadius = Moon.angularRadius(m.getR());
+            double r = mTopo.subtract(sTopo).norm();
+            double re = sTopo.norm();
+            double d = mTopo.norm();
+            double elongation = acos((d*d + re*re - r*r) / (2.0*d*re));
+            double moonRadius = Moon.angularRadius(mTopo.getR());
             double crescentWidth = moonRadius * (1 - cos(elongation));
 
             return new MoonIllumination(
