@@ -133,11 +133,18 @@ The available location-based parameters are:
 !!! NOTE
     `elevation` cannot be negative. If you pass in a negative elevation, it is silently changed to the accepted minimum of 0 meters. For this reason, it is safe to pass coordinates from satellite-based navigation systems without range checking.
 
-## Time Range
+## Window-based Parameters
 
-By default, [`SunTimes`](./apidocs/org/shredzone/commons/suncalc/SunTimes.Parameters.html) and [`MoonTimes`](./apidocs/org/shredzone/commons/suncalc/MoonTimes.Parameters.html) will calculate a full cycle of the sun or moon. This means that rise, set, noon and nadir times may be more than 24 hours ahead.
+By default, [`SunTimes`](./apidocs/org/shredzone/commons/suncalc/SunTimes.Parameters.html) and [`MoonTimes`](./apidocs/org/shredzone/commons/suncalc/MoonTimes.Parameters.html) will calculate a full cycle of the sun or moon. This means that rise, set, noon, and nadir times may be more than 24 hours ahead. You can limit this time window.
 
-You can limit the time window to the next 24 hours by using the `oneDay()` parameter. You can also give any other window by using `limit(Duration duration)`. If the sun or moon does not rise or set within that window, the appropriate getters return `null`. You can check if the sun or moon is always above or below the horizon, by checking `isAlwaysUp()` and `isAlwaysDown()`.
+The available window-based parameters are:
+
+* `limit(Duration duration)`: Limits the time window to the given duration. Must be positive!
+* `oneDay()`: Limits the time window to 24 hours.
+* `fullCycle()`: No limit. Calculation will find all rise, set, noon, and nadir times.
+* `sameWindowAs(WindowParameter<?> w)`: Copies the current time window from any other parameter object. Note that subsequent changes to the other object are not adoped.
+
+If the sun or moon does not rise or set within the given window, the appropriate getters return `null`. You can check if the sun or moon is always above or below the horizon, by checking `isAlwaysUp()` and `isAlwaysDown()`.
 
 ## Twilight
 

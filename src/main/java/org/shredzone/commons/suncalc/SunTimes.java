@@ -24,6 +24,7 @@ import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
+import org.shredzone.commons.suncalc.param.WindowParameter;
 import org.shredzone.commons.suncalc.util.BaseBuilder;
 import org.shredzone.commons.suncalc.util.JulianDate;
 import org.shredzone.commons.suncalc.util.QuadraticInterpolation;
@@ -69,6 +70,7 @@ public class SunTimes {
             GenericParameter<Parameters>,
             LocationParameter<Parameters>,
             TimeParameter<Parameters>,
+            WindowParameter<Parameters>,
             Builder<SunTimes> {
 
         /**
@@ -91,36 +93,6 @@ public class SunTimes {
          * @return itself
          */
         Parameters twilight(double angle);
-
-        /**
-         * Limits the calculation window to the given {@link Duration}.
-         *
-         * @param duration
-         *         Duration of the calculation window. Must be positive.
-         * @return itself
-         * @since 3.1
-         */
-        Parameters limit(Duration duration);
-
-        /**
-         * Limits the time window to the next 24 hours.
-         *
-         * @return itself
-         */
-        default Parameters oneDay() {
-            return limit(Duration.ofDays(1L));
-        }
-
-        /**
-         * Computes until all rise, set, noon, and nadir times are found.
-         * <p>
-         * This is the default.
-         *
-         * @return itself
-         */
-        default Parameters fullCycle() {
-            return limit(Duration.ofDays(365L));
-        }
     }
 
     /**
@@ -251,7 +223,6 @@ public class SunTimes {
     private static class SunTimesBuilder extends BaseBuilder<Parameters> implements Parameters {
         private double angle = Twilight.VISUAL.getAngleRad();
         private @Nullable Double position = Twilight.VISUAL.getAngularPosition();
-        private Duration limit = Duration.ofDays(365L);
 
         @Override
         public Parameters twilight(Twilight twilight) {
@@ -264,15 +235,6 @@ public class SunTimes {
         public Parameters twilight(double angle) {
             this.angle = toRadians(angle);
             this.position = null;
-            return this;
-        }
-
-        @Override
-        public Parameters limit(Duration duration) {
-            if (duration == null || duration.isNegative()) {
-                throw new IllegalArgumentException("duration must be positive");
-            }
-            limit = duration;
             return this;
         }
 
@@ -293,7 +255,7 @@ public class SunTimes {
             double ye;
 
             int hour = 0;
-            double limitHours = limit.toMillis() / (60 * 60 * 1000.0);
+            double limitHours = getDuration().toMillis() / (60 * 60 * 1000.0);
             int maxHours = (int) ceil(limitHours);
 
             double y_minus = correctedSunHeight(jd.atHour(hour - 1.0));

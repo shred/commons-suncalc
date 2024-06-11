@@ -25,6 +25,7 @@ import org.shredzone.commons.suncalc.param.Builder;
 import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
+import org.shredzone.commons.suncalc.param.WindowParameter;
 import org.shredzone.commons.suncalc.util.BaseBuilder;
 import org.shredzone.commons.suncalc.util.JulianDate;
 import org.shredzone.commons.suncalc.util.Moon;
@@ -65,37 +66,8 @@ public final class MoonTimes {
             GenericParameter<Parameters>,
             LocationParameter<Parameters>,
             TimeParameter<Parameters>,
+            WindowParameter<Parameters>,
             Builder<MoonTimes> {
-
-        /**
-         * Limits the calculation window to the given {@link Duration}.
-         *
-         * @param duration
-         *         Duration of the calculation window. Must be positive.
-         * @return itself
-         * @since 3.1
-         */
-        Parameters limit(Duration duration);
-
-        /**
-         * Limits the time window to the next 24 hours.
-         *
-         * @return itself
-         */
-        default Parameters oneDay() {
-            return limit(Duration.ofDays(1L));
-        }
-
-        /**
-         * Computes until all rise and set times are found.
-         * <p>
-         * This is the default.
-         *
-         * @return itself
-         */
-        default Parameters fullCycle() {
-            return limit(Duration.ofDays(365L));
-        }
     }
 
     /**
@@ -103,17 +75,7 @@ public final class MoonTimes {
      * and creates a {@link MoonTimes} object that holds the result.
      */
     private static class MoonTimesBuilder extends BaseBuilder<Parameters> implements Parameters {
-        private Duration limit = Duration.ofDays(365L);
         private double refraction = apparentRefraction(0.0);
-
-        @Override
-        public Parameters limit(Duration duration) {
-            if (duration == null || duration.isNegative()) {
-                throw new IllegalArgumentException("duration must be positive");
-            }
-            limit = duration;
-            return this;
-        }
 
         @Override
         public MoonTimes execute() {
@@ -130,7 +92,7 @@ public final class MoonTimes {
             double ye;
 
             int hour = 0;
-            double limitHours = limit.toMillis() / (60 * 60 * 1000.0);
+            double limitHours = getDuration().toMillis() / (60 * 60 * 1000.0);
             int maxHours = (int) ceil(limitHours);
 
             double y_minus = correctedMoonHeight(jd.atHour(hour - 1.0));

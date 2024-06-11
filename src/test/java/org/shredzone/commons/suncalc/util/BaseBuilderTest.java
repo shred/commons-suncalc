@@ -17,6 +17,7 @@ import static java.lang.Math.toRadians;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -275,16 +276,50 @@ public class BaseBuilderTest {
     }
 
     @Test
+    public void testWindowParameters() {
+        TestBuilder p = new TestBuilder();
+        TestBuilder r;
+
+        assertThat(p.getDuration()).isNotNull().isEqualTo(Duration.ofDays(365L));
+
+        r = p.oneDay();
+        assertThat(p.getDuration()).isEqualTo(Duration.ofDays(1L));
+        assertThat(r).isSameAs(p);
+
+        r = p.fullCycle();
+        assertThat(p.getDuration()).isEqualTo(Duration.ofDays(365L));
+        assertThat(r).isSameAs(p);
+
+        r = p.limit(Duration.ofHours(12L));
+        assertThat(p.getDuration()).isEqualTo(Duration.ofHours(12L));
+        assertThat(r).isSameAs(p);
+
+        TestBuilder s = new TestBuilder();
+        s.sameWindowAs(p);
+        assertThat(p.getDuration()).isEqualTo(Duration.ofHours(12L));
+
+        assertThatNullPointerException().isThrownBy(() -> {
+            p.limit(null);
+        });
+
+        assertThatIllegalArgumentException().isThrownBy(() -> {
+            p.limit(Duration.ofDays(14L).negated());
+        });
+    }
+
+    @Test
     public void testCopy() {
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime tomorrow = now.plusDays(1);
         ZonedDateTime yesterday = now.minusDays(1);
+        Duration duration = Duration.ofDays(60L);
 
         // Set test parameters
         TestBuilder p1 = new TestBuilder();
         p1.at(Locations.COLOGNE);
         p1.on(now);
         p1.elevation(123.0);
+        p1.limit(duration);
 
         // Make sure copy has identical values
         TestBuilder p2 = p1.copy();
@@ -292,26 +327,33 @@ public class BaseBuilderTest {
         assertThat(p2.getLongitude()).isEqualTo(Locations.COLOGNE[1]);
         assertThat(p2.getJulianDate().getDateTime()).isEqualTo(now);
         assertThat(p2.getElevation()).isEqualTo(123.0);
+        assertThat(p2.getDuration()).isEqualTo(Duration.ofDays(60L));
 
         // Make sure changes to p1 won't affect p2
         p1.at(Locations.SINGAPORE);
         p1.on(tomorrow);
+        p1.oneDay();
         assertThat(p1.getLatitude()).isEqualTo(Locations.SINGAPORE[0]);
         assertThat(p1.getLongitude()).isEqualTo(Locations.SINGAPORE[1]);
         assertThat(p1.getJulianDate().getDateTime()).isEqualTo(tomorrow);
+        assertThat(p1.getDuration()).isEqualTo(Duration.ofDays(1L));
         assertThat(p2.getLatitude()).isEqualTo(Locations.COLOGNE[0]);
         assertThat(p2.getLongitude()).isEqualTo(Locations.COLOGNE[1]);
         assertThat(p2.getJulianDate().getDateTime()).isEqualTo(now);
+        assertThat(p2.getDuration()).isEqualTo(Duration.ofDays(60L));
 
         // Make sure changes to p2 won't affect p1
         p2.at(Locations.WELLINGTON);
         p2.on(yesterday);
+        p2.fullCycle();
         assertThat(p1.getLatitude()).isEqualTo(Locations.SINGAPORE[0]);
         assertThat(p1.getLongitude()).isEqualTo(Locations.SINGAPORE[1]);
         assertThat(p1.getJulianDate().getDateTime()).isEqualTo(tomorrow);
+        assertThat(p1.getDuration()).isEqualTo(Duration.ofDays(1L));
         assertThat(p2.getLatitude()).isEqualTo(Locations.WELLINGTON[0]);
         assertThat(p2.getLongitude()).isEqualTo(Locations.WELLINGTON[1]);
         assertThat(p2.getJulianDate().getDateTime()).isEqualTo(yesterday);
+        assertThat(p2.getDuration()).isEqualTo(Duration.ofDays(365L));
     }
 
     private void assertLatLng(TestBuilder p, double lat, double lng, double elev) {

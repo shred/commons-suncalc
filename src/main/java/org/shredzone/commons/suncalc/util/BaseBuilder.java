@@ -16,6 +16,7 @@ package org.shredzone.commons.suncalc.util;
 import static java.lang.Math.max;
 import static java.lang.Math.toRadians;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,23 +30,26 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.shredzone.commons.suncalc.param.GenericParameter;
 import org.shredzone.commons.suncalc.param.LocationParameter;
 import org.shredzone.commons.suncalc.param.TimeParameter;
+import org.shredzone.commons.suncalc.param.WindowParameter;
 
 /**
- * A base implementation of {@link LocationParameter} and {@link TimeParameter}.
+ * A base implementation of {@link LocationParameter}, {@link TimeParameter}, and
+ * {@link WindowParameter}.
  * <p>
  * For internal use only.
  *
  * @param <T>
- *            Type of the final builder
+ *         Type of the final builder
  */
 @SuppressWarnings("unchecked")
 public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>,
-        TimeParameter<T>, Cloneable {
+        TimeParameter<T>, WindowParameter<T>, Cloneable {
 
     private @Nullable Double lat = null;
     private @Nullable Double lng = null;
     private double elevation = 0.0;
     private ZonedDateTime dateTime = ZonedDateTime.now();
+    private Duration duration = Duration.ofDays(365L);
 
     @Override
     public T on(ZonedDateTime dateTime) {
@@ -122,6 +126,15 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
         return (T) this;
     }
 
+    public T limit(Duration duration) {
+        Objects.requireNonNull(duration, "duration");
+        if (duration.isNegative()) {
+            throw new IllegalArgumentException("duration must be positive");
+        }
+        this.duration = duration;
+        return (T) this;
+    }
+
     @Override
     public T sameTimeAs(TimeParameter<?> t) {
         if (! (t instanceof BaseBuilder)) {
@@ -140,6 +153,16 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
         this.lat = origin.lat;
         this.lng = origin.lng;
         this.elevation = origin.elevation;
+        return (T) this;
+    }
+
+    @Override
+    public T sameWindowAs(WindowParameter<?> w) {
+        if (! (w instanceof BaseBuilder)) {
+            throw new IllegalArgumentException("Cannot read the WindowParameter");
+        }
+        BaseBuilder<?> origin = (BaseBuilder<?>) w;
+        this.duration = origin.duration;
         return (T) this;
     }
 
@@ -229,6 +252,15 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
     public void clearLocation() {
         lat = null;
         lng = null;
+    }
+
+    /**
+     * Returns the duration of the time window.
+     *
+     * @since 3.11
+     */
+    public Duration getDuration() {
+        return duration;
     }
 
 }
