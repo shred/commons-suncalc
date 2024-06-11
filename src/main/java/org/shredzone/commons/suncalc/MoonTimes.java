@@ -14,6 +14,7 @@
 package org.shredzone.commons.suncalc;
 
 import static java.lang.Math.ceil;
+import static java.lang.Math.floor;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.apparentRefraction;
 import static org.shredzone.commons.suncalc.util.ExtendedMath.parallax;
 
@@ -91,9 +92,21 @@ public final class MoonTimes {
             boolean alwaysDown = false;
             double ye;
 
+            int hourStep;
+            double lowerLimitHours, upperLimitHours;
+            if (getDuration().isNegative()) {
+                hourStep = -1;
+                lowerLimitHours = getDuration().toMillis() / (60 * 60 * 1000.0);
+                upperLimitHours = 0.0;
+            } else {
+                hourStep = 1;
+                lowerLimitHours = 0.0;
+                upperLimitHours = getDuration().toMillis() / (60 * 60 * 1000.0);;
+            }
+
             int hour = 0;
-            double limitHours = getDuration().toMillis() / (60 * 60 * 1000.0);
-            int maxHours = (int) ceil(limitHours);
+            int minHours = (int) floor(lowerLimitHours);
+            int maxHours = (int) ceil(upperLimitHours);
 
             double y_minus = correctedMoonHeight(jd.atHour(hour - 1.0));
             double y_0 = correctedMoonHeight(jd.atHour(hour));
@@ -105,19 +118,19 @@ public final class MoonTimes {
                 alwaysDown = true;
             }
 
-            while (hour <= maxHours) {
+            while (hour <= maxHours && hour >= minHours) {
                 QuadraticInterpolation qi = new QuadraticInterpolation(y_minus, y_0, y_plus);
                 ye = qi.getYe();
 
                 if (qi.getNumberOfRoots() == 1) {
                     double rt = qi.getRoot1() + hour;
                     if (y_minus < 0.0) {
-                        if (rise == null && rt >= 0.0 && rt < limitHours) {
+                        if (rise == null && rt >= lowerLimitHours && rt < upperLimitHours) {
                             rise = rt;
                             alwaysDown = false;
                         }
                     } else {
-                        if (set == null && rt >= 0.0 && rt < limitHours) {
+                        if (set == null && rt >= lowerLimitHours && rt < upperLimitHours) {
                             set = rt;
                             alwaysUp = false;
                         }
@@ -125,14 +138,14 @@ public final class MoonTimes {
                 } else if (qi.getNumberOfRoots() == 2) {
                     if (rise == null) {
                         double rt = hour + (ye < 0.0 ? qi.getRoot2() : qi.getRoot1());
-                        if (rt >= 0.0 && rt < limitHours) {
+                        if (rt >= lowerLimitHours && rt < upperLimitHours) {
                             rise = rt;
                             alwaysDown = false;
                         }
                     }
                     if (set == null) {
                         double rt = hour + (ye < 0.0 ? qi.getRoot1() : qi.getRoot2());
-                        if (rt >= 0.0 && rt < limitHours) {
+                        if (rt >= lowerLimitHours && rt < upperLimitHours) {
                             set = rt;
                             alwaysUp = false;
                         }
@@ -143,10 +156,16 @@ public final class MoonTimes {
                     break;
                 }
 
-                hour++;
-                y_minus = y_0;
-                y_0 = y_plus;
-                y_plus = correctedMoonHeight(jd.atHour(hour + 1.0));
+                hour += hourStep;
+                if (hourStep > 0) {
+                    y_minus = y_0;
+                    y_0 = y_plus;
+                    y_plus = correctedMoonHeight(jd.atHour(hour + 1.0));
+                } else {
+                    y_plus = y_0;
+                    y_0 = y_minus;
+                    y_minus = correctedMoonHeight(jd.atHour(hour - 1.0));
+                }
             }
 
             return new MoonTimes(

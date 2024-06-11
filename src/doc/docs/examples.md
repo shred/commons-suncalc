@@ -113,7 +113,27 @@ Sunset:  2020-09-04T23:55:46-04:00[Canada/Eastern]
 
 The sun will set on September 4th, and will rise again about 30 minutes later. This is technically correct, because Alert is above the Arctic Circle, where the sun never sets all summer.
 
-However, we wanted to get a result for June 15th, so we limit the window to 24 hours:
+So the sun will set about three months later, that's interesting! When did it raise for the last time before Northern summer? We can use `.reverse()` for that. It changes the search direction, so the given date is the end date of our search window.
+
+```java
+SunTimes juneReverse = SunTimes.compute()
+        .on(2020, 6, 15)            // June 15th, 2020, starting midnight
+        .at(ALERT_CANADA)
+        .timezone(ALERT_TZ)
+        .reverse()                  // reverse the search direction!
+        .execute();
+System.out.println("Sunrise: " + juneReverse.getRise());
+System.out.println("Sunset:  " + juneReverse.getSet());
+```
+
+The result:
+
+```text
+Sunrise: 2020-04-06T00:35:04-04:00[Canada/Eastern]
+Sunset:  2020-04-05T23:44:05-04:00[Canada/Eastern]
+```
+
+Now we know that the sun was rising for the last time on April 6th, and will set again on September 4th. However, we initially wanted to get a result for June 15th, so we limit the window to 24 hours:
 
 ```java
 SunTimes june15OnlyCycle = SunTimes.compute()

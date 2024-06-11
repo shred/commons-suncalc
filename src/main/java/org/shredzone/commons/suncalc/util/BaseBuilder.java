@@ -49,6 +49,7 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
     private @Nullable Double lng = null;
     private double elevation = 0.0;
     private ZonedDateTime dateTime = ZonedDateTime.now();
+    private boolean reverse = false;
     private Duration duration = Duration.ofDays(365L);
 
     @Override
@@ -128,10 +129,20 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
 
     public T limit(Duration duration) {
         Objects.requireNonNull(duration, "duration");
-        if (duration.isNegative()) {
-            throw new IllegalArgumentException("duration must be positive");
-        }
         this.duration = duration;
+        if (duration.isNegative()) {
+            reverse();
+        }
+        return (T) this;
+    }
+
+    public T reverse() {
+        reverse = true;
+        return (T) this;
+    }
+
+    public T forward() {
+        reverse = false;
         return (T) this;
     }
 
@@ -163,6 +174,7 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
         }
         BaseBuilder<?> origin = (BaseBuilder<?>) w;
         this.duration = origin.duration;
+        this.reverse = origin.reverse;
         return (T) this;
     }
 
@@ -260,6 +272,9 @@ public class BaseBuilder<T> implements GenericParameter<T>, LocationParameter<T>
      * @since 3.11
      */
     public Duration getDuration() {
+        if (reverse != duration.isNegative()) {
+            return duration.negated();
+        }
         return duration;
     }
 

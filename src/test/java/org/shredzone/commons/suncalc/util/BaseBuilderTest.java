@@ -290,20 +290,47 @@ public class BaseBuilderTest {
         assertThat(p.getDuration()).isEqualTo(Duration.ofDays(365L));
         assertThat(r).isSameAs(p);
 
+        r = p.limit(Duration.ofDays(14L).negated());
+        assertThat(p.getDuration()).isEqualTo(Duration.ofDays(14L).negated());
+        assertThat(r).isSameAs(p);
+
+        r = p.forward();
+        assertThat(p.getDuration()).isEqualTo(Duration.ofDays(14L));
+        assertThat(r).isSameAs(p);
+
+        // Second forward won't negate again!
+        r = p.forward();
+        assertThat(p.getDuration()).isEqualTo(Duration.ofDays(14L));
+        assertThat(r).isSameAs(p);
+
+        r = p.reverse();
+        assertThat(p.getDuration()).isEqualTo(Duration.ofDays(14L).negated());
+        assertThat(r).isSameAs(p);
+
+        // Second reverse won't negate again!
+        r = p.reverse();
+        assertThat(p.getDuration()).isEqualTo(Duration.ofDays(14L).negated());
+        assertThat(r).isSameAs(p);
+
+        r = p.forward();
+        assertThat(p.getDuration()).isEqualTo(Duration.ofDays(14L));
+        assertThat(r).isSameAs(p);
+
         r = p.limit(Duration.ofHours(12L));
         assertThat(p.getDuration()).isEqualTo(Duration.ofHours(12L));
         assertThat(r).isSameAs(p);
 
         TestBuilder s = new TestBuilder();
         s.sameWindowAs(p);
-        assertThat(p.getDuration()).isEqualTo(Duration.ofHours(12L));
+        assertThat(s.getDuration()).isEqualTo(Duration.ofHours(12L));
+
+        p.reverse();
+        TestBuilder s2 = new TestBuilder();
+        s2.sameWindowAs(p);
+        assertThat(s2.getDuration()).isEqualTo(Duration.ofHours(12L).negated());
 
         assertThatNullPointerException().isThrownBy(() -> {
             p.limit(null);
-        });
-
-        assertThatIllegalArgumentException().isThrownBy(() -> {
-            p.limit(Duration.ofDays(14L).negated());
         });
     }
 

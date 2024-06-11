@@ -41,6 +41,12 @@ public class MoonTimesTest {
         assertThat(mt.getSet()).as("set").isEqualTo("2017-07-12T06:53:30Z");
         assertThat(mt.isAlwaysUp()).as("alwaysup").isFalse();
         assertThat(mt.isAlwaysDown()).as("alwaysdown").isFalse();
+
+        MoonTimes mtr = MoonTimes.compute().on(2017, 7, 12).utc().at(COLOGNE).reverse().execute();
+        assertThat(mtr.getRise()).as("rise").isEqualTo("2017-07-11T20:56:23Z");
+        assertThat(mtr.getSet()).as("set").isEqualTo("2017-07-11T05:49:00Z");
+        assertThat(mtr.isAlwaysUp()).as("alwaysup").isFalse();
+        assertThat(mtr.isAlwaysDown()).as("alwaysdown").isFalse();
     }
 
     @Test

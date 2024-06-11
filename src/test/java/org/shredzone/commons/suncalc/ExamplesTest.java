@@ -80,6 +80,15 @@ public class ExamplesTest {
         System.out.println("Sunrise: " + june.getRise());
         System.out.println("Sunset:  " + june.getSet());
 
+        SunTimes juneReverse = SunTimes.compute()
+                .on(2020, 6, 15)            // June 15th, 2020, starting midnight
+                .at(ALERT_CANADA)
+                .timezone(ALERT_TZ)
+                .reverse()
+                .execute();
+        System.out.println("Sunrise: " + juneReverse.getRise());
+        System.out.println("Sunset:  " + juneReverse.getSet());
+
         SunTimes june15OnlyCycle = SunTimes.compute()
                 .on(2020, 6, 15)            // June 15th, 2020, starting midnight
                 .at(ALERT_CANADA)

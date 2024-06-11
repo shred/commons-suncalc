@@ -139,9 +139,11 @@ By default, [`SunTimes`](./apidocs/org/shredzone/commons/suncalc/SunTimes.Parame
 
 The available window-based parameters are:
 
-* `limit(Duration duration)`: Limits the time window to the given duration. Must be positive!
+* `limit(Duration duration)`: Limits the time window to the given duration. A reverse time window is implicitly set if this value is negative.
 * `oneDay()`: Limits the time window to 24 hours.
 * `fullCycle()`: No limit. Calculation will find all rise, set, noon, and nadir times.
+* `reverse()`: Sets a reverse time window. It will end at the given time. The rise, set, noon, and nadir times will be in the past. You can also pass a negative duration as `limit()`.
+* `forward()`: Sets a forward time window. It will start at the given time. The rise, set, noon, and nadir times will be in the future. This is the default.
 * `sameWindowAs(WindowParameter<?> w)`: Copies the current time window from any other parameter object. Note that subsequent changes to the other object are not adoped.
 
 If the sun or moon does not rise or set within the given window, the appropriate getters return `null`. You can check if the sun or moon is always above or below the horizon, by checking `isAlwaysUp()` and `isAlwaysDown()`.

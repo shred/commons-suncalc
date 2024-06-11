@@ -118,6 +118,12 @@ public class SunTimesTest {
                         .limit(Duration.ofDays(2L))
                         .execute();
         assertTimes(t7, null, null, "2020-06-20T16:11:02Z", true);
+
+        // Reverse check
+        SunTimes t8 = SunTimes.compute().at(ALERT).on(2017, 2, 28).utc()
+                .reverse()
+                .execute();
+        assertTimes(t8, "2017-02-27T15:23:52Z", "2017-02-27T17:23:14Z", "2017-02-27T16:23:47Z");
     }
 
     @Test
@@ -125,6 +131,14 @@ public class SunTimesTest {
         SunTimes t1 = SunTimes.compute().at(WELLINGTON).on(2017, 8, 10).timezone(WELLINGTON_TZ)
                         .execute();
         assertTimes(t1, "2017-08-09T19:18:33Z", "2017-08-10T05:34:50Z", "2017-08-10T00:26:33Z");
+    }
+
+    @Test
+    public void testWellingtonReverse() {
+        SunTimes t1 = SunTimes.compute().at(WELLINGTON).on(2017, 8, 10).timezone(WELLINGTON_TZ)
+                .reverse()
+                .execute();
+        assertTimes(t1, "2017-08-08T19:19:35Z", "2017-08-09T05:33:36Z", "2017-08-09T00:26:42Z");
     }
 
     @Test

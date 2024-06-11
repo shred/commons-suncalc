@@ -254,9 +254,21 @@ public class SunTimes {
             boolean alwaysDown = false;
             double ye;
 
+            int hourStep;
+            double lowerLimitHours, upperLimitHours;
+            if (getDuration().isNegative()) {
+                hourStep = -1;
+                lowerLimitHours = getDuration().toMillis() / (60 * 60 * 1000.0);
+                upperLimitHours = 0.0;
+            } else {
+                hourStep = 1;
+                lowerLimitHours = 0.0;
+                upperLimitHours = getDuration().toMillis() / (60 * 60 * 1000.0);;
+            }
+
             int hour = 0;
-            double limitHours = getDuration().toMillis() / (60 * 60 * 1000.0);
-            int maxHours = (int) ceil(limitHours);
+            int minHours = (int) floor(lowerLimitHours);
+            int maxHours = (int) ceil(upperLimitHours);
 
             double y_minus = correctedSunHeight(jd.atHour(hour - 1.0));
             double y_0 = correctedSunHeight(jd.atHour(hour));
@@ -268,19 +280,19 @@ public class SunTimes {
                 alwaysDown = true;
             }
 
-            while (hour <= maxHours) {
+            while (hour <= maxHours && hour >= minHours) {
                 QuadraticInterpolation qi = new QuadraticInterpolation(y_minus, y_0, y_plus);
                 ye = qi.getYe();
 
                 if (qi.getNumberOfRoots() == 1) {
                     double rt = qi.getRoot1() + hour;
                     if (y_minus < 0.0) {
-                        if (rise == null && rt >= 0.0 && rt < limitHours) {
+                        if (rise == null && rt >= lowerLimitHours && rt < upperLimitHours) {
                             rise = rt;
                             alwaysDown = false;
                         }
                     } else {
-                        if (set == null && rt >= 0.0 && rt < limitHours) {
+                        if (set == null && rt >= lowerLimitHours && rt < upperLimitHours) {
                             set = rt;
                             alwaysUp = false;
                         }
@@ -288,14 +300,14 @@ public class SunTimes {
                 } else if (qi.getNumberOfRoots() == 2) {
                     if (rise == null) {
                         double rt = hour + (ye < 0.0 ? qi.getRoot2() : qi.getRoot1());
-                        if (rt >= 0.0 && rt < limitHours) {
+                        if (rt >= lowerLimitHours && rt < upperLimitHours) {
                             rise = rt;
                             alwaysDown = false;
                         }
                     }
                     if (set == null) {
                         double rt = hour + (ye < 0.0 ? qi.getRoot1() : qi.getRoot2());
-                        if (rt >= 0.0 && rt < limitHours) {
+                        if (rt >= lowerLimitHours && rt < upperLimitHours) {
                             set = rt;
                             alwaysUp = false;
                         }
@@ -305,7 +317,7 @@ public class SunTimes {
                 double xeAbs = abs(qi.getXe());
                 if (xeAbs <= 1.0) {
                     double xeHour = qi.getXe() + hour;
-                    if (xeHour >= 0.0) {
+                    if (hourStep > 0 ? xeHour >= 0.0 : xeHour <= 0.0) {
                         if (qi.isMaximum()) {
                             if (noon == null) {
                                 noon = xeHour;
@@ -322,22 +334,28 @@ public class SunTimes {
                     break;
                 }
 
-                hour++;
-                y_minus = y_0;
-                y_0 = y_plus;
-                y_plus = correctedSunHeight(jd.atHour(hour + 1.0));
+                hour += hourStep;
+                if (hourStep > 0) {
+                    y_minus = y_0;
+                    y_0 = y_plus;
+                    y_plus = correctedSunHeight(jd.atHour(hour + 1.0));
+                } else {
+                    y_plus = y_0;
+                    y_0 = y_minus;
+                    y_minus = correctedSunHeight(jd.atHour(hour - 1.0));
+                }
             }
 
             if (noon != null) {
                 noon = readjustMax(noon, 2.0, 14, t -> correctedSunHeight(jd.atHour(t)));
-                if (noon < 0.0 || noon >= limitHours) {
+                if (noon < lowerLimitHours || noon >= upperLimitHours) {
                     noon = null;
                 }
             }
 
             if (nadir != null) {
                 nadir = readjustMin(nadir, 2.0, 14, t -> correctedSunHeight(jd.atHour(t)));
-                if (nadir < 0.0 || nadir >= limitHours) {
+                if (nadir < lowerLimitHours || nadir >= upperLimitHours) {
                     nadir = null;
                 }
             }
