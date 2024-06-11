@@ -80,7 +80,8 @@ public interface WindowParameter<T> {
      * <p>
      * Changes to the source parameter will not affect this parameter, though.
      *
-     * @param t  {@link WindowParameter} to be used.
+     * @param w
+     *         {@link WindowParameter} to be used.
      * @return itself
      * @since 3.11
      */
