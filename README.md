@@ -5,7 +5,7 @@ A Java library for calculation of sun and moon positions and phases.
 ## Features
 
 * Lightweight, only requires Java 8 or higher, no other dependencies
-* Android compatible, requires API level 26 (Android 8.0 "Oreo") or higher. For older Android versions, use [commons-suncalc v2](https://github.com/shred/commons-suncalc/tree/v2), which is similar to this version, but does not use the Java Date/Time API.
+* Android compatible, requires API level 26 (Android 8.0 "Oreo") or higher. For older Android versions, use [commons-suncalc v2](https://codeberg.org/shred/commons-suncalc/tree/v2), which is similar to this version, but does not use the Java Date/Time API.
 * Available at [Maven Central](http://search.maven.org/#search|ga|1|a%3A%22commons-suncalc%22)
 * Extensive unit tests
 
@@ -45,8 +45,8 @@ This library bases on:
 
 ## Contribute
 
-* Fork the [Source code at GitHub](https://github.com/shred/commons-suncalc). Feel free to send pull requests.
-* Found a bug? Please [file a bug report](https://github.com/shred/commons-suncalc/issues).
+* Fork the [Source code at Codeberg](https://codeberg.org/shred/commons-suncalc). Feel free to send pull requests.
+* Found a bug? Please [file a bug report](https://codeberg.org/shred/commons-suncalc/issues).
 
 ## License
 

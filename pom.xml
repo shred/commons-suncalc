@@ -15,14 +15,14 @@
         </license>
     </licenses>
     <scm>
-        <url>https://github.com/shred/commons-suncalc/</url>
-        <connection>scm:git:git@github.com:shred/commons-suncalc.git</connection>
-        <developerConnection>scm:git:git@github.com:shred/commons-suncalc.git</developerConnection>
+        <url>https://codeberg.org/shred/commons-suncalc/</url>
+        <connection>scm:git:git@codeberg.org:shred/commons-suncalc.git</connection>
+        <developerConnection>scm:git:git@codeberg.org:shred/commons-suncalc.git</developerConnection>
       <tag>HEAD</tag>
   </scm>
     <issueManagement>
-        <system>GitHub Issues</system>
-        <url>https://github.com/shred/commons-suncalc/issues</url>
+        <system>Codeberg Issues</system>
+        <url>https://codeberg.org/shred/commons-suncalc/issues</url>
     </issueManagement>
     <developers>
         <developer>

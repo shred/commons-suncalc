@@ -1,6 +1,6 @@
 # Examples
 
-In this chapter, you will find code examples that demonstrate the use and the possibilities of the API. You can also find (and run) these examples in the [ExamplesTest](https://github.com/shred/commons-suncalc/blob/master/src/test/java/org/shredzone/commons/suncalc/ExamplesTest.java) unit test.
+In this chapter, you will find code examples that demonstrate the use and the possibilities of the API. You can also find (and run) these examples in the [ExamplesTest](https://codeberg.org/shred/commons-suncalc/blob/master/src/test/java/org/shredzone/commons/suncalc/ExamplesTest.java) unit test.
 
 I know this is a long chapter. It is because _suncalc_ offers a lot of functionality. I still recommend to read it, or at least skim it, to get an idea of what is possible or best practice.
 

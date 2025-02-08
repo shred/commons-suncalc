@@ -2,7 +2,7 @@
 
 A Java library for calculation of sun and moon positions and phases.
 
-The source code can be found at [GitHub](https://github.com/shred/commons-suncalc) and is distributed under the terms of [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+The source code can be found at [Codeberg](https://codeberg.org/shred/commons-suncalc) and is distributed under the terms of [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
 ## Accuracy
 
@@ -15,7 +15,7 @@ This library has its focus on getting _acceptable_ results at low cost, so it ca
 _commons-suncalc_ requires at least Java 8, but has no other runtime dependencies. It can also be used on Android, API level 26 (Android 8.0 "Oreo") or higher.
 
 !!! NOTE
-    **For Android versions before API level 26**, please use [commons-suncalc v2](https://github.com/shred/commons-suncalc/tree/v2). It is similar to this version, but does not use the Java Date/Time API. Also see the [commons-suncalc v2 documentation](https://shredzone.org/maven/commons-suncalc-v2/index.html).
+    **For Android versions before API level 26**, please use [commons-suncalc v2](https://codeberg.org/shred/commons-suncalc/tree/v2). It is similar to this version, but does not use the Java Date/Time API. Also see the [commons-suncalc v2 documentation](https://shredzone.org/maven/commons-suncalc-v2/index.html).
 
 ## Installation
 
@@ -56,8 +56,8 @@ This library bases on:
 
 ## Contribute
 
-* Fork the [Source code at GitHub](https://github.com/shred/commons-suncalc). Feel free to send pull requests.
-* Found a bug? Please [file a bug report](https://github.com/shred/commons-suncalc/issues).
+* Fork the [Source code at Codeberg](https://codeberg.org/shred/commons-suncalc). Feel free to send pull requests.
+* Found a bug? Please [file a bug report](https://codeberg.org/shred/commons-suncalc/issues).
 
 ## License
 
